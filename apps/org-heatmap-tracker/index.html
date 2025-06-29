@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<link rel="stylesheet" href="../../common.css">
+<style>
+svg{font:14px 'Inter',sans-serif}
+#heat{width:100%;height:auto}
+</style></head>
+<body>
+<h1>Org Heatmap & Efficiency</h1>
+<svg id="heat"></svg>
+<p><a href="../../app-index.html">Back to app index</a></p>
+<script type="module">
+(async () => {
+const grid = await fetch('./heatmap.json').then(r => r.json());
+const svg=d3.select('#heat');
+const cell=40;
+const height=cell*grid.teams.length+40;
+const width=cell*grid.processes.length+120;
+svg.attr('viewBox',`0 0 ${width} ${height}`);
+// axes
+svg.selectAll('text.team').data(grid.teams).enter().append('text').attr('x',0).attr('y',(d,i)=>i*cell+cell*1.3).text(d=>d);
+svg.selectAll('text.proc').data(grid.processes).enter().append('text').attr('x',(d,i)=>i*cell+60).attr('y',10).attr('transform',(d,i)=>`rotate(-40 ${(i*cell+60)},10)`).text(d=>d);
+// cells
+grid.values.forEach((row,r)=>row.forEach((v,c)=>{
+  svg.append('rect').attr('x',c*cell+50).attr('y',r*cell+20).attr('width',cell-2).attr('height',cell-2)
+    .attr('fill',`rgba(0,128,255,${v/100})`).append('title').text(`${v}% utilisation`);
+}));
+})();
+</script></body></html>

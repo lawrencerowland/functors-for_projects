@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../common.css">
+<style>
+input{width:100%;max-width:600px}
+li+li{margin-top:.5rem}
+.btn{margin-left:.5em}
+</style></head>
+<body>
+<h1>Lessons-to-Action Synthesiser</h1>
+<input id="q" placeholder="search…" oninput="filter()"><ul id="list"></ul>
+<p><a href="../../app-index.html">Back to app index</a></p>
+<script type="module">
+(async () => {
+const lessons = await fetch('./lessons.json').then(r => r.json());
+const list=document.getElementById('list');
+function render(arr){
+  list.innerHTML='';
+  arr.forEach(l=>{
+    const li=document.createElement('li');
+    const span=document.createElement('span');
+    span.textContent=`[${l.gateway}] [${l.theme}] [${l.discipline}] ${l.text}`;
+    const btn=document.createElement('button');
+    btn.className='btn';
+    btn.textContent='Copy';
+    btn.onclick=async()=>{
+      try{
+        await navigator.clipboard.writeText(span.textContent);
+        const old=btn.textContent;
+        btn.textContent='Copied!';
+        setTimeout(()=>btn.textContent=old,1000);
+      }catch(e){console.error('copy failed',e);}
+    };
+    li.appendChild(span);
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+}
+function filter(){
+  const f=q.value.toLowerCase();
+  render(lessons.filter(l=>
+    l.text.toLowerCase().includes(f) ||
+    l.gateway.toLowerCase().includes(f) ||
+    l.theme.toLowerCase().includes(f) ||
+    l.discipline.toLowerCase().includes(f)
+  ));
+}
+render(lessons);
+})();
+</script></body></html>

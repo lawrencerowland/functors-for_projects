@@ -1,0 +1,10 @@
+{
+  "periods": ["Jan","Feb","Mar","Apr"],
+  "cost_baseline": [20, 40, 60, 80],
+  "cost_actual":   [22, 39, 65, 90],
+  "schedule_baseline": [10, 20, 30, 40],
+  "schedule_actual":   [12, 18, 35, 42],
+  "fte_planned": [120,130,140,150],
+  "fte_actual":  [118,135,150,160],
+  "efficiency": [84,78,91,87]
+}

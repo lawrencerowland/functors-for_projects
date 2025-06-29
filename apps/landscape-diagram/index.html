@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Controls Landscape Diagram</title>
+  <link rel="stylesheet" href="../../common.css">
+  <style>#diagram{max-width:100%;overflow-x:auto}</style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: false });
+    fetch('./controls-landscape.md')
+      .then(r => r.text())
+      .then(md => {
+        const match = md.match(/```mermaid\n([\s\S]*?)```/);
+        if(match){
+          const div = document.getElementById('diagram');
+          div.textContent = match[1];
+          mermaid.run({ nodes: [div] });
+        }
+      });
+  </script>
+</head>
+<body>
+  <h1>Controls Landscape Diagram</h1>
+  <div id="diagram" class="mermaid"></div>
+  <p><a href="../../app-index.html">Back to app index</a></p>
+</body>
+</html>

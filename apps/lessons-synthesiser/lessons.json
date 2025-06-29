@@ -1,0 +1,14 @@
+[
+  {
+    "gateway": "Gateway 2",
+    "theme": "Risk Management",
+    "discipline": "Project Controls",
+    "text": "Define risk appetite early and agree contingencies."
+  },
+  {
+    "gateway": "N/A",
+    "theme": "Procurement",
+    "discipline": "Commercial",
+    "text": "Involve commercial early to avoid long-lead items."
+  }
+]
