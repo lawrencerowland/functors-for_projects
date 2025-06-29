@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import '../src/styles/globals.css';
 import Home from './pages/Home.jsx';
 import Projects from './pages/Projects.jsx';
@@ -27,7 +27,7 @@ function Navbar() {
 
 function App() {
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <HashRouter>
       <Navbar />
       <div className="container mx-auto px-4">
         <Routes>
@@ -40,7 +40,7 @@ function App() {
           <Route path="/insights" element={<Insights />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
