@@ -15,7 +15,7 @@ universal
 ## Preinstalled packages
 
 Universal is an image based on Ubuntu 24.04 - see openai/codex-universal to learn more.
-The repository will be cloned to /workspace/LTG-prototypes. Edit workspace directory.
+The repository will be cloned to /workspace/functors-for_projects. Edit workspace directory.
 
 ## Environment variables
 
