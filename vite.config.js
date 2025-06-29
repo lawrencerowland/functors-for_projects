@@ -10,9 +10,10 @@ const appName = process.env.APP || 'portfolio-state-machine';
 
 export default defineConfig({
   root: resolve(__dirname, `apps/${appName}`),
+  // Use relative asset paths so the site works from any base URL
   base:
     process.env.NODE_ENV === 'production'
-      ? `/LTG-prototypes/apps/${appName}/`
+      ? './'
       : '/',
   build: {
     outDir: resolve(__dirname, `docs/apps/${appName}`),
