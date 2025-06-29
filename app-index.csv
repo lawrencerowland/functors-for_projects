@@ -1,6 +1,2 @@
 #,name,description,origin,model,tags,explainer post,notes
-1,controls-command-board,Baseline vs actual cost/schedule with FTE and efficiency KPIs,,,"chartjs,static,kpi,reporting",,
-1,decision-latency-tracker,Elapsed days from first signal to decision closure,,,"chartjs,static,governance,decision-making",,
-1,lessons-synthesiser,Searchable catalogue of lessons,,,"vanilla,static,knowledge,lessons",,
-1,org-heatmap-tracker,Team versus process utilisation heatmap,,,"d3,static,capacity,utilisation",,
-1,landscape-diagram,Mermaid diagram of controls landscape,,,"mermaid,architecture,overview",,
+1,currying-B,currying demonstration with concrete mappings,Claude,3.5,"set, currying",,
