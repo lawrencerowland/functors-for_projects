@@ -1,2 +1,3 @@
 #,name,description,origin,model,tags,explainer post,notes
 1,currying-B,currying demonstration with concrete mappings,Claude,3.5,"set, currying",,
+2,push-out-pull-back,stop getting mixed up between push outs and pullbacks, products and Co products,ChatGPT,4,education, pushout, product,,
