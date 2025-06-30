@@ -1,3 +1,4 @@
 #,name,description,origin,model,tags,explainer post,notes
 1,currying-B,currying demonstration with concrete mappings,Claude,3.5,"set, currying",,
-2,push-out-pull-back,stop getting mixed up between push outs and pullbacks, products and Co products,ChatGPT,4,education, pushout, product,,
+2,push-out-pull-back,"stop getting mixed up between push outs and pullbacks, products and Co products",ChatGPT,4,"education, pushout, product",,
+3,presheaves-and-opposite-categories,"explains why pre sheaves are a functor from the Opposite category using a node colouring example",Claude,Sonnet 3.5,"presheaves, functors",,
