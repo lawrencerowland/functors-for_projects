@@ -363,7 +363,7 @@ export default function App() {
 
                   <div>
                     <h3 className="font-medium text-amber-800 mb-2">Example:</h3>
-                    <p>In Set, the pullback is the set of pairs {(b,c) | f(b) = g(c)}. In databases, it's like a JOIN operation.</p>
+                    <p>In Set, the pullback is the set of pairs {"{(b,c) | f(b) = g(c)}"}. In databases, it's like a JOIN operation.</p>
                   </div>
                 </div>
               )}
@@ -406,7 +406,7 @@ export default function App() {
                   <tr>
                     <td className="py-2 px-4 border-b font-medium">Example in Set</td>
                     <td className="py-2 px-4 border-b">Cartesian product A × B</td>
-                    <td className="py-2 px-4 border-b">{(b,c) | f(b) = g(c)}</td>
+                    <td className="py-2 px-4 border-b">{"{(b,c) | f(b) = g(c)}"}</td>
                   </tr>
                 </tbody>
               </table>
