@@ -4,17 +4,17 @@ import './App.css';
 
 const colors = ['white', '#f87171', '#60a5fa', '#34d399', '#fbbf24'];
 
-function nextColor(current: string) {
+function nextColor(current) {
   const idx = colors.indexOf(current);
   return colors[(idx + 1) % colors.length];
 }
 
 export default function PresheafVisualization() {
   const [showExample, setShowExample] = useState(false);
-  const [graphGColorings, setGraphGColorings] = useState<string[]>(['white', 'white', 'white']);
-  const [graphHColorings, setGraphHColorings] = useState<string[]>(['white', 'white']);
+  const [graphGColorings, setGraphGColorings] = useState(['white', 'white', 'white']);
+  const [graphHColorings, setGraphHColorings] = useState(['white', 'white']);
 
-  const resetGraphs = (advanced: boolean) => {
+  const resetGraphs = (advanced) => {
     if (advanced) {
       setGraphGColorings(['white', 'white', 'white']);
       setGraphHColorings(['white', 'white']);
@@ -30,7 +30,7 @@ export default function PresheafVisualization() {
     resetGraphs(adv);
   };
 
-  const changeColor = (graph: 'G' | 'H', index: number) => {
+  const changeColor = (graph, index) => {
     if (graph === 'G') {
       setGraphGColorings(prev => {
         const arr = [...prev];
