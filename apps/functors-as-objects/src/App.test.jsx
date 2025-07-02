@@ -4,6 +4,6 @@ import App from './App';
 
 test('renders heading', () => {
   render(<App />);
-  const heading = screen.getByText(/Category Theory: Interactive Comparison/i);
+  const heading = screen.getByText(/Understanding Functors as Objects/i);
   expect(heading).toBeDefined();
 });
