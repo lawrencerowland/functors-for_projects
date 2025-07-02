@@ -1,433 +1,227 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react';
-import './App.css';
+import { ArrowRight, ArrowDown, MoveHorizontal } from 'lucide-react';
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState('pushoutVsCoproduct');
-  const [expandedSections, setExpandedSections] = useState({
-    pushout: true,
-    coproduct: true,
-    product: true,
-    pullback: true
-  });
+const App = () => {
+  const [activeView, setActiveView] = useState('categories');
+  const [showNaturalTransformation, setShowNaturalTransformation] = useState(false);
 
-  const toggleSection = (section) => {
-    setExpandedSections({
-      ...expandedSections,
-      [section]: !expandedSections[section]
-    });
-  };
-
-  const expandAll = () => {
-    setExpandedSections({
-      pushout: true,
-      coproduct: true,
-      product: true,
-      pullback: true
-    });
-  };
-
-  const collapseAll = () => {
-    setExpandedSections({
-      pushout: false,
-      coproduct: false,
-      product: false,
-      pullback: false
-    });
-  };
+  // Styles
+  const boxStyle = "border-2 rounded-md p-3 flex items-center justify-center text-center font-semibold";
+  const categoryBoxStyle = `${boxStyle} border-blue-500 bg-blue-100`;
+  const functorBoxStyle = `${boxStyle} border-purple-500 bg-purple-100`;
+  const objectBoxStyle = `${boxStyle} border-green-500 bg-green-100`;
+  const morphismStyle = "flex items-center justify-center text-gray-700 font-medium";
+  const buttonStyle = "px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 font-medium";
+  const activeButtonStyle = "px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 font-medium";
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-indigo-800">Category Theory: Interactive Comparison</h1>
-        <div className="flex space-x-2">
-          <button
-            onClick={expandAll}
-            className="flex items-center text-sm bg-indigo-100 hover:bg-indigo-200 text-indigo-700 py-1 px-2 rounded"
+    <div className="flex flex-col space-y-8 p-4 max-w-4xl mx-auto">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">Understanding Functors as Objects</h1>
+        <p className="mb-6">This visualization demonstrates how functors can be viewed as both morphisms and objects in different contexts.</p>
+        
+        <div className="flex space-x-4 justify-center mb-6">
+          <button 
+            className={activeView === 'categories' ? activeButtonStyle : buttonStyle}
+            onClick={() => setActiveView('categories')}
           >
-            <Maximize2 size={16} className="mr-1" />
-            Expand All
+            Functors as Morphisms
           </button>
-          <button
-            onClick={collapseAll}
-            className="flex items-center text-sm bg-indigo-100 hover:bg-indigo-200 text-indigo-700 py-1 px-2 rounded"
+          <button 
+            className={activeView === 'functorCategory' ? activeButtonStyle : buttonStyle}
+            onClick={() => setActiveView('functorCategory')}
           >
-            <Minimize2 size={16} className="mr-1" />
-            Collapse All
+            Functors as Objects
           </button>
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <div className="flex border-b border-gray-200">
-          <button
-            className={`py-2 px-4 font-medium ${activeTab === 'pushoutVsCoproduct' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setActiveTab('pushoutVsCoproduct')}
+          <button 
+            className={activeView === 'arrowCategory' ? activeButtonStyle : buttonStyle}
+            onClick={() => setActiveView('arrowCategory')}
           >
-            Pushouts vs Coproducts
-          </button>
-          <button
-            className={`py-2 px-4 font-medium ${activeTab === 'productVsPullback' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setActiveTab('productVsPullback')}
-          >
-            Products vs Pullbacks
+            Arrow Category
           </button>
         </div>
       </div>
 
-      {activeTab === 'pushoutVsCoproduct' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-6">
-            {/* Pushout Section */}
-            <div className="bg-indigo-50 rounded-lg p-4">
-              <div
-                className="flex justify-between items-center cursor-pointer"
-                onClick={() => toggleSection('pushout')}
-              >
-                <h2 className="text-xl font-semibold text-indigo-700">Pushout</h2>
-                {expandedSections.pushout ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </div>
-
-              {expandedSections.pushout && (
-                <div className="mt-4 space-y-4">
-                  <div className="bg-white p-4 rounded shadow-sm">
-                    <svg viewBox="0 0 400 250" className="w-full">
-                      {/* A */}
-                      <circle cx="200" cy="50" r="20" fill="#f0f0ff" stroke="#5c6bc0" strokeWidth="2" />
-                      <text x="200" y="55" textAnchor="middle" fill="#5c6bc0" fontSize="16">A</text>
-                      {/* B */}
-                      <circle cx="100" cy="150" r="20" fill="#f0f0ff" stroke="#5c6bc0" strokeWidth="2" />
-                      <text x="100" y="155" textAnchor="middle" fill="#5c6bc0" fontSize="16">B</text>
-                      {/* C */}
-                      <circle cx="300" cy="150" r="20" fill="#f0f0ff" stroke="#5c6bc0" strokeWidth="2" />
-                      <text x="300" y="155" textAnchor="middle" fill="#5c6bc0" fontSize="16">C</text>
-                      {/* D (Pushout) */}
-                      <circle cx="200" cy="220" r="25" fill="#e6e6fa" stroke="#9c27b0" strokeWidth="3" />
-                      <text x="200" y="225" textAnchor="middle" fill="#9c27b0" fontSize="16">D</text>
-                      {/* Arrows */}
-                      <line x1="190" y1="65" x2="110" y2="135" stroke="#5c6bc0" strokeWidth="2" />
-                      <polygon points="115,130 110,135 117,137" fill="#5c6bc0" />
-                      <text x="130" y="100" textAnchor="middle" fill="#5c6bc0" fontSize="14">f</text>
-                      <line x1="210" y1="65" x2="290" y2="135" stroke="#5c6bc0" strokeWidth="2" />
-                      <polygon points="285,130 290,135 283,137" fill="#5c6bc0" />
-                      <text x="270" y="100" textAnchor="middle" fill="#5c6bc0" fontSize="14">g</text>
-                      <line x1="110" y1="165" x2="185" y2="205" stroke="#5c6bc0" strokeWidth="2" />
-                      <polygon points="180,200 185,205 178,207" fill="#5c6bc0" />
-                      <text x="140" y="195" textAnchor="middle" fill="#5c6bc0" fontSize="14">i</text>
-                      <line x1="290" y1="165" x2="215" y2="205" stroke="#5c6bc0" strokeWidth="2" />
-                      <polygon points="220,200 215,205 222,207" fill="#5c6bc0" />
-                      <text x="260" y="195" textAnchor="middle" fill="#5c6bc0" fontSize="14">j</text>
-                    </svg>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-indigo-800 mb-2">Key Characteristics:</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Glues objects along a common part</li>
-                      <li>Represents the identification or quotient</li>
-                      <li>Involves a "span" from object A to objects B and C</li>
-                      <li>The result D is the "smallest" object receiving maps from B and C that make the diagram commute</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-indigo-800 mb-2">Intuition:</h3>
-                    <p>Think of a pushout as taking two objects B and C that share a common part A, and gluing them together along that common part.</p>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-indigo-800 mb-2">Example:</h3>
-                    <p>In topology, attaching a 2-cell to a circle along its boundary is a pushout.</p>
+      {activeView === 'categories' && (
+        <div className="flex flex-col space-y-8">
+          <h2 className="text-xl font-semibold text-center">Functors as Morphisms in Cat</h2>
+          <p className="text-center">In the category Cat, small categories are objects and functors are morphisms between them.</p>
+          
+          <div className="flex justify-between items-center">
+            <div className="w-1/3">
+              <div className={categoryBoxStyle}>
+                <div>
+                  <div className="text-lg mb-2">Category C</div>
+                  <div className="flex flex-col space-y-2">
+                    <div className={objectBoxStyle}>Object C₁</div>
+                    <div className={objectBoxStyle}>Object C₂</div>
+                    <div className={morphismStyle}>
+                      <ArrowRight size={16} className="mx-1" />
+                      Morphisms
+                      <ArrowRight size={16} className="mx-1" />
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
-
-            {/* Coproduct Section */}
-            <div className="bg-pink-50 rounded-lg p-4">
-              <div
-                className="flex justify-between items-center cursor-pointer"
-                onClick={() => toggleSection('coproduct')}
-              >
-                <h2 className="text-xl font-semibold text-pink-700">Coproduct</h2>
-                {expandedSections.coproduct ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            
+            <div className={morphismStyle}>
+              <div className="flex flex-col items-center">
+                <div>Functor F</div>
+                <ArrowRight size={24} />
               </div>
-
-              {expandedSections.coproduct && (
-                <div className="mt-4 space-y-4">
-                  <div className="bg-white p-4 rounded shadow-sm">
-                    <svg viewBox="0 0 400 250" className="w-full">
-                      {/* A */}
-                      <circle cx="100" cy="150" r="20" fill="#fff0f5" stroke="#e91e63" strokeWidth="2" />
-                      <text x="100" y="155" textAnchor="middle" fill="#e91e63" fontSize="16">A</text>
-                      {/* B */}
-                      <circle cx="300" cy="150" r="20" fill="#fff0f5" stroke="#e91e63" strokeWidth="2" />
-                      <text x="300" y="155" textAnchor="middle" fill="#e91e63" fontSize="16">B</text>
-                      {/* A+B (Coproduct) */}
-                      <circle cx="200" cy="60" r="25" fill="#ffebee" stroke="#e91e63" strokeWidth="3" />
-                      <text x="200" y="65" textAnchor="middle" fill="#e91e63" fontSize="16">A+B</text>
-                      {/* Arrows */}
-                      <line x1="115" y1="135" x2="185" y2="75" stroke="#e91e63" strokeWidth="2" />
-                      <polygon points="180,80 185,75 178,73" fill="#e91e63" />
-                      <text x="140" y="115" textAnchor="middle" fill="#e91e63" fontSize="14">i₁</text>
-                      <line x1="285" y1="135" x2="215" y2="75" stroke="#e91e63" strokeWidth="2" />
-                      <polygon points="220,80 215,75 222,73" fill="#e91e63" />
-                      <text x="260" y="115" textAnchor="middle" fill="#e91e63" fontSize="14">i₂</text>
-                    </svg>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-pink-800 mb-2">Key Characteristics:</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Forms a disjoint union of objects</li>
-                      <li>Represents an "either/or" construction</li>
-                      <li>Has injection maps from each component</li>
-                      <li>Universal property: any object mapping from A and B factors through A+B</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-pink-800 mb-2">Intuition:</h3>
-                    <p>Think of a coproduct as putting two objects A and B "side by side" without any interaction between them.</p>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-pink-800 mb-2">Example:</h3>
-                    <p>In Set, the coproduct is the disjoint union. In programming, it's like a tagged union or sum type.</p>
+            </div>
+            
+            <div className="w-1/3">
+              <div className={categoryBoxStyle}>
+                <div>
+                  <div className="text-lg mb-2">Category D</div>
+                  <div className="flex flex-col space-y-2">
+                    <div className={objectBoxStyle}>Object D₁</div>
+                    <div className={objectBoxStyle}>Object D₂</div>
+                    <div className={morphismStyle}>
+                      <ArrowRight size={16} className="mx-1" />
+                      Morphisms
+                      <ArrowRight size={16} className="mx-1" />
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
-
-          {/* Comparison Section */}
-          <div className="bg-gray-50 rounded-lg p-6 mt-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Pushout vs Coproduct: Key Differences</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white">
-                <thead>
-                  <tr className="bg-indigo-100">
-                    <th className="py-2 px-4 border-b text-left">Aspect</th>
-                    <th className="py-2 px-4 border-b text-left text-indigo-700">Pushout</th>
-                    <th className="py-2 px-4 border-b text-left text-pink-700">Coproduct</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="py-2 px-4 border-b font-medium">Starting Point</td>
-                    <td className="py-2 px-4 border-b">Span A → B, A → C</td>
-                    <td className="py-2 px-4 border-b">Two separate objects A, B</td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="py-2 px-4 border-b font-medium">Relationship</td>
-                    <td className="py-2 px-4 border-b">Objects have a common part</td>
-                    <td className="py-2 px-4 border-b">Objects are completely separate</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 px-4 border-b font-medium">Operation</td>
-                    <td className="py-2 px-4 border-b">Gluing along an identification</td>
-                    <td className="py-2 px-4 border-b">Disjoint union</td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="py-2 px-4 border-b font-medium">Special Case</td>
-                    <td className="py-2 px-4 border-b">When A is initial object, pushout becomes coproduct</td>
-                    <td className="py-2 px-4 border-b">Is a pushout from the initial object</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 px-4 border-b font-medium">Example in Set</td>
-                    <td className="py-2 px-4 border-b">Quotient by an equivalence relation</td>
-                    <td className="py-2 px-4 border-b">Disjoint union of sets</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          
+          <div className="text-center">
+            <p>Here, functors map objects to objects and morphisms to morphisms, preserving the structure.</p>
+            <p>The functor F takes objects C₁, C₂ from category C and maps them to objects D₁, D₂ in category D.</p>
           </div>
         </div>
       )}
 
-      {activeTab === 'productVsPullback' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-6">
-            {/* Product Section */}
-            <div className="bg-green-50 rounded-lg p-4">
-              <div
-                className="flex justify-between items-center cursor-pointer"
-                onClick={() => toggleSection('product')}
-              >
-                <h2 className="text-xl font-semibold text-green-700">Product</h2>
-                {expandedSections.product ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+      {activeView === 'functorCategory' && (
+        <div className="flex flex-col space-y-8">
+          <h2 className="text-xl font-semibold text-center">Functors as Objects in a Functor Category</h2>
+          <p className="text-center">In the functor category [C, D], functors from C to D are objects, and natural transformations are morphisms.</p>
+          
+          <div className="grid grid-cols-3 gap-6">
+            <div className={functorBoxStyle}>
+              <div>
+                <div className="text-lg mb-2">Functor F: C → D</div>
+                <div className="text-sm">Maps objects and morphisms</div>
               </div>
-
-              {expandedSections.product && (
-                <div className="mt-4 space-y-4">
-                  <div className="bg-white p-4 rounded shadow-sm">
-                    <svg viewBox="0 0 400 250" className="w-full">
-                      {/* A */}
-                      <circle cx="100" cy="150" r="20" fill="#f0fff0" stroke="#4caf50" strokeWidth="2" />
-                      <text x="100" y="155" textAnchor="middle" fill="#4caf50" fontSize="16">A</text>
-                      {/* B */}
-                      <circle cx="300" cy="150" r="20" fill="#f0fff0" stroke="#4caf50" strokeWidth="2" />
-                      <text x="300" y="155" textAnchor="middle" fill="#4caf50" fontSize="16">B</text>
-                      {/* A×B (Product) */}
-                      <circle cx="200" cy="60" r="25" fill="#e8f5e9" stroke="#4caf50" strokeWidth="3" />
-                      <text x="200" y="65" textAnchor="middle" fill="#4caf50" fontSize="16">A×B</text>
-                      {/* Arrows */}
-                      <line x1="185" y1="75" x2="115" y2="135" stroke="#4caf50" strokeWidth="2" />
-                      <polygon points="120,130 115,135 122,137" fill="#4caf50" />
-                      <text x="140" y="115" textAnchor="middle" fill="#4caf50" fontSize="14">π₁</text>
-                      <line x1="215" y1="75" x2="285" y2="135" stroke="#4caf50" strokeWidth="2" />
-                      <polygon points="280,130 285,135 278,137" fill="#4caf50" />
-                      <text x="260" y="115" textAnchor="middle" fill="#4caf50" fontSize="14">π₂</text>
-                    </svg>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-green-800 mb-2">Key Characteristics:</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Combines objects into a pair</li>
-                      <li>Represents an "and" construction</li>
-                      <li>Has projection maps to each component</li>
-                      <li>Universal property: any object mapping to A and B factors through A×B</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-green-800 mb-2">Intuition:</h3>
-                    <p>Think of a product as putting two objects A and B "together" to form pairs (a,b) where a is from A and b is from B.</p>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-green-800 mb-2">Example:</h3>
-                    <p>In Set, the product is the cartesian product. In programming, it's like a tuple or record type.</p>
-                  </div>
-                </div>
-              )}
             </div>
-
-            {/* Pullback Section */}
-            <div className="bg-amber-50 rounded-lg p-4">
-              <div
-                className="flex justify-between items-center cursor-pointer"
-                onClick={() => toggleSection('pullback')}
-              >
-                <h2 className="text-xl font-semibold text-amber-700">Pullback</h2>
-                {expandedSections.pullback ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            
+            <div className={functorBoxStyle}>
+              <div>
+                <div className="text-lg mb-2">Functor G: C → D</div>
+                <div className="text-sm">Maps objects and morphisms</div>
               </div>
-
-              {expandedSections.pullback && (
-                <div className="mt-4 space-y-4">
-                  <div className="bg-white p-4 rounded shadow-sm">
-                    <svg viewBox="0 0 400 250" className="w-full">
-                      {/* B */}
-                      <circle cx="100" cy="150" r="20" fill="#fffaf0" stroke="#ff9800" strokeWidth="2" />
-                      <text x="100" y="155" textAnchor="middle" fill="#ff9800" fontSize="16">B</text>
-                      {/* C */}
-                      <circle cx="300" cy="150" r="20" fill="#fffaf0" stroke="#ff9800" strokeWidth="2" />
-                      <text x="300" y="155" textAnchor="middle" fill="#ff9800" fontSize="16">C</text>
-                      {/* D */}
-                      <circle cx="200" cy="220" r="20" fill="#fffaf0" stroke="#ff9800" strokeWidth="2" />
-                      <text x="200" y="225" textAnchor="middle" fill="#ff9800" fontSize="16">D</text>
-                      {/* A (Pullback) */}
-                      <circle cx="200" cy="60" r="25" fill="#fff3e0" stroke="#ff9800" strokeWidth="3" />
-                      <text x="200" y="65" textAnchor="middle" fill="#ff9800" fontSize="16">A</text>
-                      {/* Arrows */}
-                      <line x1="185" y1="75" x2="115" y2="135" stroke="#ff9800" strokeWidth="2" />
-                      <polygon points="120,130 115,135 122,137" fill="#ff9800" />
-                      <text x="140" y="115" textAnchor="middle" fill="#ff9800" fontSize="14">p</text>
-                      <line x1="215" y1="75" x2="285" y2="135" stroke="#ff9800" strokeWidth="2" />
-                      <polygon points="280,130 285,135 278,137" fill="#ff9800" />
-                      <text x="260" y="115" textAnchor="middle" fill="#ff9800" fontSize="14">q</text>
-                      <line x1="110" y1="165" x2="185" y2="205" stroke="#ff9800" strokeWidth="2" />
-                      <polygon points="180,200 185,205 178,207" fill="#ff9800" />
-                      <text x="140" y="195" textAnchor="middle" fill="#ff9800" fontSize="14">f</text>
-                      <line x1="290" y1="165" x2="215" y2="205" stroke="#ff9800" strokeWidth="2" />
-                      <polygon points="220,200 215,205 222,207" fill="#ff9800" />
-                      <text x="260" y="195" textAnchor="middle" fill="#ff9800" fontSize="14">g</text>
-                    </svg>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-amber-800 mb-2">Key Characteristics:</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Finds the "common part" of objects with respect to a commuting diagram</li>
-                      <li>Represents a "fiber product" or "intersection" with respect to maps</li>
-                      <li>Involves a "cospan" from objects B and C to object D</li>
-                      <li>The result A is the "largest" object with maps to B and C that make the diagram commute</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-amber-800 mb-2">Intuition:</h3>
-                    <p>Think of a pullback as finding all pairs (b,c) from B×C that are "compatible" in the sense that f(b) = g(c).</p>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-amber-800 mb-2">Example:</h3>
-                    <p>In Set, the pullback is the set of pairs {"{(b,c) | f(b) = g(c)}"}. In databases, it's like a JOIN operation.</p>
-                  </div>
-                </div>
-              )}
+            </div>
+            
+            <div className={functorBoxStyle}>
+              <div>
+                <div className="text-lg mb-2">Functor H: C → D</div>
+                <div className="text-sm">Maps objects and morphisms</div>
+              </div>
             </div>
           </div>
-
-          {/* Comparison Section */}
-          <div className="bg-gray-50 rounded-lg p-6 mt-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Product vs Pullback: Key Differences</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white">
-                <thead>
-                  <tr className="bg-green-100">
-                    <th className="py-2 px-4 border-b text-left">Aspect</th>
-                    <th className="py-2 px-4 border-b text-left text-green-700">Product</th>
-                    <th className="py-2 px-4 border-b text-left text-amber-700">Pullback</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="py-2 px-4 border-b font-medium">Starting Point</td>
-                    <td className="py-2 px-4 border-b">Two separate objects A, B</td>
-                    <td className="py-2 px-4 border-b">Cospan B → D ← C</td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="py-2 px-4 border-b font-medium">Additional Structure</td>
-                    <td className="py-2 px-4 border-b">None</td>
-                    <td className="py-2 px-4 border-b">Common target object D</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 px-4 border-b font-medium">Operation</td>
-                    <td className="py-2 px-4 border-b">Pairing</td>
-                    <td className="py-2 px-4 border-b">Constrained pairing</td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="py-2 px-4 border-b font-medium">Special Case</td>
-                    <td className="py-2 px-4 border-b">Is a pullback when D is terminal object</td>
-                    <td className="py-2 px-4 border-b">When D is terminal object, pullback becomes product</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 px-4 border-b font-medium">Example in Set</td>
-                    <td className="py-2 px-4 border-b">Cartesian product A × B</td>
-                    <td className="py-2 px-4 border-b">{"{(b,c) | f(b) = g(c)}"}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          
+          <div className="text-center">
+            <p>These functors are now objects themselves in the functor category [C, D]</p>
+            <button 
+              className={buttonStyle}
+              onClick={() => setShowNaturalTransformation(!showNaturalTransformation)}
+            >
+              {showNaturalTransformation ? "Hide" : "Show"} Natural Transformation
+            </button>
           </div>
+          
+          {showNaturalTransformation && (
+            <div className="flex justify-center items-center space-x-6">
+              <div className={functorBoxStyle}>
+                <div>Functor F</div>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <div>Natural Transformation α: F ⇒ G</div>
+                <MoveHorizontal size={24} />
+              </div>
+              
+              <div className={functorBoxStyle}>
+                <div>Functor G</div>
+              </div>
+            </div>
+          )}
+          
+          {showNaturalTransformation && (
+            <div className="text-center">
+              <p>A natural transformation α provides a systematic way to transform functor F into functor G.</p>
+              <p>It can be thought of as a morphism between functors in the functor category.</p>
+            </div>
+          )}
         </div>
       )}
 
-      <div className="mt-8 bg-blue-50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold text-blue-800 mb-2">Universal Properties and Duality</h3>
-        <p className="mb-4">
-          These category theory constructions are related through duality. Pushouts are dual to pullbacks, and coproducts are dual to products. This means we can convert between them by reversing all the arrows in the diagrams.
-        </p>
-        <p>
-          Each construction is defined by a universal property that characterizes it as either:
-        </p>
-        <ul className="list-disc pl-5 mt-2">
-          <li><span className="font-medium">Initial object</span> in a category of cones/cocones (Pushout, Coproduct)</li>
-          <li><span className="font-medium">Terminal object</span> in a category of cones/cocones (Pullback, Product)</li>
-        </ul>
+      {activeView === 'arrowCategory' && (
+        <div className="flex flex-col space-y-8">
+          <h2 className="text-xl font-semibold text-center">Arrow Category Example</h2>
+          <p className="text-center">The arrow category shows how morphisms in one category become objects in another category.</p>
+          
+          <div className="flex justify-center space-x-10">
+            <div className="flex flex-col items-center">
+              <div className="text-lg font-semibold mb-4">Original Category C</div>
+              <div className="flex items-center space-x-4">
+                <div className={objectBoxStyle}>A</div>
+                <div className="flex flex-col">
+                  <div className="flex items-center">
+                    <ArrowRight size={24} />
+                    <span className="mx-2">f</span>
+                  </div>
+                  <div className="flex items-center mt-2">
+                    <ArrowRight size={24} />
+                    <span className="mx-2">g</span>
+                  </div>
+                </div>
+                <div className={objectBoxStyle}>B</div>
+              </div>
+              <div className="mt-2">Morphisms f, g: A → B</div>
+            </div>
+            
+            <ArrowDown size={32} className="mt-20" />
+            
+            <div className="flex flex-col items-center">
+              <div className="text-lg font-semibold mb-4">Arrow Category C↓</div>
+              <div className="flex space-x-6">
+                <div className={boxStyle + " border-orange-500 bg-orange-100"}>
+                  <div>
+                    <div className="text-lg mb-2">Morphism f</div>
+                    <div className="text-sm">as an object</div>
+                  </div>
+                </div>
+                
+                <div className={boxStyle + " border-orange-500 bg-orange-100"}>
+                  <div>
+                    <div className="text-lg mb-2">Morphism g</div>
+                    <div className="text-sm">as an object</div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4">Now morphisms f and g are objects in the arrow category!</div>
+            </div>
+          </div>
+          
+          <div className="text-center bg-gray-100 p-4 rounded-md">
+            <p className="font-semibold">Key Insight:</p>
+            <p>The arrow category demonstrates that what functions as a morphism in one context can be treated as an object in another.</p>
+            <p>Similarly, functors (which are morphisms in Cat) can be treated as objects in functor categories.</p>
+          </div>
+        </div>
+      )}
+      
+      <div className="mt-8 text-center text-gray-700 border-t pt-4">
+        <p>This demonstration illustrates why "it is sensible to take things like functors as objects" - the distinction between objects and morphisms depends on which category we're working in.</p>
       </div>
     </div>
   );
-}
+};
+
+export default App;
