@@ -7,3 +7,9 @@ test('renders heading', () => {
   const heading = screen.getByText(/Presheaf Visualization/i);
   expect(heading).toBeDefined();
 });
+
+test('shows push forward button', () => {
+  render(<App />);
+  const button = screen.getByRole('button', { name: /Try Push Forward/i });
+  expect(button).toBeDefined();
+});
