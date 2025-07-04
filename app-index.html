@@ -73,10 +73,23 @@ function createCards(data){
         const img=document.createElement('img');
         // Use the numeric id to load the matching screenshot in pics/
         img.alt=item.name;
-        img.src='pics/'+item['#']+'.png';
+        const paths=[
+            'pics/'+item['#']+'.png',
+            'pics/'+item['#']+'.PNG',
+            'pics/'+item['#']+'.png.png',
+            'pics/'+item['#']+'.PNG.png',
+            'pics/'+item['#']+'.png.PNG',
+            'pics/'+item['#']+'.PNG.PNG',
+            'pics/'+item['#']+'.webp'
+        ];
+        let idx=0;
+        img.src=paths[idx++];
         img.onerror=()=>{
-            img.onerror=()=>{img.src='pics/blank.png';};
-            img.src='pics/'+item['#']+'.webp';
+            if(idx<paths.length){
+                img.src=paths[idx++];
+            }else{
+                img.src='pics/blank.png';
+            }
         };
         card.appendChild(img);
         const title=document.createElement('h3');
