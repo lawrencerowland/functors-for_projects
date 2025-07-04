@@ -72,9 +72,12 @@ function createCards(data){
         card.dataset.tags=item.tags;
         const img=document.createElement('img');
         // Use the numeric id to load the matching screenshot in pics/
-        img.src='pics/'+item['#']+'.png';
         img.alt=item.name;
-        img.onerror=()=>{img.src='pics/blank.png';};
+        img.src='pics/'+item['#']+'.png';
+        img.onerror=()=>{
+            img.onerror=()=>{img.src='pics/blank.png';};
+            img.src='pics/'+item['#']+'.webp';
+        };
         card.appendChild(img);
         const title=document.createElement('h3');
         const link=document.createElement('a');
