@@ -247,13 +247,18 @@ export default function App() {
 
       {/* Collapsible explanation panel */}
       <div className="bg-white p-4 rounded-lg shadow mb-4">
-        <h2
-          className="text-lg font-semibold cursor-pointer flex justify-between items-center"
+        <button
+          className="w-full text-left flex justify-between items-center bg-indigo-50 px-3 py-2 rounded-md font-semibold"
           onClick={() => setShowExplanation((s) => !s)}
         >
-          Why are presheaves a functor from the Opposite category?
-          {showExplanation ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-        </h2>
+          <span>Why are presheaves a functor from the Opposite category?</span>
+          <span className="flex items-center">
+            <span className="mr-2 text-sm text-indigo-700">
+              {showExplanation ? 'Hide explanation' : 'Show explanation'}
+            </span>
+            {showExplanation ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+          </span>
+        </button>
         {showExplanation && (
           <div className="mt-2 text-sm text-gray-700">
             <p className="mb-2">
@@ -286,9 +291,7 @@ export default function App() {
           onClick={toggleExample}
           className="px-4 py-2 rounded-md bg-indigo-600 text-white shadow hover:bg-indigo-700"
         >
-          {advanced
-            ? EXAMPLES.advanced.titleButton
-            : EXAMPLES.simple.titleButton}
+          {advanced ? 'Show Simple Example' : 'Show Advanced Example'}
         </button>
       </div>
 
