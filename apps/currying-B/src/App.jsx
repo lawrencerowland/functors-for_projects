@@ -37,14 +37,16 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <h1>Currying Demonstration</h1>
+      <div className="layout">
+        <div className="content">
+          <h1>Currying Demonstration</h1>
 
-      <div className="selectors">
-        <label>Set A
-          <select value={setA} onChange={e => setSetA(parseInt(e.target.value))}>
-            {[1,2,3].map(n => <option key={n} value={n}>{n}</option>)}
-          </select>
-        </label>
+          <div className="selectors">
+            <label>Set A
+              <select value={setA} onChange={e => setSetA(parseInt(e.target.value))}>
+                {[1,2,3].map(n => <option key={n} value={n}>{n}</option>)}
+              </select>
+            </label>
         <label>Set B
           <select value={setB} onChange={e => setSetB(parseInt(e.target.value))}>
             {[1,2,3].map(n => <option key={n} value={n}>{n}</option>)}
@@ -55,14 +57,14 @@ export default function App() {
             {[1,2,3].map(n => <option key={n} value={n}>{n}</option>)}
           </select>
         </label>
-      </div>
+          </div>
 
-      <div className="grid">
-        <div className="card">
-          <h3>Regular Function (A × B) → C</h3>
-          <p className="count">Total functions: {regularMappings.length}</p>
-          <div className="list">
-            {regularMappings.map((m, i) => (
+          <div className="grid">
+            <div className="card">
+              <h3>Regular Function (A × B) → C</h3>
+              <p className="count">Total functions: {regularMappings.length}</p>
+              <div className="list">
+                {regularMappings.map((m, i) => (
               <p key={i}>{m}</p>
             ))}
           </div>
@@ -75,12 +77,15 @@ export default function App() {
               <p key={i}>{m}</p>
             ))}
           </div>
-        </div>
-      </div>
+            </div>
+          </div>
 
-      <p className="explanation">
-        This demonstration shows all possible mappings for both the regular and curried functions. Notice that while the representations are different, the total number of possible functions is the same, illustrating the isomorphism between Set(A × B, C) and Set(A, C^B).
-      </p>
+          <p className="explanation">
+            This demonstration shows all possible mappings for both the regular and curried functions. Notice that while the representations are different, the total number of possible functions is the same, illustrating the isomorphism between Set(A × B, C) and Set(A, C^B).
+          </p>
+        </div>
+        <img className="side-image" src="../../pics/1.webp" alt="Currying visualization" />
+      </div>
     </div>
   );
 }

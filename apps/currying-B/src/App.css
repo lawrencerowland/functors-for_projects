@@ -1,8 +1,33 @@
 .app-container {
   font-family: 'Inter', sans-serif;
   padding: 1rem;
-  max-width: 800px;
+  max-width: 1000px;
   margin: auto;
+}
+
+.layout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.content {
+  flex: 1;
+}
+
+.side-image {
+  max-width: 300px;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+  .side-image {
+    align-self: center;
+    max-width: 100%;
+  }
 }
 
 .selectors {
