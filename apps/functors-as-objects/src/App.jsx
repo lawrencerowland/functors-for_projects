@@ -8,9 +8,14 @@ const App = () => {
   // Styles
   const boxStyle =
     "border-2 rounded-md p-3 flex items-center justify-center text-center font-semibold";
-  const categoryBoxStyle = `${boxStyle} border-blue-500 bg-blue-100`;
-  const functorBoxStyle = `${boxStyle} border-purple-500 bg-purple-100`;
-  const objectBoxStyle = `${boxStyle} border-green-500 bg-green-100 shadow-md`;
+  const categoryBoxStyle =
+    "border-2 rounded-md p-3 flex items-center justify-center text-center font-semibold border-blue-500 bg-blue-100";
+  const functorBoxStyle =
+    "border-2 rounded-md p-3 flex items-center justify-center text-center font-semibold border-purple-500 bg-purple-100";
+  const objectBoxStyle =
+    "border-2 rounded-md p-3 flex items-center justify-center text-center font-semibold border-green-500 bg-green-100 shadow-md";
+  const arrowObjectStyle =
+    "border-2 rounded-md p-3 flex items-center justify-center text-center font-semibold border-orange-500 bg-orange-100 shadow-md";
   const morphismStyle = "flex items-center justify-center text-gray-700 font-medium";
   const buttonStyle = "px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 font-medium";
   const activeButtonStyle = "px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 font-medium";
@@ -192,14 +197,14 @@ const App = () => {
             <div className="flex flex-col items-center">
               <div className="text-lg font-semibold mb-4">Arrow Category C↓</div>
               <div className="flex space-x-6">
-                <div className={boxStyle + " border-orange-500 bg-orange-100 shadow-md"}>
+                <div className={arrowObjectStyle}>
                   <div>
                     <div className="text-lg mb-2">Morphism f</div>
                     <div className="text-sm">as an object</div>
                   </div>
                 </div>
-                
-                <div className={boxStyle + " border-orange-500 bg-orange-100 shadow-md"}>
+
+                <div className={arrowObjectStyle}>
                   <div>
                     <div className="text-lg mb-2">Morphism g</div>
                     <div className="text-sm">as an object</div>
