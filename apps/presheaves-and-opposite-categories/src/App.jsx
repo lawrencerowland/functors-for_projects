@@ -1,297 +1,365 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useState } from 'react';
-import { Circle, Square, ArrowRight, RotateCcw } from 'lucide-react';
-import './App.css';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-const colors = ['red', 'blue', 'green', 'purple', 'orange'];
+/**
+ * ---------------------------------------------------------------------------
+ * 1. CONSTANTS ───────────────────────────────────────────────────────────────
+ * ---------------------------------------------------------------------------
+ */
 
-export default function PresheafVisualization() {
-  // Start with the simple example by default (2 nodes in G, 1 node in H)
-  const [graphGColorings, setGraphGColorings] = useState(['red', 'blue']);
-  const [graphHColorings, setGraphHColorings] = useState(['red']);
-  const [showExample, setShowExample] = useState(false);
+const COLORS = ['red', 'blue', 'green', 'yellow', 'purple'];
 
-  const toggleExample = () => {
-    const nowShowingAdvanced = !showExample;
-    setShowExample(nowShowingAdvanced);
-    if (nowShowingAdvanced) {
-      // Switching to advanced example: Path P3 (3 nodes) and Edge K2 (2 nodes)
-      setGraphGColorings(['red', 'blue', 'red']);
-      setGraphHColorings(['red', 'blue']);
-    } else {
-      // Switching to simple example: independent set (2 nodes) and single node
-      setGraphGColorings(['red', 'blue']);
-      setGraphHColorings(['red']);
-    }
-  };
+/** Return “next” colour in palette (simply cycles through list) */
+function nextColour(current) {
+  const idx = COLORS.indexOf(current);
+  return COLORS[(idx + 1) % COLORS.length];
+}
 
-  const applyMorphism = () => {
-    if (!showExample) {
-      // Simple example (independent set → single node):
-      // Push forward: both v1,v2 map to w1. (No adjacency constraints in G, so any coloring can push forward)
-      setGraphHColorings([graphGColorings[0]]);
-    } else {
-      // Advanced example (path P3 → edge K2):
-      // f: v1→w1, v2→w2, v3→w1. Push forward only if v1 and v3 have the same color (≠ v2).
-      if (
-        graphGColorings[0] === (graphGColorings[2] || graphGColorings[0]) &&
-        graphGColorings[0] !== graphGColorings[1]
-      ) {
-        // Valid push-forward: set w1 = color of v1 (and v3), w2 = color of v2
-        setGraphHColorings([graphGColorings[0], graphGColorings[1]]);
-      } else {
+/**
+ * Data for each example is kept separate so toggling advanced/simple
+ * re‑initialises node colours and mapping cleanly.
+ */
+const EXAMPLES = {
+  simple: {
+    titleButton: 'Show Advanced Example',
+    descriptionG: 'Proper colorings of path P3 (adjacent nodes different colors)',
+    descriptionH: 'Proper colorings of edge K2 (endpoints have different colors)',
+    /** vertices lie on a 256×256 canvas; edges reference vertex id pairs      */
+    graphG: {
+      nodes: [
+        { id: 'v1', label: 'v1', x: 40,  y: 128, shape: 'circle' },
+        { id: 'v2', label: 'v2', x: 128, y: 128, shape: 'circle' },
+        { id: 'v3', label: 'v3', x: 216, y: 128, shape: 'circle' },
+      ],
+      edges: [
+        ['v1', 'v2'],
+        ['v2', 'v3'],
+      ],
+      initialColours: { v1: 'red', v2: 'blue', v3: 'red' },
+    },
+    graphH: {
+      nodes: [
+        { id: 'w1', label: 'w1', x: 72,  y: 128, shape: 'square' },
+        { id: 'w2', label: 'w2', x: 184, y: 128, shape: 'square' },
+      ],
+      edges: [['w1', 'w2']],
+      initialColours: { w1: 'red', w2: 'blue' },
+    },
+    /** mapping f : G → H                                          */
+    mapping: { v1: 'w1', v2: 'w2', v3: 'w1' },
+  },
+
+  advanced: {
+    titleButton: 'Show Simple Example',
+    descriptionG:
+      'Any colorings of independent set (no adjacency constraints)',
+    descriptionH: 'Any single color',
+    graphG: {
+      nodes: [
+        { id: 'v1', label: 'v1', x: 72,  y: 128, shape: 'circle' },
+        { id: 'v2', label: 'v2', x: 184, y: 128, shape: 'circle' },
+      ],
+      edges: [], // independent set
+      initialColours: { v1: 'green', v2: 'green' },
+    },
+    graphH: {
+      nodes: [{ id: 'w1', label: 'w1', x: 128, y: 128, shape: 'square' }],
+      edges: [],
+      initialColours: { w1: 'blue' },
+    },
+    mapping: { v1: 'w1', v2: 'w1' },
+  },
+};
+
+/**
+ * ---------------------------------------------------------------------------
+ * 2. REUSABLE SMALL COMPONENTS ───────────────────────────────────────────────
+ * ---------------------------------------------------------------------------
+ */
+
+/** A coloured node rendered as circle or square, clickable to change colour */
+function Node({ node, colour, onClick }) {
+  const common =
+    'absolute flex flex-col items-center justify-center cursor-pointer select-none';
+  const size = 36;
+  const shapeClass =
+    node.shape === 'circle' ? 'rounded-full' : 'rounded-md border border-gray-900';
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        left: node.x - size / 2,
+        top: node.y - size / 2,
+        backgroundColor: colour,
+      }}
+      className={`${common} ${shapeClass}`}
+      onClick={() => onClick(node.id)}
+      title={`Click to change colour of ${node.id}`}
+    >
+      {/* empty: purely decorative */}
+      <span className="sr-only">{node.id}</span>
+      <div className="text-xs mt-10">{/* reserve space for label */}</div>
+    </div>
+  );
+}
+
+/** Simple SVG connecting two vertices */
+function Edge({ from, to }) {
+  return (
+    <line
+      x1={from.x}
+      y1={from.y}
+      x2={to.x}
+      y2={to.y}
+      stroke="black"
+      strokeWidth="2"
+    />
+  );
+}
+
+/** Graph container, 256×256 canvas, with nodes & edges rendered */
+function Graph({ graph, colours, onNodeColourChange }) {
+  const { nodes, edges } = graph;
+  return (
+    <div className="relative w-64 h-64">
+      <svg
+        className="absolute left-0 top-0"
+        width="256"
+        height="256"
+        viewBox="0 0 256 256"
+      >
+        {edges.map(([a, b], i) => {
+          const from = nodes.find((n) => n.id === a);
+          const to = nodes.find((n) => n.id === b);
+          return <Edge key={i} from={from} to={to} />;
+        })}
+      </svg>
+
+      {nodes.map((node) => (
+        <Node
+          key={node.id}
+          node={node}
+          colour={colours[node.id]}
+          onClick={onNodeColourChange}
+        />
+      ))}
+
+      {/* Labels below nodes for clarity */}
+      {nodes.map((node) => (
+        <div
+          key={`${node.id}-label`}
+          style={{ left: node.x - 12, top: node.y + 24 }}
+          className="absolute text-sm font-medium"
+        >
+          {node.label}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ---------------------------------------------------------------------------
+ * 3. MAIN COMPONENT ──────────────────────────────────────────────────────────
+ * ---------------------------------------------------------------------------
+ */
+
+export default function App() {
+  /** which example? false = simple, true = advanced */
+  const [advanced, setAdvanced] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
+
+  const exampleKey = advanced ? 'advanced' : 'simple';
+  const EX = EXAMPLES[exampleKey];
+
+  // node colours as state – separate dictionaries for G and H
+  const [colG, setColG] = useState(EX.graphG.initialColours);
+  const [colH, setColH] = useState(EX.graphH.initialColours);
+
+  /** Resets colours when toggling examples */
+  function toggleExample() {
+    const nextAdvanced = !advanced;
+    const nextKey = nextAdvanced ? 'advanced' : 'simple';
+    const NEXT = EXAMPLES[nextKey];
+    setAdvanced(nextAdvanced);
+    setColG(NEXT.graphG.initialColours);
+    setColH(NEXT.graphH.initialColours);
+  }
+
+  /** Click node => cycle to next colour */
+  function changeColourG(id) {
+    setColG((prev) => ({ ...prev, [id]: nextColour(prev[id]) }));
+  }
+  function changeColourH(id) {
+    setColH((prev) => ({ ...prev, [id]: nextColour(prev[id]) }));
+  }
+
+  /**
+   * Attempt push‑forward: derive H‑colouring from current G colouring.
+   * 1. Each H vertex receives colours of its G preimage.
+   * 2. If multiple G vertices map to same H vertex, they must share colour.
+   * 3. Adjacent H vertices must have distinct colours to be proper.
+   */
+  function tryPushForward() {
+    const newColoursH = {};
+    // 1+2: gather & consistency check
+    for (const [g, h] of Object.entries(EX.mapping)) {
+      if (newColoursH[h] && newColoursH[h] !== colG[g]) {
         alert(
-          'Cannot push forward this coloring! For the morphism f: v1→w1, v2→w2, v3→w1 to work, nodes v1 and v3 must have the same color (different from v2).'
+          `Push‑forward failed: vertices mapping to ${h} have different colours.`,
         );
+        return;
+      }
+      newColoursH[h] = colG[g];
+    }
+
+    // 3: check H adjacency if any
+    const { edges } = EX.graphH;
+    for (const [a, b] of edges) {
+      if (newColoursH[a] === newColoursH[b]) {
+        alert(
+          `Push‑forward failed: adjacent vertices ${a} and ${b} share colour ${newColoursH[a]}.`,
+        );
+        return;
       }
     }
-  };
 
-  const applyPresheaf = () => {
-    if (!showExample) {
-      // Simple example pull-back: copy the single w1 color to both v1 and v2
-      const pulledColor = graphHColorings[0];
-      setGraphGColorings([pulledColor, pulledColor]);
-    } else {
-      // Advanced example pull-back: for f: v1→w1, v2→w2, v3→w1,
-      // any coloring of H (w1,w2) pulls back to v1=v3=w1's color, v2=w2's color.
-      const pulledBackColors = [
-        graphHColorings[0],
-        graphHColorings[1] || graphHColorings[0],
-        graphHColorings[0],
-      ];
-      setGraphGColorings(pulledBackColors);
+    // success
+    setColH((prev) => ({ ...prev, ...newColoursH }));
+  }
+
+  /** Pull‑back always works – copy colour of image f(g) to g */
+  function pullBackColouring() {
+    const newColoursG = {};
+    for (const [g, h] of Object.entries(EX.mapping)) {
+      newColoursG[g] = colH[h];
     }
-  };
-
-  const changeColor = (graph, index) => {
-    // Cycle the color of a given node to the next in the palette
-    const setColors = graph === 'G' ? setGraphGColorings : setGraphHColorings;
-    const currentColors = graph === 'G' ? graphGColorings : graphHColorings;
-    const newColors = [...currentColors];
-    const currentIndex = colors.indexOf(newColors[index]);
-    const nextIndex = (currentIndex + 1) % colors.length;
-    newColors[index] = colors[nextIndex];
-    setColors(newColors);
-  };
+    setColG((prev) => ({ ...prev, ...newColoursG }));
+  }
 
   return (
-    <div className="p-4 bg-gray-50 rounded-lg h-full">
-      <h1 className="text-2xl font-bold mb-4 text-center">
+    <div className="p-4 bg-gray-50 min-h-screen">
+      <h1 className="text-2xl font-bold text-center mb-4">
         Presheaf Visualization
       </h1>
 
-      {/* Toggle between simple vs advanced example */}
-      <div className="flex justify-center mb-4">
+      {/* Collapsible explanation panel */}
+      <div className="bg-white p-4 rounded-lg shadow mb-4">
+        <h2
+          className="text-lg font-semibold cursor-pointer flex justify-between items-center"
+          onClick={() => setShowExplanation((s) => !s)}
+        >
+          Why are presheaves a functor from the Opposite category?
+          {showExplanation ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+        </h2>
+        {showExplanation && (
+          <div className="mt-2 text-sm text-gray-700">
+            <p className="mb-2">
+              This interactive visualization demonstrates how presheaves work
+              using node colorings of graphs. We use valid graph homomorphisms
+              that preserve adjacency relationships.
+            </p>
+            <p className="mb-2">
+              A presheaf <em>F</em> assigns to each graph <em>G</em> a set{' '}
+              <em>F(G)</em> of proper node colorings (adjacent nodes have
+              different colors). For a morphism <em>f : G → H</em>, the
+              presheaf gives a function{' '}
+              <em>
+                F(f): F(H) → F(G)
+              </em>{' '}
+              that pulls back colorings from <em>H</em> to <em>G</em>.
+            </p>
+            <p>
+              <strong>Try it:</strong> Click on nodes to change their colors,
+              then use the buttons to see how the morphism and presheaf
+              operations work.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Toggle simple / advanced */}
+      <div className="flex justify-center mb-6">
         <button
           onClick={toggleExample}
-          className="flex items-center bg-purple-600 text-white px-4 py-2 rounded font-medium"
+          className="px-4 py-2 rounded-md bg-indigo-600 text-white shadow hover:bg-indigo-700"
         >
-          <RotateCcw size={16} className="mr-2" />
-          {showExample ? 'Show Simple Example' : 'Show Advanced Example'}
+          {advanced
+            ? EXAMPLES.advanced.titleButton
+            : EXAMPLES.simple.titleButton}
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
-        {/* Graph G display */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-lg font-semibold mb-3 text-center">Graph G</h2>
-          <div className="w-40 h-40 relative mx-auto">
-            {showExample ? (
-              /** Advanced example: Path graph P3 (v1--v2--v3) **/
-              <>
-                {/* Node v1 (left) */}
-                <div
-                  className="absolute cursor-pointer"
-                  style={{ top: '50%', left: '10px', transform: 'translateY(-50%)' }}
-                  onClick={() => changeColor('G', 0)}
-                >
-                  <Circle fill={graphGColorings[0]} color="black" size={40} />
-                  <div className="text-center mt-1">v1</div>
-                </div>
-                {/* Node v2 (middle) */}
-                <div
-                  className="absolute cursor-pointer"
-                  style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
-                  onClick={() => changeColor('G', 1)}
-                >
-                  <Circle fill={graphGColorings[1]} color="black" size={40} />
-                  <div className="text-center mt-1">v2</div>
-                </div>
-                {/* Node v3 (right) */}
-                <div
-                  className="absolute cursor-pointer"
-                  style={{ top: '50%', right: '10px', transform: 'translateY(-50%)' }}
-                  onClick={() => changeColor('G', 2)}
-                >
-                  <Circle
-                    fill={graphGColorings[2] || graphGColorings[1]}
-                    color="black"
-                    size={40}
-                  />
-                  <div className="text-center mt-1">v3</div>
-                </div>
-                {/* Edges for P3 (two line segments) */}
-                <svg className="absolute top-0 left-0 w-full h-full" style={{ zIndex: -1 }}>
-                  <line x1="30" y1="70" x2="70" y2="70" stroke="black" strokeWidth="2" />
-                  <line x1="90" y1="70" x2="130" y2="70" stroke="black" strokeWidth="2" />
-                </svg>
-              </>
-            ) : (
-              /** Simple example: Independent set (two separate nodes) **/
-              <>
-                {/* Node v1 (top) */}
-                <div
-                  className="absolute cursor-pointer"
-                  style={{ top: '20px', left: '50%', transform: 'translateX(-50%)' }}
-                  onClick={() => changeColor('G', 0)}
-                >
-                  <Circle fill={graphGColorings[0]} color="black" size={40} />
-                  <div className="text-center mt-1">v1</div>
-                </div>
-                {/* Node v2 (bottom) */}
-                <div
-                  className="absolute cursor-pointer"
-                  style={{ bottom: '20px', left: '50%', transform: 'translateX(-50%)' }}
-                  onClick={() => changeColor('G', 1)}
-                >
-                  <Circle fill={graphGColorings[1]} color="black" size={40} />
-                  <div className="text-center mt-1">v2</div>
-                </div>
-              </>
-            )}
-          </div>
-          {/* Description of F(G) */}
-          <div className="mt-4 text-center">
-            <div className="font-semibold mb-2">F(G): Set of Colorings</div>
-            <div className="text-sm">
-              {showExample
-                ? 'Proper colorings of path P3 (adjacent nodes different colors)'
-                : 'Any colorings of independent set (no adjacency constraints)'}
-            </div>
-          </div>
+      {/* Main three‑column layout */}
+      <div className="flex flex-wrap justify-center gap-8">
+        {/* GRAPH G */}
+        <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+          <Graph
+            graph={EX.graphG}
+            colours={colG}
+            onNodeColourChange={changeColourG}
+          />
+          <h3 className="text-lg font-semibold mt-4 mb-1">Graph G</h3>
+          <p className="text-sm text-center">
+            <strong>F(G):</strong> Set of Colorings
+            <br />
+            {EX.descriptionG}
+          </p>
         </div>
 
-        {/* Morphism (category vs opposite category) controls */}
-        <div className="flex flex-col items-center justify-center gap-4">
-          {/* Original category morphism (G -> H) */}
-          <div className="bg-white p-4 rounded-lg shadow-lg w-48">
-            <h3 className="text-center font-medium mb-2">Original Category</h3>
-            <div className="flex items-center justify-center">
-              <span className="font-mono">f: G → H</span>
-              <ArrowRight className="ml-2" size={20} />
-            </div>
+        {/* CATEGORY PANELS (middle column) */}
+        <div className="flex flex-col items-center gap-6">
+          {/* Original category */}
+          <div className="bg-white p-4 w-56 rounded-lg shadow-lg text-center">
+            <h4 className="font-semibold">Original Category</h4>
+            <p className="text-sm my-1">
+              <em>f: G → H</em>
+            </p>
             <button
-              onClick={applyMorphism}
-              className="mt-3 w-full bg-blue-600 text-white px-3 py-1 rounded text-sm"
+              onClick={tryPushForward}
+              className="px-3 py-1 bg-teal-600 text-white text-sm rounded shadow hover:bg-teal-700 my-2"
             >
               Try Push Forward
             </button>
-            <div className="mt-3 text-xs text-center">
-              {showExample ? 'f: v1→w1, v2→w2, v3→w1' : 'f: v1,v2 → w1'}
-            </div>
+            <p className="text-sm">
+              {Object.entries(EX.mapping)
+                .map(([g, h]) => `${g}→${h}`)
+                .join(', ')}
+            </p>
           </div>
 
-          {/* Opposite category morphism (F(f): F(H) -> F(G)) */}
-          <div className="bg-white p-4 rounded-lg shadow-lg w-48">
-            <h3 className="text-center font-medium mb-2">Opposite Category</h3>
-            <div className="flex items-center justify-center">
-              <span className="font-mono">F(f): F(H) → F(G)</span>
-              <ArrowRight className="ml-2" size={20} />
-            </div>
+          {/* Opposite category */}
+          <div className="bg-white p-4 w-56 rounded-lg shadow-lg text-center">
+            <h4 className="font-semibold">Opposite Category</h4>
+            <p className="text-sm my-1">
+              <em>F(f): F(H) → F(G)</em>
+            </p>
             <button
-              onClick={applyPresheaf}
-              className="mt-3 w-full bg-green-600 text-white px-3 py-1 rounded text-sm"
+              onClick={pullBackColouring}
+              className="px-3 py-1 bg-sky-600 text-white text-sm rounded shadow hover:bg-sky-700 my-2"
             >
               Pull Back Coloring
             </button>
-            <div className="mt-3 text-xs text-center">
-              Always works! F(f): F(H) → F(G)
-            </div>
+            <p className="text-sm">Always works! F(f): F(H) → F(G)</p>
           </div>
         </div>
 
-        {/* Graph H display */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-lg font-semibold mb-3 text-center">Graph H</h2>
-          <div className="w-40 h-40 relative mx-auto">
-            {showExample ? (
-              /** Advanced example: Edge K2 (two nodes w1--w2) **/
-              <>
-                {/* Node w1 (left) */}
-                <div
-                  className="absolute cursor-pointer"
-                  style={{ top: '50%', left: '30%', transform: 'translateY(-50%)' }}
-                  onClick={() => changeColor('H', 0)}
-                >
-                  <Square fill={graphHColorings[0]} color="black" size={40} />
-                  <div className="text-center mt-1">w1</div>
-                </div>
-                {/* Node w2 (right) */}
-                <div
-                  className="absolute cursor-pointer"
-                  style={{ top: '50%', right: '30%', transform: 'translateY(-50%)' }}
-                  onClick={() => changeColor('H', 1)}
-                >
-                  <Square
-                    fill={graphHColorings[1] || graphHColorings[0]}
-                    color="black"
-                    size={40}
-                  />
-                  <div className="text-center mt-1">w2</div>
-                </div>
-                {/* Edge for K2 */}
-                <svg className="absolute top-0 left-0 w-full h-full" style={{ zIndex: -1 }}>
-                  <line x1="50" y1="70" x2="90" y2="70" stroke="black" strokeWidth="2" />
-                </svg>
-              </>
-            ) : (
-              /** Simple example: Single node **/
-              <div
-                className="absolute cursor-pointer"
-                style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
-                onClick={() => changeColor('H', 0)}
-              >
-                <Square fill={graphHColorings[0]} color="black" size={50} />
-                <div className="text-center mt-1">w1</div>
-              </div>
-            )}
-          </div>
-          {/* Description of F(H) */}
-          <div className="mt-4 text-center">
-            <div className="font-semibold mb-2">F(H): Set of Colorings</div>
-            <div className="text-sm">
-              {showExample
-                ? 'Proper colorings of edge K2 (endpoints have different colors)'
-                : 'Any single color'}
-            </div>
-          </div>
+        {/* GRAPH H */}
+        <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+          <Graph
+            graph={EX.graphH}
+            colours={colH}
+            onNodeColourChange={changeColourH}
+          />
+          <h3 className="text-lg font-semibold mt-4 mb-1">Graph H</h3>
+          <p className="text-sm text-center">
+            <strong>F(H):</strong> Set of Colorings
+            <br />
+            {EX.descriptionH}
+          </p>
         </div>
-      </div>
-
-      {/* Explanatory section: The Presheaf Principle */}
-      <div className="mt-8 bg-white p-4 rounded-lg shadow">
-        <h2 className="text-lg font-semibold mb-2">The Presheaf Principle</h2>
-        <p className="mb-3">
-          Why does the presheaf go in the opposite direction? Because colorings
-          <strong>pull back</strong> along valid graph morphisms:
-        </p>
-        <ul className="list-disc pl-6 mb-4">
-          <li className="mb-2">
-            <strong>Simple example</strong>: The morphism f maps an independent set (2 isolated nodes) to a single node. 
-            Since there are no edges in G, any coloring can be pushed forward, but pullbacks always work.
-          </li>
-          <li className="mb-2">
-            <strong>Advanced example</strong>: The morphism f maps a path P3 (v1–v2–v3) to an edge K2 (w1–w2) via v1→w1, v2→w2, v3→w1. 
-            This preserves adjacency since edges v1–v2 and v2–v3 map to edges w1–w2 and w2–w1.
-          </li>
-          <li>
-            Given any proper coloring of H, we can always pull it back to get a valid coloring of G. 
-            However, not every coloring of G can be pushed forward to H due to the constraints of the morphism.
-          </li>
-        </ul>
-        <p>
-          This is why presheaves are defined as functors from the <strong>opposite</strong> category — they capture how structures naturally pull back rather than push forward.
-        </p>
       </div>
     </div>
   );
