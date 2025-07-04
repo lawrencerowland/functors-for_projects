@@ -184,6 +184,9 @@ export default function App() {
           </text>
         </g>
       </svg>
+      <p className="text-center text-sm text-gray-600 mt-2">
+        Click nodes and edges to see remarks.
+      </p>
 
       {/* Info Dialog */}
       <InfoDialog
