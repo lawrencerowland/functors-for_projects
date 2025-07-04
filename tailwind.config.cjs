@@ -1,7 +1,20 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-  content: ['./index.html', './src/**/*.{js,jsx}', './apps/**/*.{js,jsx}'],
+  content: {
+    files: [
+      './index.html',
+      './src/**/*.{js,jsx,ts,tsx,html}',
+      './apps/**/*.{js,jsx,ts,tsx,html}',
+    ],
+    safelist: [
+      'shadow-md',
+      'bg-blue-100',
+      'bg-purple-100',
+      'bg-green-100',
+      'bg-orange-100',
+    ],
+  },
   theme: {
     extend: {
       colors: {
