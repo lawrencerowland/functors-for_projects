@@ -161,6 +161,8 @@ Qual:[['T2','U1'],['T4','U2']]};
 // ------------------ DATA: EXPLANATIONS (unchanged) ------------------
 const EXPS=[{id:'how-to-use',label:'How to Use',tone:'bright',
  text:`<ul><li>Search or click a category; panels show theory <i>and</i>, if Example mode is on, live project data.</li><li>Functor buttons inside any panel jump along arrows.</li><li><b>Reset View</b> clears highlights.</li></ul>`},
+{id:'big-picture',label:'Big Picture',tone:'bright',
+ text:`This is an interactive map of a complex programme, designed to help a project director see how strategy, scope, schedule, cost, risk, people, and delivery evidence all connect — without getting lost in detail. Each box represents a familiar management view (tasks, risks, costs, stakeholders, etc.), and each link represents a disciplined way of translating one view into another, so that changes in one place reliably show up everywhere else they matter. The practical payoff is confidence: you can start from a board‑level goal and trace, step by step, how it drives work, spend, timing, risk exposure, and assurance, knowing the connections are consistent rather than ad‑hoc.`},
 {id:'what',label:'What is this?',tone:'bright',
  text:`A compositional cockpit: categories model project facets, functors translate structure; toggling <b>Example</b> lets you see both blueprint and instantiation.`},
 {id:'functor',label:'What is a Functor?',tone:'dun',
@@ -211,7 +213,7 @@ function render(){
     d.addEventListener('click',()=>selectCategory(c.id));catGrid.appendChild(d);
   });
   expBar.innerHTML='';
-  ['how-to-use','what','functor','comps','critique'].forEach(id=>{
+  ['big-picture','how-to-use','what','functor','comps','critique'].forEach(id=>{
     const e=EXPS.find(x=>x.id===id);
     const b=document.createElement('button');b.className=`btn ${e.tone}`;b.textContent=e.label;
     b.addEventListener('click',()=>showPanel(id,e.label));expBar.appendChild(b);
@@ -272,6 +274,7 @@ function selectCategory(catId){
   }
   if(catId==='D'){
     html+=`<h4>Kan‑Extension: Find Implied Tasks</h4>
+           <p>Kan‑extension helper for the deliverable‑to‑task functor <b>W</b>. Click <b>Cat D</b> to reveal an input plus <b>Suggest Tasks</b>. Type a deliverable description (e.g. “User Authentication Service”) and the helper immediately proposes the three canonical tasks a Kan‑extended <b>W</b> would surface: Analyse, Implement, Verify.</p>
            <input id="delivInput" style="width:60%;padding:.4rem .6rem;margin-right:.5rem;border:1px solid #00000033;border-radius:6px;font-size:.9rem" placeholder="Describe deliverable…">
            <button id="kanBtn" class="btn bright" style="vertical-align:top">Suggest Tasks</button>
            <div id="kanOut"></div>`;
