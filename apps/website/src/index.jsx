@@ -15,7 +15,7 @@ function Navbar() {
     <nav className="flex flex-wrap justify-around gap-x-8 p-4 border-b mb-4">
       <Link className="hover:text-accent-600 hover:underline decoration-2" to="/">Home</Link>
       <Link className="hover:text-accent-600 hover:underline decoration-2" to="/projects">Projects</Link>
-      <Link className="hover:text-accent-600 hover:underline decoration-2" to="/sandbox">Tools Sandbox</Link>
+      <Link className="hover:text-accent-600 hover:underline decoration-2" to="/sandbox">Galois Adjoints</Link>
       <Link className="hover:text-accent-600 hover:underline decoration-2" to="/ai-tools">AI Tools</Link>
       <Link className="hover:text-accent-600 hover:underline decoration-2" to="/systems">Systems Thinking</Link>
       <Link className="hover:text-accent-600 hover:underline decoration-2" to="/lifecycle">Lifecycle</Link>
