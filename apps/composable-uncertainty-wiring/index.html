@@ -1,0 +1,1228 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Composable Uncertainty Wiring Diagram — Co-design Loop (Power ↔ Cooling ↔ Footprint)</title>
+  <link rel="stylesheet" href="../../common.css">
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #121924;
+      --panel2: #0f1620;
+      --text: #e8eef6;
+      --muted: #9bb0c6;
+      --accent: #6aa6ff;
+      --good: #67e8a5;
+      --warn: #ffd166;
+      --bad: #ff6b6b;
+      --border: rgba(255,255,255,0.10);
+      --shadow: rgba(0,0,0,0.35);
+      --radius: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    html, body { height: 100%; background: var(--bg); color: var(--text); margin: 0; font-family: var(--sans); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 16px; }
+    .topbar {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-bottom: 12px;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px var(--shadow);
+    }
+    .card .pad { padding: 14px 14px 12px 14px; }
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 18px;
+      letter-spacing: 0.2px;
+    }
+    .sub { color: var(--muted); font-size: 13px; line-height: 1.35; }
+    .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 1;
+      transition: transform 0.04s ease, background 0.12s ease;
+      user-select: none;
+    }
+    .btn:hover { background: rgba(255,255,255,0.07); }
+    .btn:active { transform: translateY(1px); }
+    .btn.primary { border-color: rgba(106,166,255,0.45); background: rgba(106,166,255,0.12); }
+    .btn.good { border-color: rgba(103,232,165,0.35); background: rgba(103,232,165,0.10); }
+    .btn.warn { border-color: rgba(255,209,102,0.35); background: rgba(255,209,102,0.10); }
+    .btn.bad  { border-color: rgba(255,107,107,0.35); background: rgba(255,107,107,0.10); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .canvasCard { overflow: hidden; }
+    canvas { display: block; width: 100%; height: 520px; background: #070b10; border-radius: calc(var(--radius) - 2px); }
+    .rightcol .card { margin-bottom: 12px; }
+    .sectionTitle {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin: 0 0 10px 0;
+    }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .field { display: grid; gap: 6px; }
+    label { font-size: 12px; color: var(--muted); }
+    input[type="number"], select, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-family: var(--sans);
+      outline: none;
+    }
+    input[type="checkbox"] { transform: translateY(1px); }
+    .tiny { font-size: 12px; color: var(--muted); line-height: 1.35; }
+
+    .mono {
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.35;
+      color: rgba(232,238,246,0.92);
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .modalBack {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 50;
+    }
+    .modal {
+      width: min(920px, 100%);
+      max-height: min(84vh, 860px);
+      overflow: auto;
+      background: linear-gradient(180deg, rgba(18,25,36,0.98), rgba(12,16,22,0.98));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.60);
+    }
+    .modalHeader {
+      padding: 14px 14px 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modalHeader h2 { margin: 0; font-size: 15px; }
+    .modalBody { padding: 14px; }
+    .kbd {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      color: rgba(232,238,246,0.9);
+    }
+    .hr { height: 1px; background: var(--border); margin: 12px 0; }
+    .tag { display:inline-block; font-size: 11px; color: var(--muted); border: 1px solid var(--border); padding: 2px 8px; border-radius: 999px; margin-right: 6px; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <a href="../../index.html">Back to app index</a>
+    <div class="topbar">
+      <div class="card">
+        <div class="pad">
+          <h1>Composable Uncertainty Wiring Diagram — Co-design Loop (Power ↔ Cooling ↔ Footprint)</h1>
+          <div class="sub">
+            A tiny “design problem as a service” demo: boxes are typed morphisms with <em>interval uncertainty</em>;
+            wiring = composition/tensor; the log is your audit trail (“assurance pack” trace).
+            <span class="tag">SMC</span><span class="tag">feedback (optional)</span><span class="tag">uncertainty propagation</span>
+          </div>
+          <div class="pillrow">
+            <button class="btn primary" data-explain="why">Why this pattern</button>
+            <button class="btn" data-explain="smc">SMC + wiring diagrams</button>
+            <button class="btn" data-explain="dp">Design problems as morphisms</button>
+            <button class="btn" data-explain="unc">Uncertainty as 2-cells</button>
+            <button class="btn" data-explain="cospan">Open systems via cospans/double cats</button>
+            <button class="btn" data-explain="assurance">Assurance trace</button>
+            <button class="btn" data-explain="extend">How to extend</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="pad">
+          <div class="sectionTitle">Quick controls</div>
+          <div class="row">
+            <div class="field">
+              <label>Composition mode</label>
+              <select id="modeSelect">
+                <option value="serial" selected>Serial: Power → Cooling → Footprint</option>
+                <option value="parallel">Tensor demo: Power ⊗ Cooling → Footprint</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Feedback loop</label>
+              <div class="tiny">
+                <label style="display:flex;gap:8px;align-items:center;">
+                  <input id="feedbackToggle" type="checkbox" />
+                  Enable “Footprint → Power budget” feedback (fixpoint iterate)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="pillrow" style="margin-top:12px;">
+            <button class="btn good" id="runBtn">Run propagation</button>
+            <button class="btn" id="resetBtn">Reset</button>
+            <button class="btn warn" id="randomBtn">Randomise inputs</button>
+            <button class="btn" id="exportBtn">Export diagram JSON</button>
+          </div>
+
+          <div class="tiny" style="margin-top:10px;">
+            Sources: <a href="https://arxiv.org/abs/2503.17274" target="_blank" rel="noreferrer">Furter–Huang–Zardini (2025)</a>,
+            <a href="https://arxiv.org/abs/2509.22584" target="_blank" rel="noreferrer">Baez (2025)</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card canvasCard">
+        <div class="pad" style="padding-bottom: 10px;">
+          <div class="sectionTitle">Wiring diagram canvas</div>
+          <canvas id="wdCanvas" width="1200" height="520"></canvas>
+          <div class="tiny" style="margin-top:10px;">
+            Legend: numbers are <span class="kbd">[low, high]</span> intervals; arrows are typed wires; dashed arrow appears when feedback is enabled.
+          </div>
+        </div>
+      </div>
+
+      <div class="rightcol">
+        <div class="card">
+          <div class="pad">
+            <div class="sectionTitle">Inputs</div>
+            <div class="row">
+              <div class="field">
+                <label>Power budget (kW)</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <input id="pLow" type="number" step="0.1" />
+                  <input id="pHigh" type="number" step="0.1" />
+                </div>
+                <div class="tiny">Interval for available electrical power.</div>
+              </div>
+              <div class="field">
+                <label>Ambient temp (°C)</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <input id="tLow" type="number" step="0.1" />
+                  <input id="tHigh" type="number" step="0.1" />
+                </div>
+                <div class="tiny">Uncertain environment (affects cooling efficiency).</div>
+              </div>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="sectionTitle">Catalogue of reusable morphisms</div>
+            <div class="field">
+              <label>Add a morphism “service”</label>
+              <div style="display:grid;grid-template-columns:1fr auto;gap:8px;">
+                <select id="catalogueSelect"></select>
+                <button class="btn" id="addMorphBtn">Add</button>
+              </div>
+              <div class="tiny">
+                These are intentionally generic blocks (estimator/checker/optimiser) you can copy between projects.
+              </div>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="sectionTitle">Formal morphisms (f_in, f_out)</div>
+            <div id="morphismText" class="mono"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="pad">
+            <div class="sectionTitle">Trace log (audit trail)</div>
+            <div id="trace" class="mono" style="max-height: 280px; overflow:auto;"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="pad">
+            <div class="sectionTitle">Diagram JSON</div>
+            <div id="jsonOut" class="mono" style="max-height: 220px; overflow:auto;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modalBack" id="modalBack" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modalHeader">
+        <h2 id="modalTitle">Explainer</h2>
+        <button class="btn" id="closeModal">Close <span class="kbd">Esc</span></button>
+      </div>
+      <div class="modalBody" id="modalBody"></div>
+    </div>
+  </div>
+
+<script>
+/* ===========================
+   Small “interval uncertainty” core
+   =========================== */
+
+function clamp(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); }
+
+class Interval {
+  constructor(lo, hi) {
+    if (!Number.isFinite(lo) || !Number.isFinite(hi)) throw new Error("Interval endpoints must be finite numbers.");
+    this.lo = Math.min(lo, hi);
+    this.hi = Math.max(lo, hi);
+  }
+  static from(lo, hi) { return new Interval(lo, hi); }
+  static point(x) { return new Interval(x, x); }
+  width() { return this.hi - this.lo; }
+  mid() { return 0.5 * (this.lo + this.hi); }
+  toString(unit="") {
+    const u = unit ? " " + unit : "";
+    return `[${this.lo.toFixed(2)}, ${this.hi.toFixed(2)}]${u}`;
+  }
+  add(b) { return new Interval(this.lo + b.lo, this.hi + b.hi); }
+  sub(b) { return new Interval(this.lo - b.hi, this.hi - b.lo); }
+  mul(b) {
+    // Conservative interval multiplication
+    const candidates = [
+      this.lo * b.lo, this.lo * b.hi,
+      this.hi * b.lo, this.hi * b.hi
+    ];
+    return new Interval(Math.min(...candidates), Math.max(...candidates));
+  }
+  scale(k) { return this.mul(Interval.point(k)); }
+  intersect(b) { return new Interval(Math.max(this.lo, b.lo), Math.min(this.hi, b.hi)); }
+  union(b) { return new Interval(Math.min(this.lo, b.lo), Math.max(this.hi, b.hi)); }
+  isEmpty() { return this.lo > this.hi; }
+}
+
+function fmt(obj) {
+  if (obj instanceof Interval) return obj.toString();
+  return String(obj);
+}
+
+/* ===========================
+   “Typed ports” and morphisms (services)
+   =========================== */
+
+const Types = Object.freeze({
+  Power: { name: "Power", unit: "kW" },
+  Temp: { name: "AmbientTemp", unit: "°C" },
+  Heat: { name: "HeatLoad", unit: "kW" },
+  CoolingCap: { name: "CoolingCap", unit: "kW" },
+  Footprint: { name: "Footprint", unit: "m²" },
+  Compliance: { name: "Compliance", unit: "bool" }
+});
+
+function port(typeKey, label) {
+  return { typeKey, label: label || Types[typeKey].name };
+}
+
+/**
+ * Morphism = a “service block” with:
+ * - typed inputs/outputs
+ * - eval(inputs) -> outputs + trace entries
+ * - formal (f_in,f_out) text as an “assurance-friendly” artefact
+ */
+class Morphism {
+  constructor(spec) {
+    this.kind = spec.kind;
+    this.name = spec.name;
+    this.inputs = spec.inputs;
+    this.outputs = spec.outputs;
+    this.eval = spec.eval;        // (env, inputs, trace) => outputs
+    this.formal = spec.formal;    // string
+  }
+}
+
+/* ===========================
+   Catalogue (reusable morphisms)
+   =========================== */
+
+function makeCatalogue() {
+  const catalogue = [];
+
+  // Estimator: Power ⊗ Temp -> HeatLoad
+  catalogue.push(new Morphism({
+    kind: "estimator",
+    name: "Estimator: power+ambient → heat load",
+    inputs: [port("Power","P"), port("Temp","T_amb")],
+    outputs: [port("Heat","Q")],
+    eval: (env, inputs, trace) => {
+      const P = inputs.P;
+      const T = inputs.T_amb;
+
+      // toy: baseline heat is a fraction of power + ambient penalty.
+      // fraction uncertain: [0.55, 0.75]; ambient penalty factor: [0.00, 0.02] kW per °C above 20.
+      const frac = Interval.from(0.55, 0.75);
+      const penaltyK = Interval.from(0.00, 0.02);
+      const deltaT = T.sub(Interval.point(20));
+      const penalty = deltaT.mul(penaltyK);
+
+      const Q = P.mul(frac).add(penalty);
+
+      trace.push(`Estimator: Q = P * frac + (T-20)*penaltyK`);
+      trace.push(`  frac=${frac.toString()} ; penaltyK=${penaltyK.toString()} ; (T-20)=${deltaT.toString()}`);
+      trace.push(`  => Q=${Q.toString(Types.Heat.unit)}`);
+
+      return { Q };
+    },
+    formal:
+`f_in  : (P:Power, T_amb:AmbientTemp) ↦ (P, T_amb)
+f_out : (P, T_amb) ↦ Q where Q = P·frac ⊕ (T_amb−20)·penaltyK (interval-enriched)`
+  }));
+
+  // Checker/transform: HeatLoad ⊗ Temp -> CoolingCap
+  catalogue.push(new Morphism({
+    kind: "checker",
+    name: "Checker: heat+ambient → required cooling capacity",
+    inputs: [port("Heat","Q"), port("Temp","T_amb")],
+    outputs: [port("CoolingCap","C")],
+    eval: (env, inputs, trace) => {
+      const Q = inputs.Q;
+      const T = inputs.T_amb;
+
+      // toy: required cooling = Q * safetyFactor, where safetyFactor worsens with ambient.
+      const baseSF = Interval.from(1.15, 1.35);
+      const ambDrift = Interval.from(0.00, 0.01);
+      const deltaT = T.sub(Interval.point(20));
+      const sf = baseSF.add(deltaT.mul(ambDrift));
+
+      const C = Q.mul(sf);
+
+      trace.push(`Checker: C = Q * sf, sf = baseSF + (T-20)*ambDrift`);
+      trace.push(`  baseSF=${baseSF.toString()} ; ambDrift=${ambDrift.toString()} ; (T-20)=${deltaT.toString()}`);
+      trace.push(`  => sf=${sf.toString()} ; C=${C.toString(Types.CoolingCap.unit)}`);
+
+      return { C };
+    },
+    formal:
+`f_in  : (Q:HeatLoad, T_amb:AmbientTemp) ↦ (Q, T_amb)
+f_out : (Q, T_amb) ↦ C where C = Q·sf, sf = baseSF ⊕ (T_amb−20)·ambDrift`
+  }));
+
+  // Optimiser-ish: CoolingCap ⊗ Power -> Footprint
+  catalogue.push(new Morphism({
+    kind: "optimiser",
+    name: "Optimiser: cooling+power → footprint",
+    inputs: [port("CoolingCap","C"), port("Power","P")],
+    outputs: [port("Footprint","A")],
+    eval: (env, inputs, trace) => {
+      const C = inputs.C;
+      const P = inputs.P;
+
+      // toy: footprint scales with cooling capacity / (efficiency), plus power-conditioning overhead.
+      // efficiency uncertain: [0.85, 1.10] kW per m²; overhead uncertain: [0.02,0.08] m² per kW.
+      const eff = Interval.from(0.85, 1.10);
+      const overhead = Interval.from(0.02, 0.08);
+
+      // A_cool = C / eff; interval division via multiply by reciprocal bounds (conservative).
+      const invEff = Interval.from(1/eff.hi, 1/eff.lo);
+      const A_cool = C.mul(invEff);
+      const A_over = P.mul(overhead);
+      const A = A_cool.add(A_over);
+
+      trace.push(`Optimiser: A = C/eff + P*overhead`);
+      trace.push(`  eff=${eff.toString()} ; overhead=${overhead.toString()}`);
+      trace.push(`  => C/eff=${A_cool.toString()} ; P*overhead=${A_over.toString()} ; A=${A.toString(Types.Footprint.unit)}`);
+
+      return { A };
+    },
+    formal:
+`f_in  : (C:CoolingCap, P:Power) ↦ (C, P)
+f_out : (C, P) ↦ A where A = C·(1/eff) ⊕ P·overhead`
+  }));
+
+  // A compliance predicate checker: Footprint -> Compliance
+  catalogue.push(new Morphism({
+    kind: "checker",
+    name: "Checker: footprint → compliance (<= limit)",
+    inputs: [port("Footprint","A")],
+    outputs: [port("Compliance","ok")],
+    eval: (env, inputs, trace) => {
+      const A = inputs.A;
+      const limit = Interval.point(env.footprintLimit);
+      // Conservative: ok only if worst-case hi ≤ limit
+      const ok = (A.hi <= limit.hi);
+      trace.push(`Compliance: ok := (A.hi ≤ limit).  A=${A.toString()} ; limit=${limit.toString(Types.Footprint.unit)} ; ok=${ok}`);
+      return { ok: ok ? "true" : "false" };
+    },
+    formal:
+`f_in  : (A:Footprint) ↦ A
+f_out : A ↦ ok where ok := (sup(A) ≤ limit)`
+  }));
+
+  // A feedback policy: Footprint -> Power (tighten budget)
+  catalogue.push(new Morphism({
+    kind: "policy",
+    name: "Policy (feedback): footprint → tightened power budget",
+    inputs: [port("Footprint","A")],
+    outputs: [port("Power","P_new")],
+    eval: (env, inputs, trace) => {
+      const A = inputs.A;
+      const limit = Interval.point(env.footprintLimit);
+
+      // toy: if footprint threatens to exceed limit, reduce power budget by a factor
+      // factor is uncertain because organisational response isn't deterministic.
+      const slack = limit.sub(A); // may go negative
+      const response = Interval.from(0.85, 0.98); // tighten budget
+      const keep = Interval.from(0.98, 1.02);     // or basically keep
+
+      let factor = keep;
+      if (slack.lo < 0) factor = response;
+
+      const P_old = env.currentPowerBudget;
+      const P_new = P_old.mul(factor);
+
+      trace.push(`Feedback policy: if (limit - A) threatens negative, tighten power by factor ${factor.toString()}`);
+      trace.push(`  old P=${P_old.toString(Types.Power.unit)} => new P=${P_new.toString(Types.Power.unit)}`);
+
+      return { P_new };
+    },
+    formal:
+`f_in  : (A:Footprint) ↦ A
+f_out : A ↦ P_new where P_new = P_old·factor(A,limit) (policy with interval factor)`
+  }));
+
+  return catalogue;
+}
+
+/* ===========================
+   Diagram model
+   =========================== */
+
+function makeInitialDiagram(catalogue) {
+  // We'll start with 3 main blocks in serial: Estimator -> Checker -> Optimiser
+  const est = catalogue.find(m => m.name.startsWith("Estimator"));
+  const chk = catalogue.find(m => m.name.startsWith("Checker: heat"));
+  const opt = catalogue.find(m => m.name.startsWith("Optimiser"));
+
+  return {
+    id: "diagram-1",
+    mode: "serial",
+    feedback: false,
+    nodes: [
+      { id: "n1", morphism: est, x: 140, y: 170 },
+      { id: "n2", morphism: chk, x: 520, y: 170 },
+      { id: "n3", morphism: opt, x: 900, y: 170 }
+    ],
+    // Wires use named ports (by label) for simplicity
+    wires: [
+      { from: { node: "ENV", port: "P" }, to: { node: "n1", port: "P" } },
+      { from: { node: "ENV", port: "T_amb" }, to: { node: "n1", port: "T_amb" } },
+
+      { from: { node: "n1", port: "Q" }, to: { node: "n2", port: "Q" } },
+      { from: { node: "ENV", port: "T_amb" }, to: { node: "n2", port: "T_amb" } },
+
+      { from: { node: "n2", port: "C" }, to: { node: "n3", port: "C" } },
+      { from: { node: "ENV", port: "P" }, to: { node: "n3", port: "P" } }
+    ]
+  };
+}
+
+/* ===========================
+   UI state + helpers
+   =========================== */
+
+const state = {
+  catalogue: makeCatalogue(),
+  diagram: null,
+  env: {
+    P: Interval.from(18, 24),     // kW
+    T_amb: Interval.from(18, 28), // °C
+    footprintLimit: 30,           // m²
+    currentPowerBudget: Interval.from(18, 24)
+  },
+  lastOutputs: {},
+  trace: []
+};
+
+function log(line) { state.trace.push(line); }
+
+function setTrace(text) {
+  document.getElementById("trace").textContent = text;
+}
+function setJSON(text) {
+  document.getElementById("jsonOut").textContent = text;
+}
+function setMorphisms(text) {
+  document.getElementById("morphismText").textContent = text;
+}
+
+function resetTrace() {
+  state.trace = [];
+  setTrace("");
+}
+
+function typeUnit(typeKey) {
+  return Types[typeKey]?.unit || "";
+}
+
+/* ===========================
+   Wiring evaluation (very small, intentionally explicit)
+   =========================== */
+
+function getEnvInputs() {
+  return {
+    P: state.env.P,
+    T_amb: state.env.T_amb
+  };
+}
+
+function evalSerial(diagram) {
+  const trace = state.trace;
+  trace.push("=== Serial composition: Power → Cooling → Footprint ===");
+
+  const envInputs = getEnvInputs();
+
+  const n1 = diagram.nodes.find(n => n.id === "n1").morphism;
+  const n2 = diagram.nodes.find(n => n.id === "n2").morphism;
+  const n3 = diagram.nodes.find(n => n.id === "n3").morphism;
+
+  // Evaluate each morphism with explicit typed bindings.
+  trace.push(`\n[Box n1] ${n1.name}`);
+  const out1 = n1.eval(state.env, { P: envInputs.P, T_amb: envInputs.T_amb }, trace);
+
+  trace.push(`\n[Box n2] ${n2.name}`);
+  const out2 = n2.eval(state.env, { Q: out1.Q, T_amb: envInputs.T_amb }, trace);
+
+  trace.push(`\n[Box n3] ${n3.name}`);
+  const out3 = n3.eval(state.env, { C: out2.C, P: envInputs.P }, trace);
+
+  return { ...out1, ...out2, ...out3 };
+}
+
+function evalParallel(diagram) {
+  const trace = state.trace;
+  trace.push("=== Tensor demo: (Power ⊗ Cooling) → Footprint ===");
+  trace.push("Here we *pretend* you already have a CoolingCap interval and compose via ⊗ feeding a single box.");
+
+  const envInputs = getEnvInputs();
+
+  // Make a synthetic CoolingCap source as if it were another subsystem.
+  const C_source = Interval.from(20, 36);
+  trace.push(`Synthetic CoolingCap source C₀=${C_source.toString(Types.CoolingCap.unit)}`);
+
+  const opt = diagram.nodes.find(n => n.id === "n3").morphism;
+  trace.push(`\n[Box n3] ${opt.name}`);
+  const out = opt.eval(state.env, { C: C_source, P: envInputs.P }, trace);
+  return { C: C_source, ...out };
+}
+
+/**
+ * Feedback: iterate a loop where footprint feeds a power policy that tightens power budget,
+ * and we recompute until convergence or max iterations.
+ */
+function evalWithFeedback(diagram, baseEvalFn) {
+  const trace = state.trace;
+  trace.push("=== Feedback enabled: iterate until power budget stabilises (toy fixpoint) ===");
+
+  const policy = state.catalogue.find(m => m.name.startsWith("Policy (feedback)"));
+  const maxIter = 10;
+  const tol = 0.05; // kW tolerance on midpoints
+
+  let P = state.env.P;
+  state.env.currentPowerBudget = P;
+
+  let lastMid = P.mid();
+  let finalOut = null;
+
+  for (let i=1; i<=maxIter; i++) {
+    trace.push(`\n-- Iteration ${i} --`);
+    state.env.P = P;
+    state.env.currentPowerBudget = P;
+
+    finalOut = baseEvalFn(diagram);
+    const A = finalOut.A;
+
+    trace.push(`\n[Feedback] Apply policy to A=${A.toString(Types.Footprint.unit)}`);
+    const pOut = policy.eval(state.env, { A }, trace);
+    const P_new = pOut.P_new;
+
+    const mid = P_new.mid();
+    trace.push(`Convergence check: mid(P_old)=${lastMid.toFixed(2)} vs mid(P_new)=${mid.toFixed(2)} (tol=${tol})`);
+
+    if (Math.abs(mid - lastMid) <= tol) {
+      trace.push("✔ Converged (within tolerance).");
+      P = P_new;
+      break;
+    }
+
+    // Relaxation (damping) to keep the toy stable
+    const alpha = 0.6;
+    const relaxed = new Interval(
+      alpha * P_new.lo + (1-alpha) * P.lo,
+      alpha * P_new.hi + (1-alpha) * P.hi
+    );
+
+    trace.push(`Relax: P := α P_new + (1-α) P_old with α=${alpha} => P=${relaxed.toString(Types.Power.unit)}`);
+    P = relaxed;
+    lastMid = P.mid();
+  }
+
+  state.env.P = P; // keep the final
+  state.env.currentPowerBudget = P;
+  return { ...finalOut, P_feedback: P };
+}
+
+/* ===========================
+   Rendering (canvas)
+   =========================== */
+
+function hiDPI(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.floor(rect.width * dpr);
+  canvas.height = Math.floor(rect.height * dpr);
+  return { dpr, w: canvas.width, h: canvas.height };
+}
+
+function drawRoundedRect(ctx, x, y, w, h, r) {
+  const rr = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+rr, y);
+  ctx.arcTo(x+w, y, x+w, y+h, rr);
+  ctx.arcTo(x+w, y+h, x, y+h, rr);
+  ctx.arcTo(x, y+h, x, y, rr);
+  ctx.arcTo(x, y, x+w, y, rr);
+  ctx.closePath();
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, dashed=false) {
+  const head = 9;
+  const dx = x2-x1, dy = y2-y1;
+  const ang = Math.atan2(dy, dx);
+  ctx.save();
+  if (dashed) ctx.setLineDash([6,6]); else ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - head*Math.cos(ang - Math.PI/6), y2 - head*Math.sin(ang - Math.PI/6));
+  ctx.lineTo(x2 - head*Math.cos(ang + Math.PI/6), y2 - head*Math.sin(ang + Math.PI/6));
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function render() {
+  const canvas = document.getElementById("wdCanvas");
+  const { dpr, w, h } = hiDPI(canvas);
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.scale(dpr, dpr);
+
+  const rect = canvas.getBoundingClientRect();
+  const W = rect.width, H = rect.height;
+
+  // background
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = "#070b10";
+  ctx.fillRect(0,0,W,H);
+
+  // Title strip
+  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  ctx.fillRect(0,0,W,40);
+  ctx.fillStyle = "rgba(232,238,246,0.92)";
+  ctx.font = "12px " + getComputedStyle(document.body).fontFamily;
+  const mode = state.diagram.mode === "serial" ? "serial" : "tensor demo";
+  const fb = state.diagram.feedback ? " + feedback" : "";
+  ctx.fillText(`Diagram: ${mode}${fb}`, 14, 25);
+
+  // ENV "ports"
+  const envX = 40, envY = 110;
+  const envW = 130, envH = 300;
+  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.fillStyle = "rgba(255,255,255,0.03)";
+  drawRoundedRect(ctx, envX, envY, envW, envH, 14);
+  ctx.fill(); ctx.stroke();
+
+  ctx.fillStyle = "rgba(232,238,246,0.92)";
+  ctx.font = "12px " + getComputedStyle(document.body).fontFamily;
+  ctx.fillText("ENV", envX+12, envY+22);
+
+  const envPorts = [
+    { key: "P", label: "P: Power", val: state.env.P, unit: Types.Power.unit, y: envY+70 },
+    { key: "T_amb", label: "T: Ambient", val: state.env.T_amb, unit: Types.Temp.unit, y: envY+140 },
+    { key: "limit", label: "A_limit", val: Interval.point(state.env.footprintLimit), unit: Types.Footprint.unit, y: envY+210 }
+  ];
+
+  ctx.fillStyle = "rgba(232,238,246,0.85)";
+  ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+
+  for (const p of envPorts) {
+    ctx.fillText(p.label, envX+12, p.y);
+    ctx.fillStyle = "rgba(155,176,198,0.92)";
+    ctx.fillText(p.val.toString(p.unit), envX+12, p.y+18);
+    ctx.fillStyle = "rgba(232,238,246,0.85)";
+    // port dot
+    ctx.beginPath();
+    ctx.arc(envX+envW, p.y-4, 4, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(106,166,255,0.85)";
+    ctx.fill();
+    ctx.fillStyle = "rgba(232,238,246,0.85)";
+  }
+
+  // nodes
+  const nodeW = 250, nodeH = 150;
+
+  function nodeById(id) { return state.diagram.nodes.find(n => n.id === id); }
+
+  for (const n of state.diagram.nodes) {
+    const x = n.x, y = n.y;
+    ctx.fillStyle = "rgba(255,255,255,0.035)";
+    ctx.strokeStyle = "rgba(255,255,255,0.12)";
+    drawRoundedRect(ctx, x, y, nodeW, nodeH, 16);
+    ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = "rgba(232,238,246,0.92)";
+    ctx.font = "12px " + getComputedStyle(document.body).fontFamily;
+    ctx.fillText(n.morphism.kind.toUpperCase(), x+14, y+24);
+
+    ctx.fillStyle = "rgba(155,176,198,0.92)";
+    ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+    ctx.fillText(n.morphism.name, x+14, y+44);
+
+    // ports
+    const inPorts = n.morphism.inputs;
+    const outPorts = n.morphism.outputs;
+
+    ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+    for (let i=0; i<inPorts.length; i++) {
+      const p = inPorts[i];
+      const py = y + 70 + i*24;
+      ctx.fillStyle = "rgba(232,238,246,0.85)";
+      ctx.fillText(p.label, x+14, py);
+      ctx.beginPath();
+      ctx.arc(x, py-4, 4, 0, Math.PI*2);
+      ctx.fillStyle = "rgba(106,166,255,0.85)";
+      ctx.fill();
+    }
+    for (let i=0; i<outPorts.length; i++) {
+      const p = outPorts[i];
+      const py = y + 70 + i*24;
+      ctx.fillStyle = "rgba(232,238,246,0.85)";
+      ctx.fillText(p.label, x+nodeW-54, py);
+      ctx.beginPath();
+      ctx.arc(x+nodeW, py-4, 4, 0, Math.PI*2);
+      ctx.fillStyle = "rgba(103,232,165,0.80)";
+      ctx.fill();
+    }
+
+    // show last computed values (if any)
+    const id = n.id;
+    const out = state.lastOutputs[id];
+    if (out) {
+      ctx.fillStyle = "rgba(155,176,198,0.92)";
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      let yy = y + nodeH - 38;
+      for (const [k,v] of Object.entries(out)) {
+        const unit = (k === "Q") ? Types.Heat.unit :
+                     (k === "C") ? Types.CoolingCap.unit :
+                     (k === "A") ? Types.Footprint.unit :
+                     "";
+        const s = (v instanceof Interval) ? v.toString(unit) : String(v);
+        ctx.fillText(`${k} = ${s}`, x+14, yy);
+        yy += 16;
+      }
+    }
+  }
+
+  // wires (we route only the common ones; enough for the visual)
+  ctx.strokeStyle = "rgba(255,255,255,0.35)";
+  ctx.fillStyle = "rgba(255,255,255,0.35)";
+  ctx.lineWidth = 2;
+
+  // ENV -> n1 (P, T)
+  const n1 = nodeById("n1"), n2 = nodeById("n2"), n3 = nodeById("n3");
+
+  const envPortPos = {
+    P:  { x: envX+envW, y: envPorts[0].y-4 },
+    T:  { x: envX+envW, y: envPorts[1].y-4 },
+    A:  { x: envX+envW, y: envPorts[2].y-4 }
+  };
+  function inPortPos(node, idx) { return { x: node.x, y: node.y + 70 + idx*24 - 4 }; }
+  function outPortPos(node, idx) { return { x: node.x + nodeW, y: node.y + 70 + idx*24 - 4 }; }
+
+  // draw core wires depending on mode
+  if (state.diagram.mode === "serial") {
+    drawArrow(ctx, envPortPos.P.x, envPortPos.P.y, inPortPos(n1,0).x, inPortPos(n1,0).y);
+    drawArrow(ctx, envPortPos.T.x, envPortPos.T.y, inPortPos(n1,1).x, inPortPos(n1,1).y);
+
+    drawArrow(ctx, outPortPos(n1,0).x, outPortPos(n1,0).y, inPortPos(n2,0).x, inPortPos(n2,0).y);
+    drawArrow(ctx, envPortPos.T.x, envPortPos.T.y, inPortPos(n2,1).x, inPortPos(n2,1).y);
+
+    drawArrow(ctx, outPortPos(n2,0).x, outPortPos(n2,0).y, inPortPos(n3,0).x, inPortPos(n3,0).y);
+    drawArrow(ctx, envPortPos.P.x, envPortPos.P.y, inPortPos(n3,1).x, inPortPos(n3,1).y);
+  } else {
+    // tensor demo: ENV P -> n3 (P); synthetic C is drawn as a small left stub
+    drawArrow(ctx, envPortPos.P.x, envPortPos.P.y, inPortPos(n3,1).x, inPortPos(n3,1).y);
+    // synthetic C stub
+    ctx.strokeStyle = "rgba(255,209,102,0.55)";
+    ctx.fillStyle = "rgba(255,209,102,0.55)";
+    ctx.lineWidth = 2;
+    drawArrow(ctx, n3.x - 60, inPortPos(n3,0).y, inPortPos(n3,0).x, inPortPos(n3,0).y);
+    ctx.fillStyle = "rgba(155,176,198,0.92)";
+    ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+    ctx.fillText("C₀ (synthetic)", n3.x - 116, inPortPos(n3,0).y - 10);
+
+    ctx.strokeStyle = "rgba(255,255,255,0.35)";
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    ctx.lineWidth = 2;
+  }
+
+  // Feedback dashed arrow: n3 output A back to ENV power (conceptual)
+  if (state.diagram.feedback) {
+    const Aout = outPortPos(n3,0);
+    const back = envPortPos.P;
+    ctx.strokeStyle = "rgba(106,166,255,0.55)";
+    ctx.fillStyle = "rgba(106,166,255,0.55)";
+    ctx.lineWidth = 2;
+    drawArrow(ctx, Aout.x, Aout.y, back.x, back.y, true);
+    ctx.fillStyle = "rgba(155,176,198,0.92)";
+    ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+    ctx.fillText("policy: tighten P", (Aout.x+back.x)/2 - 52, (Aout.y+back.y)/2 - 10);
+
+    ctx.strokeStyle = "rgba(255,255,255,0.35)";
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+  }
+}
+
+/* ===========================
+   Explainers (lots of buttons)
+   =========================== */
+
+const explainers = {
+  why: {
+    title: "Why this pattern (the practical punchline)",
+    body: `
+<p><span class="tag">Core idea</span> you want uncertainty to be <em>forced to compose</em> by the same algebra that composes your subsystem interfaces.</p>
+<p>In the Furter–Huang–Zardini move, you don’t bolt “risk ranges” onto the side of a design problem; you <em>change the homs</em> so morphisms become parametrised/uncertain maps, with reparametrisations living as 2-cells—so composition/tensor/feedback transports that uncertainty structure automatically. That is the difference between “an engineering workflow” and “an engineering workflow with an audit trail you can replay”.</p>
+<div class="hr"></div>
+<p><span class="tag">In this demo</span> every box is a service (estimator/checker/optimiser) and the trace log is the artefact you’d staple into an assurance pack: it shows the exact propagation that took you from inputs to constraints to outputs.</p>`
+  },
+  smc: {
+    title: "SMC + wiring diagrams (what you’re actually using)",
+    body: `
+<p><span class="tag">Objects</span> are interface types (bundles of resources/variables). <span class="tag">Morphisms</span> are open systems with those interfaces.</p>
+<p><span class="tag">Tensor ⊗</span> is “do in parallel” (side-by-side wiring). <span class="tag">Composition ∘</span> is “wire outputs into inputs” (series). Optional <span class="tag">feedback</span> is the compact-closed/trace story: you close a wire and solve a constraint satisfaction / fixpoint problem.</p>
+<div class="hr"></div>
+<p>The key engineering benefit is local reasoning: you verify a box once, then wiring gives you a verified composite <em>modulo the algebra’s laws</em>.</p>`
+  },
+  dp: {
+    title: "Design problems as morphisms (service blocks)",
+    body: `
+<p>Think “design problem morphism” as a <em>bidirectional constraint transformer</em>: it relates required functionality to required resources (and back again), rather than “forward simulation only”.</p>
+<p>In practice, PM/engineering teams keep reinventing this: “if cooling ≥ X then footprint ≥ Y”; “if power ≤ P then performance degrades”; etc. Categorically, you want these as reusable morphisms you can tensor and compose like Lego.</p>
+<div class="hr"></div>
+<p>This demo is intentionally lightweight: each morphism is a typed function from intervals to intervals, plus a formal (f_in, f_out) signature you can paste into documentation.</p>`
+  },
+  unc: {
+    title: "Uncertainty as 2-cells (why it stops being ad-hoc)",
+    body: `
+<p>The Furter–Huang–Zardini construction (informally): start with an SMC <em>C</em> of systems/design problems, then replace each hom C(X,Y) by <em>parametrised</em> maps A → C(X,Y) in a suitable probabilistic/Markov setting, yielding a 2-categorical structure with reparametrisation 2-cells. Different monads give different “kinds” of uncertainty (intervals, distributions, non-empty powersets, etc.).</p>
+<div class="hr"></div>
+<p><span class="tag">Operational meaning</span> “uncertainty” becomes part of what a morphism <em>is</em>, so composing morphisms automatically composes uncertainty. That’s what lets you treat the trace as an artefact rather than a narration. (See the arXiv abstract for the precise statement.)</p>`
+  },
+  cospan: {
+    title: "Open systems via cospans / double categories (plug-and-play engineering)",
+    body: `
+<p>Baez’s 2025 overview emphasises the “variable sharing” paradigm: compose open systems by identifying shared boundary variables, formalised using structured/decorated cospans inside a symmetric monoidal <em>double category</em>.</p>
+<p><span class="tag">Why you care</span> double categories let you keep both: (i) vertical structure (maps of interfaces) and (ii) horizontal structure (systems between interfaces), plus 2-cells for refinements/commuting squares—this is unusually close to how engineering change actually behaves.</p>
+<div class="hr"></div>
+<p>For PMO workflows, it suggests an architecture where interfaces are governed objects, systems are deliverables/services, and refinements are controlled changes—composition gives you end-to-end traceability.</p>`
+  },
+  assurance: {
+    title: "Assurance trace (what to staple into the pack)",
+    body: `
+<p><span class="tag">Recipe</span> For each composition, record: inputs, chosen uncertainty model, propagation steps, and the resulting bounds/distributions. Your “proof” is the replayable log + the diagram structure.</p>
+<p>This demo writes trace lines of the form “Q = P*frac + …” plus the intervals used. In a real pack, you’d also version the morphisms, store calibration evidence, and attach sign-offs for each box.</p>
+<div class="hr"></div>
+<p><span class="tag">Key move</span> treat the trace as a first-class output of composition, not a byproduct—so auditors can ask “which morphism version and which reparametrisation produced this bound?” and you can answer mechanically.</p>`
+  },
+  extend: {
+    title: "How to extend (from toy to real co-design loops)",
+    body: `
+<p><span class="tag">1</span> Replace interval arithmetic with your preferred uncertainty monad (e.g. distributions) and keep the same wiring surface.</p>
+<p><span class="tag">2</span> Add more boxes: cost model, schedule risk model, supplier lead-time model—each as a reusable morphism with typed ports.</p>
+<p><span class="tag">3</span> Add a “contract algebra” layer: each box exports predicates (must hold), composition merges predicates, and violations become explicit artefacts.</p>
+<div class="hr"></div>
+<p>If you want, the next pragmatic step is to define a small JSON schema for your morphism library (estimator/checker/optimiser) and then generate both: (i) the interactive diagram and (ii) an “assurance bundle” (trace + evidence links + version pins) from the same source.</p>`
+  }
+};
+
+function openModal(key) {
+  const back = document.getElementById("modalBack");
+  const title = document.getElementById("modalTitle");
+  const body = document.getElementById("modalBody");
+  const ex = explainers[key];
+  if (!ex) return;
+  title.textContent = ex.title;
+  body.innerHTML = ex.body;
+  back.style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modalBack").style.display = "none";
+}
+
+/* ===========================
+   Morphism text rendering
+   =========================== */
+
+function renderFormalMorphisms() {
+  const d = state.diagram;
+  let s = "";
+  for (const n of d.nodes) {
+    s += `(${n.id}) ${n.morphism.name}\n${n.morphism.formal}\n\n`;
+  }
+  if (d.feedback) {
+    const policy = state.catalogue.find(m => m.name.startsWith("Policy (feedback)"));
+    s += `(feedback) ${policy.name}\n${policy.formal}\n`;
+  }
+  setMorphisms(s.trimEnd());
+}
+
+/* ===========================
+   JSON export
+   =========================== */
+
+function diagramToJSON(diagram) {
+  // Note: functions aren’t serialisable; we export a reference to morphism catalogue names.
+  const obj = {
+    id: diagram.id,
+    mode: diagram.mode,
+    feedback: diagram.feedback,
+    env: {
+      P: { lo: state.env.P.lo, hi: state.env.P.hi, unit: Types.Power.unit },
+      T_amb: { lo: state.env.T_amb.lo, hi: state.env.T_amb.hi, unit: Types.Temp.unit },
+      footprintLimit: state.env.footprintLimit
+    },
+    nodes: diagram.nodes.map(n => ({
+      id: n.id,
+      morphism: { kind: n.morphism.kind, name: n.morphism.name },
+      x: n.x, y: n.y,
+      inputs: n.morphism.inputs,
+      outputs: n.morphism.outputs
+    })),
+    wires: diagram.wires
+  };
+  return JSON.stringify(obj, null, 2);
+}
+
+/* ===========================
+   Wiring run + state update
+   =========================== */
+
+function run() {
+  resetTrace();
+  state.lastOutputs = {};
+
+  const d = state.diagram;
+  const baseEval = (d.mode === "serial") ? evalSerial : evalParallel;
+
+  let outputs;
+  if (d.feedback) outputs = evalWithFeedback(d, baseEval);
+  else outputs = baseEval(d);
+
+  // Store node-local outputs for rendering
+  if (d.mode === "serial") {
+    // n1 has Q, n2 has C, n3 has A
+    state.lastOutputs["n1"] = { Q: outputs.Q };
+    state.lastOutputs["n2"] = { C: outputs.C };
+    state.lastOutputs["n3"] = { A: outputs.A };
+  } else {
+    state.lastOutputs["n3"] = { A: outputs.A };
+  }
+
+  // Append summary
+  log("\n=== Summary ===");
+  if (outputs.Q) log(`Q (HeatLoad) = ${outputs.Q.toString(Types.Heat.unit)}`);
+  if (outputs.C) log(`C (CoolingCap) = ${outputs.C.toString(Types.CoolingCap.unit)}`);
+  if (outputs.A) log(`A (Footprint) = ${outputs.A.toString(Types.Footprint.unit)}`);
+  if (outputs.P_feedback) log(`P_feedback (Power) = ${outputs.P_feedback.toString(Types.Power.unit)}`);
+
+  setTrace(state.trace.join("\n"));
+  setJSON(diagramToJSON(d));
+  renderFormalMorphisms();
+  render();
+}
+
+/* ===========================
+   UI wiring
+   =========================== */
+
+function init() {
+  state.diagram = makeInitialDiagram(state.catalogue);
+
+  // Populate catalogue select
+  const sel = document.getElementById("catalogueSelect");
+  for (const m of state.catalogue) {
+    const opt = document.createElement("option");
+    opt.value = m.name;
+    opt.textContent = `${m.kind}: ${m.name}`;
+    sel.appendChild(opt);
+  }
+
+  // Inputs
+  const pLow = document.getElementById("pLow");
+  const pHigh = document.getElementById("pHigh");
+  const tLow = document.getElementById("tLow");
+  const tHigh = document.getElementById("tHigh");
+
+  function syncInputsFromState() {
+    pLow.value = state.env.P.lo;
+    pHigh.value = state.env.P.hi;
+    tLow.value = state.env.T_amb.lo;
+    tHigh.value = state.env.T_amb.hi;
+  }
+  function syncStateFromInputs() {
+    state.env.P = Interval.from(parseFloat(pLow.value), parseFloat(pHigh.value));
+    state.env.T_amb = Interval.from(parseFloat(tLow.value), parseFloat(tHigh.value));
+    state.env.currentPowerBudget = state.env.P;
+  }
+  syncInputsFromState();
+
+  [pLow,pHigh,tLow,tHigh].forEach(el => {
+    el.addEventListener("change", () => {
+      try { syncStateFromInputs(); run(); }
+      catch (e) { alert(e.message); }
+    });
+  });
+
+  // Mode select
+  const modeSelect = document.getElementById("modeSelect");
+  modeSelect.addEventListener("change", () => {
+    state.diagram.mode = modeSelect.value;
+    // Hide irrelevant nodes in tensor demo? We'll keep, but evaluation uses n3 only.
+    run();
+  });
+
+  // Feedback
+  const fb = document.getElementById("feedbackToggle");
+  fb.addEventListener("change", () => {
+    state.diagram.feedback = !!fb.checked;
+    run();
+  });
+
+  // Explainer buttons
+  document.querySelectorAll("[data-explain]").forEach(btn => {
+    btn.addEventListener("click", () => openModal(btn.getAttribute("data-explain")));
+  });
+  document.getElementById("closeModal").addEventListener("click", closeModal);
+  document.getElementById("modalBack").addEventListener("click", (e) => { if (e.target.id === "modalBack") closeModal(); });
+  window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+  // Run/reset/randomise/export
+  document.getElementById("runBtn").addEventListener("click", () => {
+    try { syncStateFromInputs(); run(); } catch(e){ alert(e.message); }
+  });
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    state.env.P = Interval.from(18, 24);
+    state.env.T_amb = Interval.from(18, 28);
+    state.env.currentPowerBudget = state.env.P;
+    state.diagram.mode = "serial";
+    state.diagram.feedback = false;
+    modeSelect.value = "serial";
+    fb.checked = false;
+    syncInputsFromState();
+    run();
+  });
+  document.getElementById("randomBtn").addEventListener("click", () => {
+    const p1 = 14 + Math.random()*10;
+    const p2 = p1 + 3 + Math.random()*8;
+    const t1 = 12 + Math.random()*12;
+    const t2 = t1 + 2 + Math.random()*12;
+    state.env.P = Interval.from(p1, p2);
+    state.env.T_amb = Interval.from(t1, t2);
+    state.env.currentPowerBudget = state.env.P;
+    syncInputsFromState();
+    run();
+  });
+  document.getElementById("exportBtn").addEventListener("click", async () => {
+    const json = diagramToJSON(state.diagram);
+    try {
+      await navigator.clipboard.writeText(json);
+      alert("Diagram JSON copied to clipboard.");
+    } catch {
+      alert("Could not copy to clipboard (browser restriction). JSON is shown in the panel.");
+    }
+  });
+
+  // Add morphism button (demonstrative: appends a new node to the right and wires it to previous output)
+  document.getElementById("addMorphBtn").addEventListener("click", () => {
+    const name = sel.value;
+    const m = state.catalogue.find(x => x.name === name);
+    if (!m) return;
+
+    // Add node
+    const id = `n${state.diagram.nodes.length + 1}`;
+    const last = state.diagram.nodes[state.diagram.nodes.length - 1];
+    const newNode = { id, morphism: m, x: last.x + 320, y: last.y };
+    state.diagram.nodes.push(newNode);
+
+    // Naively wire last node's first output into new node's first input (only for demo)
+    if (last.morphism.outputs.length > 0 && m.inputs.length > 0) {
+      state.diagram.wires.push({
+        from: { node: last.id, port: last.morphism.outputs[0].label },
+        to: { node: id, port: m.inputs[0].label }
+      });
+    }
+
+    log(`\n[Diagram] Added node ${id}: ${m.name}`);
+    run();
+  });
+
+  // Initial render
+  run();
+}
+
+window.addEventListener("load", init);
+window.addEventListener("resize", render);
+</script>
+</body>
+</html>
