@@ -1,0 +1,1490 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark">
+  <title>Category Theory Toolkit for Construction Systems Engineering</title>
+  <style>
+    :root{
+      --bg: #0b0d10;
+      --panel: #12161c;
+      --panel2: #0f1318;
+      --text: #e9edf2;
+      --muted: #a7b0bb;
+      --accent: #7dd3fc;
+      --accent2: #a78bfa;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #fb7185;
+      --line: rgba(255,255,255,0.08);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --radius: 14px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg: #f7f8fb;
+        --panel: #ffffff;
+        --panel2: #f1f5f9;
+        --text: #0b1220;
+        --muted: #475569;
+        --line: rgba(2,6,23,0.10);
+        --shadow: 0 12px 30px rgba(15,23,42,.10);
+      }
+    }
+    *{ box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background: radial-gradient(1200px 500px at 10% -10%, rgba(125,211,252,.20), transparent 60%),
+                  radial-gradient(900px 450px at 110% 20%, rgba(167,139,250,.18), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+    }
+    a{ color: var(--accent); }
+    .wrap{
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px 14px 28px;
+    }
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 8px 6px 6px;
+    }
+    .title h1{
+      margin:0;
+      font-size: 20px;
+      letter-spacing: .2px;
+      line-height:1.15;
+    }
+    .title p{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 78ch;
+    }
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 10px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(125,211,252,.14), rgba(125,211,252,.06));
+      border: 1px solid rgba(125,211,252,.20);
+      color: var(--text);
+      font-size: 12px;
+      box-shadow: var(--shadow);
+      white-space: nowrap;
+    }
+    .pill code{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 2px 6px;
+      background: rgba(0,0,0,.12);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 8px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap: 12px;
+      align-items: start;
+      margin-top: 12px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    @media (prefers-color-scheme: light){
+      .card{
+        background: linear-gradient(180deg, rgba(2,6,23,.02), rgba(2,6,23,.01));
+      }
+    }
+    .card .hd{
+      padding: 12px 12px 10px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+      justify-content: space-between;
+    }
+    .card .hd h2{
+      margin:0;
+      font-size: 13px;
+      letter-spacing: .2px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .card .bd{
+      padding: 12px;
+    }
+
+    .row{ display:flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .row > * { flex: 0 0 auto; }
+
+    label.small{
+      font-size: 12px;
+      color: var(--muted);
+      display:block;
+      margin-bottom:6px;
+    }
+    select, input[type="search"]{
+      width: 100%;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      color: var(--text);
+      outline: none;
+    }
+    select:focus, input[type="search"]:focus{ border-color: rgba(125,211,252,.55); box-shadow: 0 0 0 4px rgba(125,211,252,.12); }
+    .btn{
+      appearance:none;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size: 12px;
+      user-select:none;
+    }
+    .btn:hover{ border-color: rgba(125,211,252,.35); }
+    .btn.primary{
+      border-color: rgba(125,211,252,.40);
+      background: linear-gradient(180deg, rgba(125,211,252,.18), rgba(125,211,252,.06));
+    }
+    .btn.ghost{ background: transparent; }
+    .btn:active{ transform: translateY(1px); }
+
+    .kpi{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      padding: 9px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .dot{
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(125,211,252,.14);
+      flex:0 0 auto;
+    }
+    .dot.p{ background: var(--accent2); box-shadow: 0 0 0 4px rgba(167,139,250,.14); }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .hint{
+      font-size: 12px;
+      line-height:1.45;
+      color: var(--muted);
+    }
+    .mini{
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .mono{ font-family: var(--mono); }
+
+    /* Category list */
+    .catlist{
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 560px;
+      overflow:auto;
+      padding-right: 2px;
+    }
+    .cat{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+      padding: 10px;
+    }
+    .cat.active{
+      border-color: rgba(125,211,252,.50);
+      box-shadow: 0 0 0 4px rgba(125,211,252,.10);
+    }
+    .cat .top{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content: space-between;
+    }
+    .cat h3{
+      margin:0;
+      font-size: 14px;
+      letter-spacing: .2px;
+    }
+    .rank{
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      background: rgba(0,0,0,.10);
+      flex:0 0 auto;
+    }
+    @media (prefers-color-scheme: light){
+      .rank{ background: rgba(2,6,23,.04); }
+    }
+    .tagline{
+      margin: 5px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .meta{
+      display:flex; gap:8px; flex-wrap:wrap;
+      margin-top: 8px;
+    }
+    .badge{
+      font-size: 11px;
+      border: 1px solid var(--line);
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+    }
+    .expander{
+      margin-top: 8px;
+      display:none;
+      border-top: 1px dashed var(--line);
+      padding-top: 8px;
+    }
+    .expander.open{ display:block; }
+    .expander p{
+      margin: 6px 0 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text);
+    }
+    .expander .muted{ color: var(--muted); }
+
+    /* Graph */
+    .graphWrap{
+      padding: 8px 8px 10px;
+    }
+    .graphTop{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content: space-between;
+      padding: 12px 12px 0;
+    }
+    .graphTop .left{
+      display:flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .graphTop h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing: .2px;
+    }
+    .graphTop p{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .graphControls{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    svg{ width: 100%; height: auto; display:block; }
+    .node{ cursor:pointer; }
+    .node circle{
+      fill: rgba(255,255,255,.04);
+      stroke: rgba(255,255,255,.18);
+      stroke-width: 1.2;
+    }
+    .node text{
+      font-size: 11px;
+      fill: var(--text);
+      paint-order: stroke;
+      stroke: rgba(0,0,0,.30);
+      stroke-width: 3px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    @media (prefers-color-scheme: light){
+      .node text{ stroke: rgba(255,255,255,.65); }
+    }
+    .node .sub{
+      font-size: 10px;
+      fill: var(--muted);
+      stroke-width: 2px;
+    }
+    .node.active circle{
+      stroke: rgba(125,211,252,.85);
+      stroke-width: 2.2;
+      fill: rgba(125,211,252,.10);
+    }
+    .node.relevant circle{
+      stroke: rgba(167,139,250,.85);
+      stroke-width: 2.0;
+      fill: rgba(167,139,250,.10);
+    }
+
+    .edge path{
+      fill:none;
+      stroke: rgba(255,255,255,.18);
+      stroke-width: 1.2;
+    }
+    .edge text{
+      font-size: 10px;
+      fill: var(--muted);
+    }
+    .edge.active path{
+      stroke: rgba(125,211,252,.85);
+      stroke-width: 2.0;
+    }
+    .edge.relevant path{
+      stroke: rgba(167,139,250,.85);
+      stroke-width: 1.8;
+    }
+
+    .legend{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 0 12px 10px;
+    }
+    .legend .kpi{ padding: 7px 9px; }
+
+    /* Details pane */
+    .detailTitle{
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
+    }
+    .detailTitle h3{ margin:0; font-size: 16px; }
+    .detailTitle .mono{ font-size: 11px; color: var(--muted); }
+    .detail p{ margin: 8px 0 0; font-size: 13px; line-height: 1.48; }
+    .detail ul{ margin: 8px 0 0 18px; padding:0; }
+    .detail li{ margin: 4px 0; font-size: 12px; color: var(--text); line-height:1.45; }
+    .detail .muted{ color: var(--muted); }
+    .callout{
+      margin-top: 10px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(125,211,252,.22);
+      background: linear-gradient(180deg, rgba(125,211,252,.14), rgba(125,211,252,.04));
+    }
+    .callout h4{ margin:0; font-size: 12px; text-transform: uppercase; letter-spacing:.2px; color: var(--muted); }
+    .callout p{ margin: 6px 0 0; font-size: 12px; color: var(--text); line-height:1.45; }
+
+    /* Use-case map */
+    .mapList{
+      display:flex; flex-direction: column; gap: 10px;
+      max-height: 380px;
+      overflow:auto;
+      padding-right: 2px;
+    }
+    details.mapItem{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+      padding: 8px 10px;
+    }
+    details.mapItem[open]{
+      border-color: rgba(167,139,250,.42);
+      box-shadow: 0 0 0 4px rgba(167,139,250,.10);
+    }
+    details summary{
+      cursor:pointer;
+      list-style:none;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    details summary::-webkit-details-marker{ display:none; }
+    .mapBody{
+      margin-top: 8px;
+      border-top: 1px dashed var(--line);
+      padding-top: 8px;
+      display:grid;
+      gap: 8px;
+    }
+    .mapBody .line{
+      font-size: 12px;
+      color: var(--muted);
+      line-height:1.45;
+    }
+    .mapBody .line b{ color: var(--text); }
+
+    footer{
+      margin-top: 14px;
+      padding: 10px 6px 0;
+      color: var(--muted);
+      font-size: 12px;
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items:center;
+    }
+    .kbd{
+      font-family: var(--mono);
+      padding: 2px 6px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+    }
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="title">
+      <h1>Category Theory Toolkit for Construction Systems Engineering</h1>
+      <p>
+        Start with <span class="mono">Poset</span>, <span class="mono">Set</span>, and <span class="mono">Rel</span> to model precedence, data, and traceability; then add <span class="mono">Cat</span> to treat whole artefacts as composable “systems”.
+        The big wins in projects come from functors that translate between semantics (requirements ⇄ design ⇄ cost ⇄ schedule ⇄ as-built), and from sheaf-style “local-to-global” consistency checks across disciplines and site zones.
+      </p>
+    </div>
+    <div class="pill" title="How to use this file">
+      <span aria-hidden="true">🧭</span>
+      <span>Tip: pick a use case → see recommended categories & functors</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT COLUMN -->
+    <section class="card" aria-labelledby="left-h2">
+      <div class="hd">
+        <h2 id="left-h2">Use-case lens</h2>
+        <div class="row">
+          <button class="btn ghost" id="btnPrimer" type="button" aria-expanded="false">Primer (PM)</button>
+          <button class="btn primary" id="btnReset" type="button">Reset</button>
+        </div>
+      </div>
+      <div class="bd">
+        <div id="primer" class="callout" style="display:none;">
+          <h4>30-second primer</h4>
+          <p><b>Objects</b> are “things” (tasks, documents, model elements, states). <b>Morphisms</b> are “allowable moves” (dependency, refinement, transformation, handover). <b>Composition</b> says: if A leads to B and B leads to C, the pipeline A→C is coherent; this is the algebra behind “interfaces don’t lie”.</p>
+          <p class="muted">Category theory is most useful when you have many partial views (cost, schedule, design, contracts) and need disciplined translation between them.</p>
+        </div>
+
+        <div class="split">
+          <div>
+            <label class="small" for="usecase">Choose a systems-engineering use case</label>
+            <select id="usecase" aria-describedby="usecaseHelp"></select>
+            <div class="mini" id="usecaseHelp" style="margin-top:6px;">
+              Highlights relevant nodes (<span class="dot p" style="display:inline-block;width:9px;height:9px;vertical-align:-1px;"></span>) and functors.
+            </div>
+          </div>
+
+          <div class="row" style="justify-content:space-between;">
+            <div class="kpi"><span class="dot"></span><span><b>Active</b> selection (node/edge)</span></div>
+            <div class="kpi"><span class="dot p"></span><span><b>Recommended</b> for selected use case</span></div>
+          </div>
+
+          <div class="card" style="box-shadow:none;">
+            <div class="hd" style="border-bottom:none;">
+              <h2>Map (use case → categories → functors)</h2>
+              <div class="row">
+                <button class="btn" id="btnOpenAll" type="button">Open all</button>
+                <button class="btn" id="btnCloseAll" type="button">Close all</button>
+              </div>
+            </div>
+            <div class="bd" style="padding-top:0;">
+              <div class="mapList" id="mapList" aria-label="Use case mapping list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN -->
+    <section class="card" aria-labelledby="right-h2">
+      <div class="graphTop">
+        <div class="left">
+          <h2 id="right-h2">Semantic translation map</h2>
+          <p>Click a node to see PM and technical explainers. Use “Show only recommended” to declutter.</p>
+        </div>
+        <div class="graphControls">
+          <button class="btn" id="btnOnlyRec" type="button" aria-pressed="false">Show only recommended</button>
+          <button class="btn" id="btnZoomFit" type="button">Zoom: fit</button>
+        </div>
+      </div>
+
+      <div class="legend" aria-hidden="true">
+        <div class="kpi"><span class="kbd">Click</span> a node/edge</div>
+        <div class="kpi"><span class="kbd">⌘/Ctrl</span>+<span class="kbd">F</span> works (search text)</div>
+        <div class="kpi"><span class="kbd">Esc</span> clears selection</div>
+      </div>
+
+      <div class="graphWrap">
+        <svg id="graph" viewBox="0 0 980 560" role="img" aria-label="Graph of categories (nodes) and functors (edges)">
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,.35)"></path>
+            </marker>
+            <marker id="arrowActive" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L8,3 z" fill="rgba(125,211,252,.85)"></path>
+            </marker>
+            <marker id="arrowRec" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L8,3 z" fill="rgba(167,139,250,.85)"></path>
+            </marker>
+          </defs>
+
+          <g id="edges"></g>
+          <g id="nodes"></g>
+        </svg>
+      </div>
+
+      <div class="bd">
+        <div class="detail" id="detail">
+          <div class="detailTitle">
+            <div>
+              <h3 id="detailName">Pick a use case or click a node</h3>
+              <div class="mono" id="detailFormal">—</div>
+            </div>
+            <div class="row">
+              <button class="btn" id="btnPM" type="button" aria-expanded="false">PM explainer</button>
+              <button class="btn" id="btnTech" type="button" aria-expanded="false">Technical</button>
+            </div>
+          </div>
+
+          <div id="detailPM" style="display:none;">
+            <p id="detailPMText" class="muted">—</p>
+          </div>
+
+          <div id="detailTech" style="display:none;">
+            <p id="detailTechText" class="muted">—</p>
+            <div class="callout">
+              <h4>How to use it on a real project</h4>
+              <p id="detailHow" class="muted">—</p>
+            </div>
+          </div>
+
+          <div class="callout" id="detailUsecaseCallout" style="display:none;">
+            <h4>Use-case lens</h4>
+            <p id="detailUsecaseText" class="muted"></p>
+          </div>
+
+          <p class="hint" style="margin-top: 12px;">
+            A useful “engineering” stance: treat every artefact as a morphism between states (e.g., “Design v3” → “Issued for Construction”), then make translations between artefacts explicit as functors; what breaks under composition is usually where scope, interface, or accountability breaks.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom left: category list -->
+    <section class="card" aria-labelledby="cats-h2" style="grid-column: 1 / span 1;">
+      <div class="hd">
+        <h2 id="cats-h2">Categories to start from (ranked)</h2>
+        <div class="row" style="min-width: 230px;">
+          <label class="sr-only" for="catSearch">Filter categories</label>
+          <input id="catSearch" type="search" placeholder="Filter (e.g. sheaf, monoidal, poset)..." />
+        </div>
+      </div>
+      <div class="bd">
+        <div class="hint" style="margin-top:-4px; margin-bottom:10px;">
+          These are the “most likely to pay rent” categories in construction systems engineering; click to focus, or use <span class="mono">PM explainer</span>.
+        </div>
+        <div class="catlist" id="catlist"></div>
+      </div>
+    </section>
+
+    <!-- Bottom right: patterns -->
+    <section class="card" aria-labelledby="patterns-h2" style="grid-column: 2 / span 1;">
+      <div class="hd">
+        <h2 id="patterns-h2">Functor patterns (translation between semantics)</h2>
+        <div class="row">
+          <button class="btn" id="btnShowPatterns" type="button" aria-expanded="true">Toggle</button>
+        </div>
+      </div>
+      <div class="bd" id="patterns">
+        <div class="hint">
+          Most project pain is not inside a model; it’s in the <i>translation</i> between models. These functor “shapes” are practical: you can name them, assign owners, and test them.
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; margin-top:10px;">
+          <div class="cat">
+            <div class="top"><div><h3>Forgetful functor (drop structure)</h3><div class="tagline">BIM → attribute tables → reporting</div></div></div>
+            <div class="expander open">
+              <p><span class="muted">PM:</span> “Extract what we can measure/report, without dragging the whole geometric model around.”</p>
+              <p><span class="muted">Watch:</span> If you forget too much, you can’t reconstruct accountability (classic reporting drift).</p>
+            </div>
+          </div>
+          <div class="cat">
+            <div class="top"><div><h3>Valuation functor (assign costs/risks)</h3><div class="tagline">Design/options → £, time, carbon, risk</div></div></div>
+            <div class="expander open">
+              <p><span class="muted">PM:</span> Make your pricing/risk model a named map with explicit inputs; then change-control is just “did the functor’s inputs change?”</p>
+              <p><span class="muted">Academic aside:</span> Many estimators implicitly enrich categories over a cost monoid; naming that clarifies “what adds” vs “what multiplies”.</p>
+            </div>
+          </div>
+          <div class="cat">
+            <div class="top"><div><h3>Adjunction (abstraction ⇄ refinement)</h3><div class="tagline">Scope/WBS ⇄ detailed design packages</div></div></div>
+            <div class="expander open">
+              <p><span class="muted">PM:</span> “Roll-up” and “drill-down” are rarely inverses; adjunction formalizes the best-possible approximation in each direction.</p>
+              <p><span class="muted">Use:</span> Detects where summaries are misleading (no left adjoint) or detail cannot be consistently aggregated (no right adjoint).</p>
+            </div>
+          </div>
+          <div class="cat">
+            <div class="top"><div><h3>Natural transformation (change request)</h3><div class="tagline">Two interpretations of the same spec</div></div></div>
+            <div class="expander open">
+              <p><span class="muted">PM:</span> A CR is a controlled “switch” from one pipeline to another (e.g., pricing old spec vs new spec), component by component.</p>
+              <p><span class="muted">Practical:</span> If you can’t write the components, you can’t cost the change coherently.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <h4>A contrarian but useful lens</h4>
+          <p>Instead of “one master model”, aim for a <b>category of models</b> with explicit functors between them; the goal is not a single truth but <i>coherent composition</i> across contractual and disciplinary boundaries (a construction-flavoured version of “many-sorted semantics”).</p>
+        </div>
+
+        <div class="hint" style="margin-top:10px;">
+          Tangent to explore later: “How sheaf gluing conditions resemble Last Planner / constraint removal on site.”
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div>Offline, single-file, works in Safari/Chrome/Edge (no external libraries).</div>
+    <div>Keyboard: <span class="kbd">Esc</span> clears selection. Interaction is local; nothing is transmitted.</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const CATS = [
+    {
+      id:"poset",
+      rank:1,
+      name:"Poset / Preorder",
+      formal:"Category with ≤-style morphisms (at most one arrow between any two objects).",
+      tagline:"Dependencies, precedence, approval lattices.",
+      badges:["schedule", "interfaces", "governance"],
+      pm:`Think “what must happen before what” (or “what implies what”). A poset is your dependency logic with the fluff removed: tasks, approvals, constraints; an arrow means “allowed / must precede”.`,
+      tech:`In a preorder category, morphisms encode feasibility/precedence. Limits/colimits reduce to meets/joins when they exist; completion (e.g., adding joins) corresponds to adding missing aggregation structure.`,
+      how:`Model the IMS/WBS/constraints as a preorder; compute transitive closure to detect hidden coupling; use monotone maps to translate between vendor schedules and the master plan without inventing fake detail.`,
+      uses:[
+        "Critical path, handover gates, approvals, permits",
+        "Interface readiness: 'A released' ≤ 'B can start'",
+        "Constraint log as a partial order of releases"
+      ]
+    },
+    {
+      id:"set",
+      rank:2,
+      name:"Set (and FinSet)",
+      formal:"Objects are sets; morphisms are functions.",
+      tagline:"Data schemas, identifiers, “one truth per field”.",
+      badges:["data", "reporting", "controls"],
+      pm:`When you say “this field maps to that field” (element IDs, asset tags, cost codes), you’re already in Set. It’s the cleanest place to begin when you want to eliminate ambiguity in data flow.`,
+      tech:`Set is the base for many semantics: relational models become spans/profunctors; schema-as-category models become presheaves valued in Set. Limits are familiar joins; products correspond to pairing data.`,
+      how:`Define canonical ID functions (element → asset register ID; WBS item → cost code). Treat every spreadsheet extract as a morphism and test compositionality (does BIM→BoQ→Cost reconcile with BIM→Cost directly?).`,
+      uses:[
+        "Data dictionaries, field mapping between tools",
+        "Asset register, tagging, handover datasets",
+        "Consistency checks for reports (same input, same output)"
+      ]
+    },
+    {
+      id:"rel",
+      rank:3,
+      name:"Rel (relations) / Profunctors",
+      formal:"Objects are sets; morphisms are relations (or profunctors).",
+      tagline:"Traceability, many-to-many, “who relates to what”.",
+      badges:["traceability", "requirements", "quality"],
+      pm:`Traceability is rarely a function: one requirement touches many elements; one element satisfies many requirements. Rel lets you model this honestly, then compute impacts when something changes.`,
+      tech:`Rel is a bicategory; composition is relational composition. Profunctors generalize relations between categories; they model “specifications” and “capabilities” without forcing deterministic mapping.`,
+      how:`Put requirements ↔ design elements ↔ tests ↔ NCRs into a relational pipeline. Change impact is just composition: (changed reqs) ○ (req→elements) ○ (elements→workpacks).`,
+      uses:[
+        "Requirements ↔ design ↔ test ↔ inspection trace",
+        "Nonconformance routing and causal webs",
+        "Interfaces: stakeholder ↔ deliverable ↔ acceptance criteria"
+      ]
+    },
+    {
+      id:"cat",
+      rank:4,
+      name:"Cat (category of categories)",
+      formal:"Objects are small categories; morphisms are functors.",
+      tagline:"Treat whole artefacts as composable systems.",
+      badges:["architecture", "integration", "semantics"],
+      pm:`Once you have several “worlds” (BIM, schedule, cost, contract), you need to reason about the <i>maps between worlds</i>. Cat is the level where those translations become first-class and testable.`,
+      tech:`Cat supports higher-order constructions: functor categories, adjunctions, (co)limits, Kan extensions. It’s the ambient setting for “semantics of semantics”.`,
+      how:`Make each tool’s model a category (objects=entities, morphisms=allowed transformations/relationships). Then write named functors between them; failing compositions identify integration risks early.`,
+      uses:[
+        "Multi-model integration governance",
+        "Toolchain semantics and interoperability",
+        "Defining “what counts as a valid change”"
+      ]
+    },
+    {
+      id:"psh",
+      rank:5,
+      name:"Presheaves  PSh(C) = Set^{Cᵒᵖ}",
+      formal:"Functor category of contravariant Set-valued functors.",
+      tagline:"Schemas-as-categories; BIM/IFC as structured data.",
+      badges:["bim", "schema", "federation"],
+      pm:`A presheaf is a disciplined way to say: “for each object type, here are its records; for each relation, here is how records restrict/lookup.” It’s basically a typed graph with guaranteed coherence.`,
+      tech:`Presheaves on a schema category formalize databases and labelled graphs. They’re the natural habitat of “federated models” and versioned artefacts; natural transformations are schema-respecting updates.`,
+      how:`Model your data schema (e.g., IFC subset + project-specific relations) as a small category C; each model snapshot is a presheaf on C. Merges and extracts become natural transformations and functors between presheaf categories.`,
+      uses:[
+        "Federated BIM + metadata governance",
+        "Versioned model comparison (deltas as natural transformations)",
+        "Interoperability beyond ad-hoc CSV exports"
+      ]
+    },
+    {
+      id:"monoidal",
+      rank:6,
+      name:"Monoidal Categories (and MonCat)",
+      formal:"Category with tensor ⊗ and unit I capturing “compose in parallel”.",
+      tagline:"Resources, parallel work, modular assembly.",
+      badges:["logistics", "resources", "interfaces"],
+      pm:`Some things add (crew-hours), some “stack” (risk), some can be done in parallel; monoidal structure encodes your combination rule explicitly—so you stop mixing metaphors in planning.`,
+      tech:`A symmetric monoidal category captures parallel composition; monoids live inside monoidal categories. Many project metrics form monoids (time addition, cost addition) and enrichments over them are powerful.`,
+      how:`Choose a tensor meaning (e.g., “do in parallel” or “assemble modules”). Then make resource/cost/time aggregation a monoidal functor from workpacks to a cost/time monoid.`,
+      uses:[
+        "Modular construction composition rules",
+        "Resource pooling and constraints",
+        "Aggregating impacts with explicit algebra (add vs max vs probabilistic)"
+      ]
+    },
+    {
+      id:"cospan",
+      rank:7,
+      name:"Cospan / Span Categories",
+      formal:"Objects are interfaces; morphisms are systems wired via spans/cospans.",
+      tagline:"Interfaces, integration, handovers.",
+      badges:["interfaces", "systems", "handover"],
+      pm:`Interfaces are where projects bleed. Spans/cospans let you model “system A and system B share an interface I” and then compose such interface-wiring without losing track of boundaries.`,
+      tech:`Cospans compose by pushout (gluing); spans by pullback (matching). In systems engineering, cospans are common for assembly; decorated cospans add attributes (cost, compliance, performance).`,
+      how:`Represent subsystems by cospans between interface sets (e.g., connection points, responsibilities). Compose via pushout to see what gets identified when integrating trades; attach compliance properties as decorations.`,
+      uses:[
+        "MEP/structural/architectural interface management",
+        "System integration and commissioning boundary logic",
+        "Document handover as wiring diagram of responsibilities"
+      ]
+    },
+    {
+      id:"operad",
+      rank:8,
+      name:"Operads (composition of many inputs → one output)",
+      formal:"Abstract syntax for hierarchical assembly and substitution.",
+      tagline:"Workpack templates, repeatable assemblies.",
+      badges:["templates", "repeatability", "standardization"],
+      pm:`If you have repeatable “assemblies” (bathroom pods, façade panels), operads capture how parts plug into wholes—then you can substitute parts without rewriting the plan from scratch.`,
+      tech:`Operads describe multi-ary composition. They sit between WBS decomposition and interface wiring, supporting parameterized templates and substitution semantics.`,
+      how:`Define a library of assembly operations (e.g., “install pod” takes N inputs: deliveries, permits, crew, prechecks). Substitution gives controlled variation (different supplier) without breaking structure.`,
+      uses:[
+        "Standard work / pattern libraries",
+        "Configurable modularization strategies",
+        "Repeatable QA/inspection workflows"
+      ]
+    },
+    {
+      id:"double",
+      rank:9,
+      name:"Double Categories / Bicategories",
+      formal:"Two kinds of morphisms (e.g., processes and interfaces) with squares.",
+      tagline:"Process + interface at once; contracts as 2D structure.",
+      badges:["process", "contracts", "governance"],
+      pm:`Projects have two orthogonal logics: “sequence over time” and “wiring over scope/interfaces”. Double categories let you reason in both directions at once without collapsing one into the other.`,
+      tech:`Objects, horizontal morphisms, vertical morphisms, and squares capturing compatibility (commuting diagrams). Useful for combining workflows with interface composition.`,
+      how:`Use horizontal arrows for task progression and vertical arrows for responsibility handoffs (or design→build). Squares represent “this handoff is valid given this progress”, i.e., approvals and sign-offs.`,
+      uses:[
+        "Contractual handoffs + technical integration",
+        "RACI/ownership constraints on workflows",
+        "Commissioning and staged acceptance"
+      ]
+    },
+    {
+      id:"enriched",
+      rank:10,
+      name:"Enriched Categories (Lawvere metric, probabilistic, etc.)",
+      formal:"Hom-objects live in a monoidal poset (cost, distance, likelihood).",
+      tagline:"Cost/time/risk as the ‘strength’ of connections.",
+      badges:["risk", "cost", "optimization"],
+      pm:`Instead of “is there a link?”, ask “how expensive / risky / long is the best link?”. Enrichment makes that quantitative and composable.`,
+      tech:`Lawvere metric spaces are categories enriched over ([0,∞], ≥, +, 0). Many planning problems become shortest-path or best-feasible morphism in an enriched setting.`,
+      how:`Model alternatives as morphisms weighted by time/cost/risk. Composition adds weights (or uses max, etc.). Use this to compare change options and propagate impacts without ad-hoc spreadsheets.`,
+      uses:[
+        "Change-option evaluation with explicit algebra",
+        "Risk propagation through dependency graphs",
+        "Value engineering with compositional scoring"
+      ]
+    },
+    {
+      id:"sheaves",
+      rank:11,
+      name:"Sheaves  Sh(X) (local-to-global consistency)",
+      formal:"Presheaves satisfying gluing and locality axioms on a cover.",
+      tagline:"Site zones + disciplines → coherent global plan.",
+      badges:["coordination", "site", "constraints"],
+      pm:`A sheaf formalizes this: each discipline can be “right locally”, but the global plan only works if local views agree on overlaps (shared zones, shared interfaces). That is coordination, turned into a test.`,
+      tech:`Given a cover of a space (site zones, building levels, work areas), a sheaf assigns data to each region with restriction maps, and enforces that matching local data glue uniquely. Violations pinpoint coordination gaps.`,
+      how:`Choose a cover: zones/levels/time-windows. Put constraints/permits/temporary works as local sections. Gluing failure flags an integration issue before it becomes a field clash.`,
+      uses:[
+        "4D planning: local workface constraints → global schedule feasibility",
+        "Discipline coordination on overlaps (shafts, risers, plant rooms)",
+        "Quality data that must agree across teams (e.g., test packs)"
+      ]
+    },
+    {
+      id:"topos",
+      rank:12,
+      name:"Topos (contextual logic of a project)",
+      formal:"A category behaving like Set, with internal logic.",
+      tagline:"Reasoning under partial information and changing contexts.",
+      badges:["assurance", "logic", "specs"],
+      pm:`Projects live in “partial truths”: not all facts are known, and what’s true depends on context (phase, contract, revision). Topos logic lets you reason without pretending everything is globally decidable.`,
+      tech:`A topos has subobject classifiers and supports internal higher-order logic. Presheaf topoi encode “varying sets” over contexts; truth becomes stage-dependent.`,
+      how:`Use when you need formal assurance arguments: “Given what is known at stage s, these compliance claims hold.” It’s heavy, but it prevents the usual collapse between ‘unknown’ and ‘false’.`,
+      uses:[
+        "Compliance/assurance cases with staged evidence",
+        "Specification semantics under revisions",
+        "Reasoning about permissions/visibility across parties"
+      ]
+    },
+    {
+      id:"monad",
+      rank:13,
+      name:"Monads / Comonads (effects & context)",
+      formal:"Endofunctors with unit/multiplication; dual for comonads.",
+      tagline:"Change control, uncertainty, workflows with side effects.",
+      badges:["change", "workflow", "uncertainty"],
+      pm:`A monad is a disciplined way to say “this transformation has side effects”: approvals, non-determinism, rework, waiting. It helps you separate the “pure plan” from the “real plan with friction”.`,
+      tech:`Monads model computational effects; comonads model context/dependence. In projects, monadic structure can encode approval pipelines; comonads encode local context (site conditions, crew capability).`,
+      how:`Use monadic wrappers for “needs approval”, “may fail inspection”, “has lead time”. Then compose without losing the effect-tracking, and ask: where do effects accumulate or get discharged?`,
+      uses:[
+        "Approval workflows and gating semantics",
+        "Nonconformance and rework loops",
+        "Explicit modelling of waiting/lead times"
+      ]
+    }
+  ];
+
+  // Nodes positioned by hand for stability across browsers (and to keep it offline/simple)
+  const NODES = [
+    {id:"poset", x:110, y:140, sub:"precedence"},
+    {id:"set", x:110, y:280, sub:"data"},
+    {id:"rel", x:260, y:220, sub:"trace"},
+    {id:"cat", x:430, y:160, sub:"models"},
+    {id:"psh", x:430, y:300, sub:"schemas"},
+    {id:"monoidal", x:610, y:120, sub:"parallel ⊗"},
+    {id:"cospan", x:610, y:250, sub:"interfaces"},
+    {id:"operad", x:760, y:170, sub:"templates"},
+    {id:"double", x:760, y:320, sub:"2D logic"},
+    {id:"enriched", x:430, y:440, sub:"cost/risk"},
+    {id:"sheaves", x:610, y:440, sub:"gluing"},
+    {id:"topos", x:820, y:440, sub:"context"},
+    {id:"monad", x:820, y:260, sub:"effects"}
+  ];
+
+  const EDGES = [
+    // core translations
+    {id:"e1", from:"poset", to:"enriched", label:"enrich: add weights", kind:"pattern"},
+    {id:"e2", from:"set", to:"rel", label:"graph/trace relation", kind:"pattern"},
+    {id:"e3", from:"rel", to:"cat", label:"categorify: semantics", kind:"pattern"},
+    {id:"e4", from:"cat", to:"psh", label:"model as presheaf", kind:"pattern"},
+    {id:"e5", from:"psh", to:"set", label:"forget geometry/structure", kind:"functor"},
+    {id:"e6", from:"cospan", to:"monoidal", label:"compose systems", kind:"pattern"},
+    {id:"e7", from:"cat", to:"cospan", label:"interfaces as wiring", kind:"pattern"},
+    {id:"e8", from:"psh", to:"sheaves", label:"add cover + gluing", kind:"pattern"},
+    {id:"e9", from:"sheaves", to:"topos", label:"sheaf topos", kind:"pattern"},
+    {id:"e10", from:"cat", to:"monad", label:"effects on models", kind:"pattern"},
+    {id:"e11", from:"operad", to:"cospan", label:"templates → wiring", kind:"pattern"},
+    {id:"e12", from:"double", to:"cat", label:"decategorify view", kind:"pattern"},
+    // applied functor names
+    {id:"f_req", from:"rel", to:"poset", label:"impact ordering", kind:"functor"},
+    {id:"f_cost", from:"cospan", to:"enriched", label:"valuation (cost/risk)", kind:"functor"},
+    {id:"f_sched", from:"cospan", to:"poset", label:"schedule projection", kind:"functor"},
+    {id:"f_asbuilt", from:"psh", to:"cat", label:"revision functor", kind:"functor"}
+  ];
+
+  const USECASES = [
+    {
+      id:"uc0",
+      name:"(Pick one) — or browse the ranked list",
+      blurb:"Select a use case to highlight the categories and functors that most often pay off in construction systems engineering.",
+      recCats: [],
+      recEdges: []
+    },
+    {
+      id:"uc1",
+      name:"Change impact analysis (requirements/design/cost/schedule)",
+      blurb:"Treat traceability as relations/profunctors; changes are natural transformations between interpretations; impacts propagate by composition rather than ad-hoc meetings.",
+      recCats:["rel","poset","enriched","cat","monad"],
+      recEdges:["e1","e2","f_req","f_cost","f_sched","e10"]
+    },
+    {
+      id:"uc2",
+      name:"Interface management across trades (MEP/structural/arch)",
+      blurb:"Model subsystems as cospans between interface sets; integration is pushout-style gluing; use sheaf reasoning on overlap zones to catch mismatches early.",
+      recCats:["cospan","set","sheaves","poset","cat"],
+      recEdges:["e7","e8","f_sched","e6"]
+    },
+    {
+      id:"uc3",
+      name:"BIM federation + data governance (schemas, IDs, extracts)",
+      blurb:"Use presheaves (schemas-as-categories) for federated models; set-level extracts are forgetful functors; updates are natural transformations you can audit.",
+      recCats:["psh","set","cat","rel"],
+      recEdges:["e4","e5","e2","f_asbuilt"]
+    },
+    {
+      id:"uc4",
+      name:"4D planning / workface coordination (local constraints → global plan)",
+      blurb:"Choose a cover of the site (zones/time-windows) and represent constraints locally; gluing failures are coordination failures; precedence remains a poset backbone.",
+      recCats:["sheaves","poset","set","rel"],
+      recEdges:["e8","f_req","e1"]
+    },
+    {
+      id:"uc5",
+      name:"Modularization & repeatable assemblies (pods/panels/standard work)",
+      blurb:"Use operads for substitution-friendly assembly templates; wire interfaces with cospans; aggregate resources in a monoidal setting.",
+      recCats:["operad","cospan","monoidal","set"],
+      recEdges:["e11","e6","f_cost"]
+    },
+    {
+      id:"uc6",
+      name:"Assurance/compliance case under partial info (staged evidence)",
+      blurb:"When truth depends on context and revision, topos-style internal logic models ‘known at stage s’; sheaves/presheaves provide the varying data over contexts.",
+      recCats:["topos","sheaves","psh","cat"],
+      recEdges:["e9","e8","e4"]
+    }
+  ];
+
+  // --- DOM
+  const $ = (sel, el=document) => el.querySelector(sel);
+  const $$ = (sel, el=document) => [...el.querySelectorAll(sel)];
+
+  const usecaseSel = $("#usecase");
+  const mapList = $("#mapList");
+  const catList = $("#catlist");
+  const catSearch = $("#catSearch");
+
+  const detailName = $("#detailName");
+  const detailFormal = $("#detailFormal");
+  const detailPM = $("#detailPM");
+  const detailTech = $("#detailTech");
+  const detailPMText = $("#detailPMText");
+  const detailTechText = $("#detailTechText");
+  const detailHow = $("#detailHow");
+  const btnPM = $("#btnPM");
+  const btnTech = $("#btnTech");
+  const btnPrimer = $("#btnPrimer");
+  const primer = $("#primer");
+  const detailUsecaseCallout = $("#detailUsecaseCallout");
+  const detailUsecaseText = $("#detailUsecaseText");
+
+  const svg = $("#graph");
+  const edgesG = $("#edges");
+  const nodesG = $("#nodes");
+
+  let activeCatId = null;
+  let activeEdgeId = null;
+  let activeUsecaseId = "uc0";
+  let onlyRecommended = false;
+
+  // --- helpers
+  const catById = (id) => CATS.find(c => c.id === id);
+  const usecaseById = (id) => USECASES.find(u => u.id === id);
+  const nodeById = (id) => NODES.find(n => n.id === id);
+
+  function setDetailForCat(id){
+    const c = catById(id);
+    if(!c) return;
+    detailName.textContent = `${c.rank}. ${c.name}`;
+    detailFormal.textContent = c.formal;
+    detailPMText.textContent = c.pm;
+    detailTechText.textContent = c.tech;
+    detailHow.textContent = c.how;
+  }
+
+  function setDetailForEdge(edgeId){
+    const e = EDGES.find(x => x.id === edgeId);
+    if(!e) return;
+    const a = catById(e.from), b = catById(e.to);
+    detailName.textContent = `${e.label}`;
+    detailFormal.textContent = `Functor-ish link: ${a?.name || e.from} → ${b?.name || e.to}`;
+    detailPMText.textContent =
+      `PM translation: this arrow is a named “handover of meaning” between two models. If it isn’t named, owned, and tested, integration debt accumulates silently.`;
+    detailTechText.textContent =
+      `Technically: treat this as a functor/profunctor/natural transformation depending on determinism. The key is compositionality: can you compose this with adjacent translations without contradiction?`;
+    detailHow.textContent =
+      `Write a thin spec for this translation: inputs, outputs, invariants preserved (IDs, totals, constraints), and a small suite of reconciliation checks (commuting squares).`;
+  }
+
+  function clearDetail(){
+    detailName.textContent = "Pick a use case or click a node";
+    detailFormal.textContent = "—";
+    detailPMText.textContent = "—";
+    detailTechText.textContent = "—";
+    detailHow.textContent = "—";
+  }
+
+  function updateUsecaseCallout(){
+    const u = usecaseById(activeUsecaseId);
+    if(!u || u.id==="uc0"){
+      detailUsecaseCallout.style.display = "none";
+      return;
+    }
+    detailUsecaseCallout.style.display = "block";
+    detailUsecaseText.textContent = u.blurb;
+  }
+
+  function togglePane(btn, pane){
+    const expanded = btn.getAttribute("aria-expanded") === "true";
+    btn.setAttribute("aria-expanded", String(!expanded));
+    pane.style.display = expanded ? "none" : "block";
+  }
+
+  // --- render category list
+  function renderCatList(){
+    const q = (catSearch.value || "").trim().toLowerCase();
+    catList.innerHTML = "";
+    const filtered = CATS
+      .slice()
+      .sort((a,b)=>a.rank-b.rank)
+      .filter(c => {
+        if(!q) return true;
+        const hay = (c.name + " " + c.tagline + " " + c.formal + " " + c.badges.join(" ") + " " + c.pm + " " + c.tech).toLowerCase();
+        return hay.includes(q);
+      });
+
+    const u = usecaseById(activeUsecaseId);
+    const rec = new Set((u?.recCats)||[]);
+
+    filtered.forEach(c=>{
+      const div = document.createElement("div");
+      div.className = "cat";
+      div.dataset.id = c.id;
+
+      const top = document.createElement("div");
+      top.className = "top";
+
+      const left = document.createElement("div");
+      left.style.minWidth="0";
+
+      const h3 = document.createElement("h3");
+      h3.textContent = `${c.rank}. ${c.name}`;
+      left.appendChild(h3);
+
+      const tl = document.createElement("div");
+      tl.className = "tagline";
+      tl.textContent = c.tagline;
+      left.appendChild(tl);
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      c.badges.forEach(b=>{
+        const s = document.createElement("span");
+        s.className = "badge";
+        s.textContent = b;
+        meta.appendChild(s);
+      });
+      if(rec.has(c.id)){
+        const s = document.createElement("span");
+        s.className = "badge";
+        s.style.borderColor = "rgba(167,139,250,.45)";
+        s.style.color = "var(--text)";
+        s.textContent = "recommended";
+        meta.appendChild(s);
+      }
+      left.appendChild(meta);
+
+      const right = document.createElement("div");
+      right.style.display="flex";
+      right.style.flexDirection="column";
+      right.style.gap="8px";
+      right.style.alignItems="flex-end";
+
+      const rank = document.createElement("div");
+      rank.className = "rank";
+      rank.textContent = rec.has(c.id) ? "★" : `#${c.rank}`;
+      right.appendChild(rank);
+
+      const btn = document.createElement("button");
+      btn.className = "btn";
+      btn.type = "button";
+      btn.textContent = "PM explainer";
+      btn.addEventListener("click", (ev)=>{
+        ev.stopPropagation();
+        const exp = div.querySelector(".expander");
+        exp.classList.toggle("open");
+      });
+      right.appendChild(btn);
+
+      top.appendChild(left);
+      top.appendChild(right);
+
+      const expander = document.createElement("div");
+      expander.className = "expander";
+      expander.innerHTML = `
+        <p><span class="muted">PM:</span> ${escapeHtml(c.pm)}</p>
+        <p><span class="muted">Formal:</span> ${escapeHtml(c.formal)}</p>
+        <p><span class="muted">Typical uses:</span> ${escapeHtml(c.uses.join(" · "))}</p>
+      `;
+
+      div.appendChild(top);
+      div.appendChild(expander);
+
+      div.addEventListener("click", ()=>{
+        setActiveCat(c.id);
+      });
+
+      catList.appendChild(div);
+    });
+
+    // keep highlight
+    $$(".cat", catList).forEach(el=>{
+      el.classList.toggle("active", el.dataset.id === activeCatId);
+    });
+  }
+
+  // --- render map list
+  function renderMapList(){
+    mapList.innerHTML = "";
+    USECASES.filter(u => u.id!=="uc0").forEach(u=>{
+      const d = document.createElement("details");
+      d.className = "mapItem";
+      d.dataset.id = u.id;
+
+      const s = document.createElement("summary");
+      s.textContent = u.name;
+      d.appendChild(s);
+
+      const body = document.createElement("div");
+      body.className = "mapBody";
+
+      const line1 = document.createElement("div");
+      line1.className = "line";
+      line1.innerHTML = `<b>Why</b>: ${escapeHtml(u.blurb)}`;
+      body.appendChild(line1);
+
+      const line2 = document.createElement("div");
+      line2.className = "line";
+      line2.innerHTML = `<b>Categories</b>: ${u.recCats.map(id => `<span class="badge">${escapeHtml(catById(id)?.name || id)}</span>`).join(" ")}`;
+      body.appendChild(line2);
+
+      const line3 = document.createElement("div");
+      line3.className = "line";
+      line3.innerHTML = `<b>Functors / translations</b>: ${u.recEdges.map(eid => {
+        const e = EDGES.find(x => x.id===eid);
+        if(!e) return "";
+        return `<span class="badge">${escapeHtml(e.label)}</span>`;
+      }).join(" ")}`;
+      body.appendChild(line3);
+
+      const line4 = document.createElement("div");
+      line4.className = "line";
+      line4.innerHTML = `<button class="btn primary" type="button">Highlight this use case</button>`;
+      body.appendChild(line4);
+
+      body.querySelector("button").addEventListener("click", ()=>{
+        usecaseSel.value = u.id;
+        setUsecase(u.id);
+        d.open = true;
+      });
+
+      d.appendChild(body);
+
+      d.addEventListener("toggle", ()=>{
+        // When opening one, don't auto-close others; but update selection on open
+        if(d.open){
+          usecaseSel.value = u.id;
+          setUsecase(u.id);
+        }
+      });
+
+      mapList.appendChild(d);
+    });
+  }
+
+  // --- graph render
+  function pathForEdge(a, b, bend=0){
+    // simple quadratic curve; bend controls perpendicular offset
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const mx = (a.x + b.x)/2, my = (a.y + b.y)/2;
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    const nx = -dy/len, ny = dx/len; // normal
+    const cx = mx + nx * bend;
+    const cy = my + ny * bend;
+    return `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
+  }
+
+  function renderGraph(){
+    edgesG.innerHTML = "";
+    nodesG.innerHTML = "";
+
+    const u = usecaseById(activeUsecaseId);
+    const recCats = new Set(u?.recCats || []);
+    const recEdges = new Set(u?.recEdges || []);
+
+    // edges first
+    EDGES.forEach((e, idx)=>{
+      const a = nodeById(e.from), b = nodeById(e.to);
+      if(!a || !b) return;
+
+      const shouldHide = onlyRecommended && !(recEdges.has(e.id) || (activeEdgeId===e.id));
+      if(shouldHide) return;
+
+      const bend = (idx % 2 === 0) ? 10 : -10;
+      const g = document.createElementNS("http://www.w3.org/2000/svg","g");
+      g.setAttribute("class","edge");
+      g.dataset.id = e.id;
+
+      const p = document.createElementNS("http://www.w3.org/2000/svg","path");
+      p.setAttribute("d", pathForEdge(a,b,bend));
+      p.setAttribute("marker-end", "url(#arrow)");
+      g.appendChild(p);
+
+      const label = document.createElementNS("http://www.w3.org/2000/svg","text");
+      const tpath = document.createElementNS("http://www.w3.org/2000/svg","textPath");
+      const pid = "path_" + e.id;
+      p.setAttribute("id", pid);
+      tpath.setAttributeNS("http://www.w3.org/1999/xlink","xlink:href","#"+pid);
+      tpath.setAttribute("startOffset","50%");
+      tpath.setAttribute("text-anchor","middle");
+      tpath.textContent = e.label;
+      label.appendChild(tpath);
+      g.appendChild(label);
+
+      g.addEventListener("click", (ev)=>{
+        ev.stopPropagation();
+        setActiveEdge(e.id);
+      });
+
+      // classes
+      if(recEdges.has(e.id)) g.classList.add("relevant");
+      if(e.id === activeEdgeId) g.classList.add("active");
+
+      edgesG.appendChild(g);
+    });
+
+    // nodes
+    NODES.forEach(n=>{
+      const c = catById(n.id);
+      if(!c) return;
+      const shouldHide = onlyRecommended && !(recCats.has(n.id) || (activeCatId===n.id));
+      if(shouldHide) return;
+
+      const g = document.createElementNS("http://www.w3.org/2000/svg","g");
+      g.setAttribute("class","node");
+      g.dataset.id = n.id;
+      g.setAttribute("transform", `translate(${n.x},${n.y})`);
+
+      const circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      circle.setAttribute("r","28");
+      g.appendChild(circle);
+
+      const text = document.createElementNS("http://www.w3.org/2000/svg","text");
+      text.setAttribute("text-anchor","middle");
+      text.setAttribute("dy","4");
+      text.textContent = c.name.split(" ")[0]; // short label
+      g.appendChild(text);
+
+      const sub = document.createElementNS("http://www.w3.org/2000/svg","text");
+      sub.setAttribute("text-anchor","middle");
+      sub.setAttribute("dy","20");
+      sub.setAttribute("class","sub");
+      sub.textContent = n.sub;
+      g.appendChild(sub);
+
+      g.addEventListener("click", (ev)=>{
+        ev.stopPropagation();
+        setActiveCat(n.id);
+      });
+
+      if(recCats.has(n.id)) g.classList.add("relevant");
+      if(n.id === activeCatId) g.classList.add("active");
+
+      nodesG.appendChild(g);
+    });
+
+    // edge markers: switch to active/rec where relevant
+    $$(".edge", edgesG).forEach(el=>{
+      const eid = el.dataset.id;
+      const e = EDGES.find(x => x.id===eid);
+      const p = el.querySelector("path");
+      if(!p || !e) return;
+      if(eid === activeEdgeId){
+        p.setAttribute("marker-end", "url(#arrowActive)");
+      }else if(recEdges.has(eid)){
+        p.setAttribute("marker-end", "url(#arrowRec)");
+      }else{
+        p.setAttribute("marker-end", "url(#arrow)");
+      }
+    });
+  }
+
+  function zoomFit(){
+    // Because we use a viewBox already, "fit" is just resetting it.
+    svg.setAttribute("viewBox", "0 0 980 560");
+  }
+
+  // --- selection logic
+  function setActiveCat(id){
+    activeCatId = id;
+    activeEdgeId = null;
+    $$(".node", nodesG).forEach(n => n.classList.toggle("active", n.dataset.id === id));
+    $$(".edge", edgesG).forEach(e => e.classList.remove("active"));
+    setDetailForCat(id);
+    updateUsecaseCallout();
+    renderCatList();
+    renderGraph();
+    // open detail panes sensibly
+    if(btnPM.getAttribute("aria-expanded") === "true") detailPM.style.display = "block";
+    if(btnTech.getAttribute("aria-expanded") === "true") detailTech.style.display = "block";
+  }
+
+  function setActiveEdge(eid){
+    activeEdgeId = eid;
+    activeCatId = null;
+    $$(".edge", edgesG).forEach(e => e.classList.toggle("active", e.dataset.id === eid));
+    $$(".node", nodesG).forEach(n => n.classList.remove("active"));
+    setDetailForEdge(eid);
+    updateUsecaseCallout();
+    renderCatList();
+    renderGraph();
+    if(btnPM.getAttribute("aria-expanded") === "true") detailPM.style.display = "block";
+    if(btnTech.getAttribute("aria-expanded") === "true") detailTech.style.display = "block";
+  }
+
+  function setUsecase(uid){
+    activeUsecaseId = uid;
+    activeEdgeId = null;
+    activeCatId = null;
+    updateUsecaseCallout();
+    clearDetail();
+    renderCatList();
+    renderGraph();
+
+    // highlight currently-open map item visually
+    $$(".mapItem", mapList).forEach(d => d.toggleAttribute("open", d.dataset.id === uid ? true : d.open));
+
+    // auto-open the selected item in the map list (nice on mobile)
+    const chosen = $(`details.mapItem[data-id="${uid}"]`, mapList);
+    if(chosen) chosen.open = true;
+  }
+
+  // --- escaping (for innerHTML in small places)
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  // --- init
+  function init(){
+    // fill usecase select
+    USECASES.forEach(u=>{
+      const opt = document.createElement("option");
+      opt.value = u.id;
+      opt.textContent = u.name;
+      usecaseSel.appendChild(opt);
+    });
+
+    // listeners
+    usecaseSel.addEventListener("change", ()=> setUsecase(usecaseSel.value));
+    catSearch.addEventListener("input", renderCatList);
+
+    $("#btnReset").addEventListener("click", ()=>{
+      usecaseSel.value = "uc0";
+      activeUsecaseId = "uc0";
+      activeCatId = null;
+      activeEdgeId = null;
+      onlyRecommended = false;
+      $("#btnOnlyRec").setAttribute("aria-pressed","false");
+      $("#btnOnlyRec").textContent = "Show only recommended";
+      clearDetail();
+      updateUsecaseCallout();
+      renderMapList();
+      renderCatList();
+      renderGraph();
+      zoomFit();
+    });
+
+    $("#btnOnlyRec").addEventListener("click", ()=>{
+      onlyRecommended = !onlyRecommended;
+      $("#btnOnlyRec").setAttribute("aria-pressed", String(onlyRecommended));
+      $("#btnOnlyRec").textContent = onlyRecommended ? "Show all nodes" : "Show only recommended";
+      renderGraph();
+    });
+
+    $("#btnZoomFit").addEventListener("click", zoomFit);
+
+    btnPM.addEventListener("click", ()=> togglePane(btnPM, detailPM));
+    btnTech.addEventListener("click", ()=> togglePane(btnTech, detailTech));
+
+    btnPrimer.addEventListener("click", ()=>{
+      const expanded = btnPrimer.getAttribute("aria-expanded") === "true";
+      btnPrimer.setAttribute("aria-expanded", String(!expanded));
+      primer.style.display = expanded ? "none" : "block";
+    });
+
+    $("#btnOpenAll").addEventListener("click", ()=> $$(".mapItem", mapList).forEach(d => d.open = true));
+    $("#btnCloseAll").addEventListener("click", ()=> $$(".mapItem", mapList).forEach(d => d.open = false));
+
+    $("#btnShowPatterns").addEventListener("click", ()=>{
+      const el = $("#patterns");
+      const open = el.style.display !== "none";
+      el.style.display = open ? "none" : "block";
+      $("#btnShowPatterns").setAttribute("aria-expanded", String(!open));
+    });
+
+    // click background clears selection
+    svg.addEventListener("click", ()=>{
+      activeCatId = null;
+      activeEdgeId = null;
+      $$(".node", nodesG).forEach(n => n.classList.remove("active"));
+      $$(".edge", edgesG).forEach(e => e.classList.remove("active"));
+      clearDetail();
+      updateUsecaseCallout();
+      renderCatList();
+      renderGraph();
+    });
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape"){
+        activeCatId = null;
+        activeEdgeId = null;
+        clearDetail();
+        updateUsecaseCallout();
+        renderCatList();
+        renderGraph();
+      }
+    });
+
+    renderMapList();
+    renderCatList();
+    renderGraph();
+    updateUsecaseCallout();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
