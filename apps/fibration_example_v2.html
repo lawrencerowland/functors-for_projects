@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fibration‑Based Milestone Linking — Interactive Toy Example</title>
+  <style>
+    :root{
+      --bg: #0b1020;
+      --panel: #121a33;
+      --panel2: #0f1730;
+      --text: #e9eefc;
+      --muted: #a9b6de;
+      --line: rgba(233,238,252,0.14);
+      --accent: #76b7ff;
+      --accent2: #a7ffce;
+      --warn: #ffcc66;
+      --bad: #ff7b7b;
+      --good: #7bffa8;
+      --shadow: 0 12px 30px rgba(0,0,0,0.35);
+      --radius: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(1200px 700px at 20% 0%, #17224d 0%, var(--bg) 55%);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.45;
+    }
+
+    a { color: var(--accent); }
+
+    header {
+      padding: 26px 20px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(118,183,255,0.10), rgba(118,183,255,0) 60%);
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      letter-spacing: 0.3px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      max-width: 78ch;
+      font-size: 14px;
+    }
+
+    .chipRow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .chipBtn {
+      border: 1px solid var(--line);
+      background: rgba(18,26,51,0.6);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: transform 0.08s ease, border-color 0.12s ease, background 0.12s ease;
+      user-select: none;
+    }
+
+    .chipBtn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(118,183,255,0.5);
+      background: rgba(18,26,51,0.85);
+    }
+
+    .main {
+      padding: 18px 20px 44px;
+    }
+
+    .controls {
+      border: 1px solid var(--line);
+      background: rgba(18,26,51,0.55);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .controlsGrid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px){
+      .controlsGrid { grid-template-columns: 1fr; }
+    }
+
+    .controlRow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    select {
+      background: rgba(11,16,32,0.6);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: rgba(11,16,32,0.55);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.08s ease, border-color 0.12s ease, background 0.12s ease;
+      font-size: 13px;
+      user-select: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(118,183,255,0.55);
+      background: rgba(11,16,32,0.8);
+    }
+
+    .btnPrimary {
+      background: rgba(118,183,255,0.18);
+      border-color: rgba(118,183,255,0.4);
+    }
+
+    .btnDanger {
+      background: rgba(255,123,123,0.12);
+      border-color: rgba(255,123,123,0.35);
+    }
+
+    .hint {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 90ch;
+    }
+
+    .workspace {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px){
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: rgba(18,26,51,0.55);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panelHeader {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(15,23,48,0.65);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .panelHeader h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0.2px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(11,16,32,0.45);
+      white-space: nowrap;
+    }
+
+    .panelBody {
+      padding: 14px;
+    }
+
+    .contextRow {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 680px){
+      .contextRow { grid-template-columns: 1fr; }
+    }
+
+    .context {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(11,16,32,0.35);
+      position: relative;
+      min-height: 290px;
+    }
+
+    .context.hidden { display: none; }
+
+    .ctxTitle {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .ctxTitle h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .ctxDesc {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .constraintList {
+      margin: 0 0 10px;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+
+    .regionGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .regionCard {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(18,26,51,0.35);
+      cursor: pointer;
+      transition: transform 0.08s ease, border-color 0.12s ease, background 0.12s ease;
+    }
+
+    .regionCard:hover {
+      transform: translateY(-1px);
+      border-color: rgba(118,183,255,0.45);
+      background: rgba(18,26,51,0.55);
+    }
+
+    .regionCard.active {
+      border-color: rgba(167,255,206,0.65);
+      box-shadow: 0 0 0 2px rgba(167,255,206,0.14) inset;
+    }
+
+    .regionTop {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+    }
+
+    .regionName {
+      font-weight: 650;
+      font-size: 13.5px;
+    }
+
+    .regionMeta {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(11,16,32,0.35);
+    }
+
+    .pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(233,238,252,0.25);
+    }
+
+    .pill.good .dot { background: rgba(123,255,168,0.75); }
+    .pill.warn .dot { background: rgba(255,204,102,0.75); }
+    .pill.bad .dot { background: rgba(255,123,123,0.8); }
+
+    .arrowBox {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.85;
+    }
+
+    .arrowSvg {
+      width: 60px;
+      height: 290px;
+    }
+
+    .arrowLabel {
+      font-size: 11px;
+      fill: var(--muted);
+    }
+
+    .arrowActive {
+      stroke: rgba(118,183,255,0.9);
+    }
+
+    .arrowInactive {
+      stroke: rgba(233,238,252,0.25);
+    }
+
+    .detailsTitle {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+
+    .detailsTitle h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .detailsTitle .small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 8px 10px;
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .kv div:nth-child(odd){
+      color: rgba(233,238,252,0.65);
+      font-weight: 600;
+    }
+
+    .taskGroup {
+      margin-top: 10px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+    }
+
+    .taskGroup h4 {
+      margin: 0 0 8px;
+      font-size: 12.5px;
+      color: rgba(233,238,252,0.75);
+      letter-spacing: 0.2px;
+    }
+
+    .taskList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .task {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: rgba(11,16,32,0.35);
+    }
+
+    .taskTop {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .taskName {
+      font-size: 13px;
+      font-weight: 650;
+      color: rgba(233,238,252,0.92);
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(18,26,51,0.35);
+      white-space: nowrap;
+    }
+
+    .badge.new { border-color: rgba(123,255,168,0.35); color: rgba(123,255,168,0.95); }
+    .badge.review { border-color: rgba(255,204,102,0.35); color: rgba(255,204,102,0.95); }
+    .badge.blocked { border-color: rgba(255,123,123,0.4); color: rgba(255,123,123,0.95); }
+
+    .taskMeta {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .audit {
+      margin-top: 14px;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    .audit h4 {
+      margin: 0 0 8px;
+      font-size: 12.5px;
+      color: rgba(233,238,252,0.75);
+    }
+
+    .auditList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .auditItem {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: rgba(11,16,32,0.32);
+    }
+
+    .auditItem code {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(233,238,252,0.8);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .legendItem {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: rgba(11,16,32,0.3);
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: rgba(233,238,252,0.25);
+    }
+
+    .swatch.new { background: rgba(123,255,168,0.75); }
+    .swatch.review { background: rgba(255,204,102,0.75); }
+    .swatch.blocked { background: rgba(255,123,123,0.8); }
+
+    /* Modal */
+    .modalOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 50;
+    }
+
+    .modalOverlay.open { display: flex; }
+
+    .modal {
+      width: min(980px, 100%);
+      max-height: 86vh;
+      overflow: auto;
+      border: 1px solid rgba(233,238,252,0.18);
+      border-radius: 16px;
+      background: rgba(18,26,51,0.96);
+      box-shadow: var(--shadow);
+    }
+
+    .modalHeader {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      background: rgba(15,23,48,0.7);
+      position: sticky;
+      top: 0;
+    }
+
+    .modalHeader h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .modalBody {
+      padding: 14px 16px 18px;
+      color: rgba(233,238,252,0.9);
+    }
+
+    .modalBody p, .modalBody li {
+      color: rgba(233,238,252,0.85);
+      font-size: 13.5px;
+    }
+
+    .modalBody code, .modalBody pre {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: rgba(233,238,252,0.92);
+    }
+
+    pre {
+      background: rgba(11,16,32,0.55);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .closeX {
+      border: 1px solid var(--line);
+      background: rgba(11,16,32,0.45);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .foot {
+      margin-top: 16px;
+      color: rgba(233,238,252,0.55);
+      font-size: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Fibration‑Based Milestone Linking — Interactive Toy Example</h1>
+      <p class="subtitle">
+        A prototype of the idea “milestones as fibre objects over evolving global constraints”.
+        This page lets you trigger a local regulatory change (Asia) and watch a structured, auditable propagation through a simplified global marketing campaign.
+      </p>
+      <div class="chipRow">
+        <button class="chipBtn" data-modal="modalPrompt">Explainer: prompt (verbatim)</button>
+        <button class="chipBtn" data-modal="modalToy">Explainer: toy example (verbatim)</button>
+        <button class="chipBtn" data-modal="modalFibration">Explainer: how the fibration mapping works</button>
+        <button class="chipBtn" data-modal="modalHowTo">Explainer: how to read the prototype</button>
+        <button class="chipBtn" data-modal="modalVerdict">Explainer: does this “actually work”?</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="wrap">
+
+      <section class="controls">
+        <div class="controlsGrid">
+          <div>
+            <div class="controlRow">
+              <label>
+                Cleavage / propagation policy
+                <select id="policySelect" aria-label="Select propagation policy">
+                  <option value="minimal">Minimal change (audit & patch)</option>
+                  <option value="strict">Strict compliance (add extra checks)</option>
+                  <option value="pivot">Strategic pivot (reduce tracking)</option>
+                </select>
+              </label>
+
+              <button class="btn btnPrimary" id="btnTrigger">Trigger: Asia consumer‑data regulation change</button>
+              <button class="btn btnDanger" id="btnReset">Reset</button>
+            </div>
+            <p class="hint">
+              The policy choice stands in for the <em>cleavage</em>: a rule that picks a particular cartesian lift / pullback plan.
+              Try switching policies and re‑triggering the update to see different (but still structured) cascades.
+            </p>
+          </div>
+          <div>
+            <div class="legend" aria-label="Legend">
+              <span class="legendItem"><span class="swatch new"></span>NEW task</span>
+              <span class="legendItem"><span class="swatch review"></span>REVIEW needed</span>
+              <span class="legendItem"><span class="swatch blocked"></span>BLOCKED / infeasible</span>
+            </div>
+            <p class="hint">
+              A true Grothendieck fibration gives lifts that are unique up to unique isomorphism.
+              In project terms, you often have <em>choices</em>; this prototype treats those choices as “policy”, i.e., as part of the modelling design.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <!-- VISUAL / CANVAS -->
+        <div class="panel" id="canvasPanel">
+          <div class="panelHeader">
+            <h2>Base contexts (top) and regional plans in each fibre (below)</h2>
+            <span class="tag" id="tagState">state: baseline</span>
+          </div>
+          <div class="panelBody">
+            <div class="contextRow" id="contextRow">
+              <!-- Baseline context -->
+              <div class="context" id="ctx-baseline" data-context="baseline">
+                <div class="ctxTitle">
+                  <h3>Base object C₀: Global strategy (baseline)</h3>
+                  <span class="tag">B object</span>
+                </div>
+                <p class="ctxDesc">Shared launch narrative + shared analytics, with region‑specific execution.</p>
+                <ul class="constraintList" id="constraints-baseline"></ul>
+
+                <div class="regionGrid" id="regions-baseline"></div>
+              </div>
+
+              <!-- Arrow / morphism area -->
+              <div class="arrowBox" aria-hidden="true">
+                <svg class="arrowSvg" viewBox="0 0 60 290" role="img" aria-label="Base morphism arrow">
+                  <defs>
+                    <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+                      <path d="M0,0 L8,3 L0,6 Z" fill="rgba(118,183,255,0.9)"></path>
+                    </marker>
+                    <marker id="arrowHead2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+                      <path d="M0,0 L8,3 L0,6 Z" fill="rgba(233,238,252,0.25)"></path>
+                    </marker>
+                  </defs>
+
+                  <!-- Active arrow (privacy -> baseline) -->
+                  <line id="arrowActive" x1="30" y1="230" x2="30" y2="58" stroke-width="2" stroke="rgba(118,183,255,0.9)" marker-end="url(#arrowHead)" opacity="0.0"></line>
+                  <text id="arrowActiveLabel" x="30" y="38" text-anchor="middle" class="arrowLabel" opacity="0.0">u : C₁ → C₀</text>
+                  <text id="arrowActiveLabel2" x="30" y="52" text-anchor="middle" class="arrowLabel" opacity="0.0">(forget privacy)</text>
+
+                  <!-- Inactive hint arrow (baseline -> privacy) -->
+                  <line id="arrowInactive" x1="30" y1="60" x2="30" y2="232" stroke-width="2" stroke="rgba(233,238,252,0.25)" marker-end="url(#arrowHead2)" opacity="1"></line>
+                  <text id="arrowInactiveLabel" x="30" y="260" text-anchor="middle" class="arrowLabel">“add privacy”</text>
+                </svg>
+              </div>
+
+              <!-- Privacy context (hidden until update) -->
+              <div class="context hidden" id="ctx-privacy" data-context="privacy">
+                <div class="ctxTitle">
+                  <h3>Base object C₁: Global strategy (+ privacy constraint)</h3>
+                  <span class="tag">B object</span>
+                </div>
+                <p class="ctxDesc">A stricter data posture becomes global to keep cross‑region analytics + brand risk consistent.</p>
+                <ul class="constraintList" id="constraints-privacy"></ul>
+
+                <div class="regionGrid" id="regions-privacy"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DETAILS PANEL -->
+        <aside class="panel" id="detailPanel">
+          <div class="panelHeader">
+            <h2>Selected plan</h2>
+            <span class="tag" id="tagSelection">none selected</span>
+          </div>
+          <div class="panelBody" id="detailBody">
+            <div class="detailsTitle">
+              <h3>Click a region card to inspect its local plan</h3>
+              <span class="small">You can click Baseline or Privacy column cards.</span>
+            </div>
+            <p class="hint" style="margin-top:0">
+              The right panel shows the object in the fibre (a regional plan) sitting over the selected base context.
+              When you trigger the Asia update, the prototype constructs a new base object <code>C₁</code> and a base morphism <code>u : C₁ → C₀</code>, then computes pullbacks <code>u*P</code> for each region.
+            </p>
+
+            <div class="audit">
+              <h4>Audit log</h4>
+              <ul class="auditList" id="auditList"></ul>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <p class="foot">
+        Prototype note: the “math” here is lightweight — a deliberate, readable stand‑in for an actual category‑theory engine.
+        The point is to pressure‑test the <em>workflow shape</em>: explicit base contexts, explicit pullback rules, and an audit trail of cascaded impacts.
+      </p>
+
+    </div>
+  </main>
+
+  <!-- MODALS -->
+  <div class="modalOverlay" id="modalPrompt" role="dialog" aria-modal="true" aria-labelledby="modalPromptTitle">
+    <div class="modal">
+      <div class="modalHeader">
+        <h3 id="modalPromptTitle">Explainer — prompt (verbatim)</h3>
+        <button class="closeX" data-close>Close</button>
+      </div>
+      <div class="modalBody">
+        <pre id="promptText"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="modalOverlay" id="modalToy" role="dialog" aria-modal="true" aria-labelledby="modalToyTitle">
+    <div class="modal">
+      <div class="modalHeader">
+        <h3 id="modalToyTitle">Explainer — toy example (verbatim)</h3>
+        <button class="closeX" data-close>Close</button>
+      </div>
+      <div class="modalBody">
+        <pre id="toyText"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="modalOverlay" id="modalFibration" role="dialog" aria-modal="true" aria-labelledby="modalFibrationTitle">
+    <div class="modal">
+      <div class="modalHeader">
+        <h3 id="modalFibrationTitle">Explainer — mapping this prototype to a Grothendieck fibration</h3>
+        <button class="closeX" data-close>Close</button>
+      </div>
+      <div class="modalBody">
+        <p>
+          The core mathematical object is a functor <code>p : E → B</code>.
+          A Grothendieck fibration is one where base morphisms can be <em>lifted</em> in a particular universal way.
+          In project‑speak: “when the global constraint context changes, there is a principled way to update each local plan without losing alignment”.
+        </p>
+
+        <p><strong>How the pieces map here</strong></p>
+        <ul>
+          <li>
+            <strong>Base category <code>B</code></strong> = “global constraint contexts”.
+            In this page, <code>C₀</code> (baseline) and <code>C₁</code> (baseline + privacy) are base objects.
+          </li>
+          <li>
+            <strong>Arrows in <code>B</code></strong> = “forgetful/refinement links” between contexts.
+            We draw <code>u : C₁ → C₀</code> as “forget the extra privacy constraint”.
+            (Triggering the update is conceptually moving from <code>C₀</code> to a new stricter context <code>C₁</code> — the arrow is drawn in the fibration‑friendly direction.)
+          </li>
+          <li>
+            <strong>Total category <code>E</code></strong> = “regional plans, typed by context”.
+            An object of <code>E</code> is something like “Europe plan under <code>C₀</code>” or “Europe plan under <code>C₁</code>”.
+            The projection <code>p</code> just forgets the plan details and remembers the context.
+          </li>
+          <li>
+            <strong>Cartesian lifting</strong> (informally) = “the least‑surprising, policy‑consistent update”.
+            Given a plan <code>P</code> over <code>C₀</code> and a base arrow <code>u : C₁ → C₀</code>, the fibration property gives a plan <code>u*P</code> over <code>C₁</code> and an arrow <code>u*P → P</code> lying over <code>u</code>.
+            In the UI, that’s exactly what happens when we compute the privacy‑adjusted tasks and mark what must be reviewed.
+          </li>
+          <li>
+            <strong>Cleavage</strong> = “your propagation policy”.
+            A real project typically has multiple acceptable ways to adapt.
+            Choosing a cleavage means specifying a consistent rule for selecting the lift.
+            The drop‑down (“Minimal / Strict / Pivot”) is a toy cleavage.
+          </li>
+        </ul>
+
+        <p><strong>Why this is useful</strong></p>
+        <ul>
+          <li>
+            It separates <em>what changed globally</em> (base context) from <em>how each area adapts</em> (fibre).
+          </li>
+          <li>
+            It makes propagation rules explicit and auditable.
+          </li>
+          <li>
+            It supports “variant plans”: different cleavages = different but structured update cascades.
+          </li>
+        </ul>
+
+        <p class="foot">
+          If you later add sheaf‑style compatibility checks (gluing local sections into a global one), you can detect when no consistent pullback exists — i.e., when a change causes a genuine contradiction.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modalOverlay" id="modalHowTo" role="dialog" aria-modal="true" aria-labelledby="modalHowToTitle">
+    <div class="modal">
+      <div class="modalHeader">
+        <h3 id="modalHowToTitle">Explainer — how to read and use the prototype</h3>
+        <button class="closeX" data-close>Close</button>
+      </div>
+      <div class="modalBody">
+        <ol>
+          <li>
+            Start in <strong>baseline</strong> (<code>C₀</code>). Click a region card to see its tasks.
+          </li>
+          <li>
+            Click <strong>“Trigger: Asia consumer‑data regulation change”</strong>.
+            The prototype:
+            <ul>
+              <li>creates a stricter global context <code>C₁</code>,</li>
+              <li>draws the base arrow <code>u : C₁ → C₀</code>,</li>
+              <li>computes the pullback plans in each region (Asia/Europe/N. America) under <code>C₁</code>,</li>
+              <li>records an audit trail.</li>
+            </ul>
+          </li>
+          <li>
+            Click a region card under <code>C₁</code> to see what changed.
+            Tasks are marked as <strong>NEW</strong> or <strong>REVIEW</strong> with a reason.
+          </li>
+          <li>
+            Switch the <strong>policy</strong> (cleavage) and re‑trigger.
+            You should see a different — but still coherent — cascade.
+          </li>
+        </ol>
+
+        <p>
+          The most important thing to notice is that propagation is not “magic”.
+          It is a <em>function you design</em> (the cleavage), driven by an explicit change to the base context.
+          That design is where the project team’s governance lives.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modalOverlay" id="modalVerdict" role="dialog" aria-modal="true" aria-labelledby="modalVerdictTitle">
+    <div class="modal">
+      <div class="modalHeader">
+        <h3 id="modalVerdictTitle">Explainer — does this “actually work” and could it be useful?</h3>
+        <button class="closeX" data-close>Close</button>
+      </div>
+      <div class="modalBody">
+        <p>
+          For the toy campaign: yes — it “works” in the sense that we can formalise a change as a base‑context refinement and then systematically compute a region‑by‑region adaptation with an audit trail.
+          That already solves a real pain point: <em>impact analysis and disciplined change propagation</em>.
+        </p>
+
+        <p><strong>Where this is genuinely useful</strong></p>
+        <ul>
+          <li>
+            <strong>Propagation you can justify</strong>: “Europe task X was flagged because it depends on cross‑region analytics, which is governed by the global privacy context”.
+          </li>
+          <li>
+            <strong>Traceability</strong>: each change becomes a base morphism plus a list of lifted changes in fibres.
+          </li>
+          <li>
+            <strong>Variant planning</strong>: different cleavages/policies represent alternative but consistent update cascades.
+          </li>
+        </ul>
+
+        <p><strong>Where the model can break (and what you’d do)</strong></p>
+        <ul>
+          <li>
+            <strong>Non‑monotone change</strong>: if a “refinement” sometimes removes constraints, or constraints trade off (budget vs privacy), the base is no longer a simple poset.
+            <em>Fix:</em> model base as a richer category of states and transitions.
+          </li>
+          <li>
+            <strong>Multiple non‑equivalent lifts</strong>: often there are several adaptation strategies (not just cosmetic differences).
+            <em>Fix:</em> represent the option set explicitly, and treat “choosing” as part of governance/optimisation.
+          </li>
+          <li>
+            <strong>No feasible lift</strong>: some changes cause contradictions.
+            <em>Fix:</em> add a sheaf‑style consistency check (or constraint solver) that reports an obstruction instead of a plan.
+          </li>
+        </ul>
+
+        <p class="foot">
+          In short: the fibration idea is promising for “change propagation with guarantees”, but only after you specify the base‑state model and the lift policy precisely.
+          This prototype is meant to make those design decisions visible.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // -----------------------------
+    // Verbatim texts (from the user)
+    // -----------------------------
+    const VERBATIM_PROMPT =
+`ibration-based Milestone Linking
+Structure milestones as fibered objects in a category of evolving constraints, so each milestone trivially “lifts” or “restricts” along a morphism of resource states. By designing the entire project plan in a fibration framework, changes at one node can be systematically reflected upward or downward without losing the global structure.
+i.e. Viewing milestones and constraints within a category, a fibration structure ensures that local refinements (e.g., sub-milestone updates) consistently “lift” or “pull back” through the overarching project plan. When resources or dependencies shift, a fibration-based model automatically propagates these changes across higher or lower levels of abstraction without orphaning tasks in the organizational chart. This yields a smoother global coherence, minimizing “transition friction” in large programs, especially those involving multiple sub-projects or specialized departmental silos. The key is to formalize the project plan as a hierarchical functor, so that iterative modifications at one tier systematically cascade in a controlled, logically consistent manner.`;
+
+    const VERBATIM_TOY =
+`Toy example: Consider a global marketing campaign with region-specific sub-milestones (launch events in Europe, Asia, and North America) that collectively form a “bundle” in the categorical sense. By representing each local plan as a fibration over a “global strategy” object, updates in one region (e.g., Asia’s new consumer data regulations) automatically propagate upward and across to other regions, ensuring that the shared milestones (like global brand consistency) remain consistent. When the Asia plan’s constraints shift, the fibration structure dictates how dependent tasks in Europe or North America reflect those changes without losing local nuance. This not only maintains coherence but also provides an auditable map of how each local event connects to—and is shaped by—the overarching campaign.`;
+
+    document.getElementById('promptText').textContent = VERBATIM_PROMPT;
+    document.getElementById('toyText').textContent = VERBATIM_TOY;
+
+    // -----------------------------
+    // Prototype data model
+    // -----------------------------
+
+    const BASE = {
+      baseline: {
+        id: 'baseline',
+        label: 'C₀',
+        name: 'Global strategy (baseline)',
+        description: 'Shared launch narrative + shared analytics, with region-specific execution.',
+        constraints: [
+          'One global brand narrative + design system (must stay consistent).',
+          'Cross-region analytics dashboard (aggregates regional data).',
+          'Global launch window is fixed (regional launches must fit).' 
+        ]
+      },
+      privacy: {
+        id: 'privacy',
+        label: 'C₁',
+        name: 'Global strategy (+ privacy constraint)',
+        description: 'A stricter consumer-data posture becomes global to keep analytics + brand risk consistent.',
+        constraints: [
+          'Consent required before collecting personal data for marketing.',
+          'Data minimisation + retention limits are enforced.',
+          'Cross-border transfers must be reviewed (DPAs / vendor terms).',
+          'Copy and UX around consent must remain brand-consistent globally.'
+        ]
+      }
+    };
+
+    // Baseline regional plans (fibre objects over C0)
+    const REGION_BASE_PLANS = {
+      asia: {
+        id: 'asia',
+        name: 'Asia',
+        localConstraints: [
+          'Multiple languages; localisation must be approved.',
+          'Local vendors for adtech and event operations.'
+        ],
+        tasks: [
+          { id: 'a1', milestone: 'Research & targeting', name: 'Market research (panels + surveys)', depends: [], tags: ['data'] },
+          { id: 'a2', milestone: 'Content & brand', name: 'Localisation (copy + creative)', depends: ['a1'], tags: ['content'] },
+          { id: 'a3', milestone: 'Execution', name: 'Digital campaign setup (audiences + pixels)', depends: ['a2'], tags: ['data','adtech'] },
+          { id: 'a4', milestone: 'Execution', name: 'Launch event planning', depends: ['a2'], tags: ['event'] },
+          { id: 'a5', milestone: 'Measurement', name: 'Analytics instrumentation (dashboards)', depends: ['a3'], tags: ['data'] }
+        ]
+      },
+      europe: {
+        id: 'europe',
+        name: 'Europe',
+        localConstraints: [
+          'GDPR is already a baseline assumption.',
+          'Many markets: translations + approvals across countries.'
+        ],
+        tasks: [
+          { id: 'e1', milestone: 'Compliance', name: 'Regulatory review (privacy + claims)', depends: [], tags: ['legal','data'] },
+          { id: 'e2', milestone: 'Content & brand', name: 'Brand alignment with global narrative', depends: [], tags: ['content'] },
+          { id: 'e3', milestone: 'Content & brand', name: 'Localisation (country variants)', depends: ['e2'], tags: ['content'] },
+          { id: 'e4', milestone: 'Execution', name: 'Digital campaign setup (audiences + pixels)', depends: ['e3','e1'], tags: ['data','adtech'] },
+          { id: 'e5', milestone: 'Execution', name: 'Launch event planning', depends: ['e3','e1'], tags: ['event'] },
+          { id: 'e6', milestone: 'Measurement', name: 'Analytics instrumentation (dashboards)', depends: ['e4'], tags: ['data'] }
+        ]
+      },
+      north: {
+        id: 'north',
+        name: 'North America',
+        localConstraints: [
+          'FTC guidelines for advertising claims.',
+          'Heavy digital spend; ad platforms change frequently.'
+        ],
+        tasks: [
+          { id: 'n1', milestone: 'Compliance', name: 'Digital compliance audit (tracking + claims)', depends: [], tags: ['legal','data'] },
+          { id: 'n2', milestone: 'Content & brand', name: 'Content creation (ads + landing pages)', depends: [], tags: ['content'] },
+          { id: 'n3', milestone: 'Execution', name: 'Media buying plan (channels + budget)', depends: ['n2'], tags: ['adtech'] },
+          { id: 'n4', milestone: 'Execution', name: 'Digital campaign setup (pixels + audiences)', depends: ['n1','n3'], tags: ['data','adtech'] },
+          { id: 'n5', milestone: 'Execution', name: 'Launch event planning', depends: ['n2'], tags: ['event'] },
+          { id: 'n6', milestone: 'Measurement', name: 'Analytics instrumentation (dashboards)', depends: ['n4'], tags: ['data'] }
+        ]
+      }
+    };
+
+    // Policy-dependent pullback rules u* : Fib(C0) -> Fib(C1)
+    // Each policy returns { taskEdits: {id -> {status, reason}}, addedTasks: [...] }
+    function privacyPullback(regionId, policy) {
+      // Helper: common edits
+      const edits = {};
+      const added = [];
+
+      const mark = (taskId, status, reason) => {
+        edits[taskId] = { status, reason };
+      };
+
+      // Common for all: anything tagged 'data' should be reviewed under privacy
+      const baseTasks = REGION_BASE_PLANS[regionId].tasks;
+      baseTasks.forEach(t => {
+        if (t.tags.includes('data')) {
+          mark(t.id, 'review', 'Touches customer data; must satisfy new consent/minimisation rules.');
+        }
+      });
+
+      // Region-specific
+      if (regionId === 'asia') {
+        // Asia triggers the change; add immediate compliance tasks
+        added.push(
+          { id: 'a_priv_1', milestone: 'Compliance', name: 'Privacy gap assessment (new regulation)', depends: [], tags: ['legal'], status: 'new', reason: 'New Asia regulation must be interpreted + mapped to campaign practices.' },
+          { id: 'a_priv_2', milestone: 'Compliance', name: 'Update consent UX + privacy copy (brand-consistent)', depends: ['a_priv_1'], tags: ['legal','content'], status: 'new', reason: 'Consent flows must be updated and remain globally on-brand.' },
+          { id: 'a_priv_3', milestone: 'Compliance', name: 'Vendor terms & DPAs for adtech providers', depends: ['a_priv_1'], tags: ['legal'], status: 'new', reason: 'Cross-border/data-processing terms need review under stricter regime.' }
+        );
+        if (policy === 'strict') {
+          added.push(
+            { id: 'a_priv_4', milestone: 'Measurement', name: 'Data retention & deletion test (pre-launch)', depends: ['a_priv_2','a5'], tags: ['data'], status: 'new', reason: 'Strict policy: test retention/deletion end-to-end before launch.' }
+          );
+        }
+        if (policy === 'pivot') {
+          // Pivot: reduce tracking; block some tasks and add alternatives
+          mark('a3', 'review', 'Pivot policy: consider contextual targeting; reduce tracking pixels/audiences.');
+          mark('a5', 'review', 'Pivot policy: dashboards may move to aggregated or on-device metrics.');
+          added.push(
+            { id: 'a_priv_p1', milestone: 'Execution', name: 'Switch to contextual targeting packages', depends: ['a2'], tags: ['adtech'], status: 'new', reason: 'Pivot policy reduces reliance on personal data.' },
+            { id: 'a_priv_p2', milestone: 'Measurement', name: 'Define privacy-preserving KPIs (aggregated)', depends: ['a_priv_p1'], tags: ['data'], status: 'new', reason: 'Replace user-level tracking with aggregated measurement.' }
+          );
+        }
+      }
+
+      if (regionId === 'europe') {
+        // Europe already has GDPR: fewer NEW tasks, more alignment checks
+        added.push(
+          { id: 'e_priv_1', milestone: 'Compliance', name: 'Align consent language with new global baseline', depends: ['e1','e2'], tags: ['legal','content'], status: 'new', reason: 'Maintain brand consistency across regions for consent UX/copy.' },
+          { id: 'e_priv_2', milestone: 'Measurement', name: 'Review cross-border transfer to global dashboard', depends: ['e6'], tags: ['data'], status: 'new', reason: 'Global analytics now governed by stricter transfer rules.' }
+        );
+        if (policy === 'strict') {
+          added.push(
+            { id: 'e_priv_3', milestone: 'Compliance', name: 'Vendor DPIA template update for shared adtech', depends: ['e_priv_1'], tags: ['legal'], status: 'new', reason: 'Strict policy: ensure shared vendors meet the highest common standard.' }
+          );
+        }
+        if (policy === 'pivot') {
+          mark('e4', 'review', 'Pivot policy: shift away from audience-based targeting where feasible.');
+          added.push(
+            { id: 'e_priv_p1', milestone: 'Execution', name: 'Update media plan to privacy-first channels', depends: ['e2'], tags: ['adtech'], status: 'new', reason: 'Pivot policy reduces data reliance while keeping brand messaging.' }
+          );
+        }
+      }
+
+      if (regionId === 'north') {
+        added.push(
+          { id: 'n_priv_1', milestone: 'Compliance', name: 'Update tracking opt-out + consent signals', depends: ['n1'], tags: ['legal','data'], status: 'new', reason: 'Global privacy baseline requires consistent consent signalling.' },
+          { id: 'n_priv_2', milestone: 'Measurement', name: 'Update analytics retention settings (global standard)', depends: ['n6'], tags: ['data'], status: 'new', reason: 'Retention limits must align for cross-region reporting.' }
+        );
+        if (policy === 'strict') {
+          added.push(
+            { id: 'n_priv_3', milestone: 'Compliance', name: 'Run pre-launch privacy compliance drill (tabletop)', depends: ['n_priv_1'], tags: ['legal'], status: 'new', reason: 'Strict policy: rehearsed incident response + consent audit.' }
+          );
+        }
+        if (policy === 'pivot') {
+          mark('n4', 'review', 'Pivot policy: reduce pixel dependence; use contextual + first-party where consented.');
+          added.push(
+            { id: 'n_priv_p1', milestone: 'Execution', name: 'Replace lookalike audiences with contextual buys', depends: ['n3'], tags: ['adtech'], status: 'new', reason: 'Pivot policy reduces personal data dependency.' }
+          );
+        }
+      }
+
+      // Minimal policy: keep changes small
+      if (policy === 'minimal') {
+        // Nothing extra beyond baseline review and a few new tasks.
+      }
+
+      return { taskEdits: edits, addedTasks: added };
+    }
+
+    // Build a plan object for (context, region)
+    function buildPlan(contextId, regionId, policy) {
+      const base = REGION_BASE_PLANS[regionId];
+      const plan = {
+        contextId,
+        regionId,
+        regionName: base.name,
+        localConstraints: [...base.localConstraints],
+        globalConstraints: [...BASE[contextId].constraints],
+        tasks: base.tasks.map(t => ({
+          ...t,
+          status: 'ok',
+          reason: ''
+        }))
+      };
+
+      if (contextId === 'privacy') {
+        const { taskEdits, addedTasks } = privacyPullback(regionId, policy);
+
+        plan.tasks = plan.tasks.map(t => {
+          const edit = taskEdits[t.id];
+          if (!edit) return t;
+          return { ...t, status: edit.status, reason: edit.reason };
+        });
+
+        // Insert added tasks
+        plan.tasks = plan.tasks.concat(addedTasks);
+
+        // Ensure added tasks dependencies exist; if dependency is missing, mark blocked
+        const ids = new Set(plan.tasks.map(t => t.id));
+        plan.tasks = plan.tasks.map(t => {
+          const missing = (t.depends || []).filter(d => !ids.has(d));
+          if (missing.length === 0) return t;
+          return {
+            ...t,
+            status: 'blocked',
+            reason: `Depends on missing task(s): ${missing.join(', ')}. (Infeasible lift without extra modelling.)`
+          };
+        });
+      }
+
+      return plan;
+    }
+
+    function summarisePlan(plan) {
+      const added = plan.tasks.filter(t => t.status === 'new').length;
+      const review = plan.tasks.filter(t => t.status === 'review').length;
+      const blocked = plan.tasks.filter(t => t.status === 'blocked').length;
+      return { total: plan.tasks.length, added, review, blocked };
+    }
+
+    // -----------------------------
+    // UI state
+    // -----------------------------
+
+    const state = {
+      hasPrivacyContext: false,
+      policy: 'minimal',
+      selected: null, // {contextId, regionId}
+      audit: []
+    };
+
+    const el = {
+      policySelect: document.getElementById('policySelect'),
+      btnTrigger: document.getElementById('btnTrigger'),
+      btnReset: document.getElementById('btnReset'),
+      tagState: document.getElementById('tagState'),
+      ctxPrivacy: document.getElementById('ctx-privacy'),
+      constraintsBaseline: document.getElementById('constraints-baseline'),
+      constraintsPrivacy: document.getElementById('constraints-privacy'),
+      regionsBaseline: document.getElementById('regions-baseline'),
+      regionsPrivacy: document.getElementById('regions-privacy'),
+      detailBody: document.getElementById('detailBody'),
+      tagSelection: document.getElementById('tagSelection'),
+      auditList: document.getElementById('auditList'),
+      arrowActive: document.getElementById('arrowActive'),
+      arrowActiveLabel: document.getElementById('arrowActiveLabel'),
+      arrowActiveLabel2: document.getElementById('arrowActiveLabel2')
+    };
+
+    // -----------------------------
+    // Rendering
+    // -----------------------------
+
+    function renderConstraints() {
+      el.constraintsBaseline.innerHTML = BASE.baseline.constraints.map(c => `<li>${escapeHtml(c)}</li>`).join('');
+      el.constraintsPrivacy.innerHTML = BASE.privacy.constraints.map(c => `<li>${escapeHtml(c)}</li>`).join('');
+    }
+
+    function renderContexts() {
+      // Baseline region cards
+      el.regionsBaseline.innerHTML = '';
+      ['asia','europe','north'].forEach(regionId => {
+        const plan = buildPlan('baseline', regionId, state.policy);
+        const summary = summarisePlan(plan);
+        el.regionsBaseline.appendChild(regionCard(plan, summary));
+      });
+
+      // Privacy region cards (if enabled)
+      el.regionsPrivacy.innerHTML = '';
+      if (state.hasPrivacyContext) {
+        ['asia','europe','north'].forEach(regionId => {
+          const plan = buildPlan('privacy', regionId, state.policy);
+          const summary = summarisePlan(plan);
+          el.regionsPrivacy.appendChild(regionCard(plan, summary));
+        });
+      }
+
+      // Context visibility
+      el.ctxPrivacy.classList.toggle('hidden', !state.hasPrivacyContext);
+      el.tagState.textContent = state.hasPrivacyContext ? 'state: C₁ available' : 'state: baseline';
+
+      // Arrow visibility
+      const activeOpacity = state.hasPrivacyContext ? 1.0 : 0.0;
+      el.arrowActive.style.opacity = activeOpacity;
+      el.arrowActiveLabel.style.opacity = activeOpacity;
+      el.arrowActiveLabel2.style.opacity = activeOpacity;
+    }
+
+    function regionCard(plan, summary) {
+      const card = document.createElement('div');
+      card.className = 'regionCard';
+      card.dataset.context = plan.contextId;
+      card.dataset.region = plan.regionId;
+
+      const pills = [];
+      pills.push(`<span class="pill good"><span class="dot"></span>${summary.total} tasks</span>`);
+      if (summary.added > 0) pills.push(`<span class="pill good"><span class="dot"></span>+${summary.added} new</span>`);
+      if (summary.review > 0) pills.push(`<span class="pill warn"><span class="dot"></span>${summary.review} review</span>`);
+      if (summary.blocked > 0) pills.push(`<span class="pill bad"><span class="dot"></span>${summary.blocked} blocked</span>`);
+
+      card.innerHTML = `
+        <div class="regionTop">
+          <div class="regionName">${escapeHtml(plan.regionName)}</div>
+          <div class="regionMeta">${pills.join('')}</div>
+        </div>
+        <div style="margin-top:6px; color: var(--muted); font-size:12px;">
+          Fibre object over <code>${plan.contextId === 'baseline' ? 'C₀' : 'C₁'}</code>
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        state.selected = { contextId: plan.contextId, regionId: plan.regionId };
+        renderSelection();
+        highlightActiveCard();
+      });
+
+      return card;
+    }
+
+    function highlightActiveCard() {
+      document.querySelectorAll('.regionCard').forEach(c => c.classList.remove('active'));
+      if (!state.selected) return;
+      const sel = document.querySelector(`.regionCard[data-context="${state.selected.contextId}"][data-region="${state.selected.regionId}"]`);
+      if (sel) sel.classList.add('active');
+    }
+
+    function renderSelection() {
+      if (!state.selected) return;
+
+      const { contextId, regionId } = state.selected;
+      const plan = buildPlan(contextId, regionId, state.policy);
+      const ctx = BASE[contextId];
+
+      el.tagSelection.textContent = `selected: ${plan.regionName} @ ${ctx.label}`;
+
+      // Group tasks by milestone
+      const groups = {};
+      plan.tasks.forEach(t => {
+        groups[t.milestone] = groups[t.milestone] || [];
+        groups[t.milestone].push(t);
+      });
+
+      const groupHtml = Object.keys(groups).sort().map(milestone => {
+        const tasks = groups[milestone];
+        const items = tasks.map(t => taskItemHtml(t, plan)).join('');
+        return `
+          <div class="taskGroup">
+            <h4>${escapeHtml(milestone)}</h4>
+            <ul class="taskList">${items}</ul>
+          </div>
+        `;
+      }).join('');
+
+      const localConstraints = plan.localConstraints.map(c => `<li>${escapeHtml(c)}</li>`).join('');
+      const globalConstraints = plan.globalConstraints.map(c => `<li>${escapeHtml(c)}</li>`).join('');
+
+      const header = `
+        <div class="detailsTitle">
+          <h3>${escapeHtml(plan.regionName)} plan under ${escapeHtml(ctx.name)}</h3>
+          <span class="small">policy: <code>${escapeHtml(state.policy)}</code></span>
+        </div>
+        <div class="kv">
+          <div>Base object</div><div><code>${escapeHtml(ctx.label)}</code> (${escapeHtml(ctx.id)})</div>
+          <div>Fibre object</div><div><code>${escapeHtml(plan.regionId)}</code> plan in <code>Fib(${escapeHtml(ctx.label)})</code></div>
+          <div>Interpretation</div><div>${escapeHtml(shortInterpretation(contextId))}</div>
+        </div>
+        <div class="taskGroup" style="border-top:none; padding-top:0;">
+          <h4>Global constraints in this context</h4>
+          <ul class="constraintList">${globalConstraints}</ul>
+        </div>
+        <div class="taskGroup">
+          <h4>Local constraints (region-specific)</h4>
+          <ul class="constraintList">${localConstraints}</ul>
+        </div>
+      `;
+
+      const auditHtml = `
+        <div class="audit">
+          <h4>Audit log</h4>
+          <ul class="auditList" id="auditList">${state.audit.map(a => `<li class="auditItem">${a}</li>`).join('')}</ul>
+        </div>
+      `;
+
+      el.detailBody.innerHTML = header + groupHtml + auditHtml;
+
+      // Update audit list reference after re-render
+      el.auditList = document.getElementById('auditList');
+    }
+
+    function taskItemHtml(t, plan) {
+      const badge = t.status === 'new' ? '<span class="badge new">NEW</span>' :
+                    t.status === 'review' ? '<span class="badge review">REVIEW</span>' :
+                    t.status === 'blocked' ? '<span class="badge blocked">BLOCKED</span>' :
+                    '<span class="badge">OK</span>';
+
+      const deps = (t.depends && t.depends.length)
+        ? `Depends on: ${t.depends.map(d => `<code>${escapeHtml(d)}</code>`).join(', ')}`
+        : 'Depends on: —';
+
+      const reason = t.reason ? `<div class="taskMeta"><strong>Why:</strong> ${escapeHtml(t.reason)}</div>` : '';
+
+      return `
+        <li class="task">
+          <div class="taskTop">
+            <div class="taskName">${escapeHtml(t.name)}</div>
+            ${badge}
+          </div>
+          <div class="taskMeta">${deps}</div>
+          ${reason}
+        </li>
+      `;
+    }
+
+    function shortInterpretation(contextId) {
+      if (contextId === 'baseline') {
+        return 'No extra global privacy constraint beyond the baseline campaign assumptions.';
+      }
+      return 'Global privacy constraint is in force; data-touching tasks require review and extra compliance work.';
+    }
+
+    // -----------------------------
+    // Audit log helpers
+    // -----------------------------
+
+    function pushAudit(htmlLine) {
+      state.audit.unshift(htmlLine);
+      if (state.audit.length > 12) state.audit = state.audit.slice(0, 12);
+
+      // Update the list if it is currently mounted
+      if (el.auditList) {
+        el.auditList.innerHTML = state.audit.map(a => `<li class="auditItem">${a}</li>`).join('');
+      }
+    }
+
+    // -----------------------------
+    // Events
+    // -----------------------------
+
+    el.policySelect.addEventListener('change', (e) => {
+      state.policy = e.target.value;
+      render();
+    });
+
+    el.btnTrigger.addEventListener('click', () => {
+      state.hasPrivacyContext = true;
+
+      // Audit storyline
+      pushAudit('1) <strong>Local signal</strong>: Asia reports a new consumer‑data regulation affecting marketing data collection.');
+      pushAudit('2) <strong>Base refinement</strong>: introduce <code>C₁</code> = “baseline + privacy constraint”, with base arrow <code>u : C₁ → C₀</code> (“forget privacy”).');
+      pushAudit(`3) <strong>Cartesian lift policy</strong>: using cleavage <code>${escapeHtml(state.policy)}</code> to compute pullbacks <code>u*P</code> for each regional plan <code>P</code> in <code>Fib(C₀)</code>.`);
+      pushAudit('4) <strong>Propagation result</strong>: data‑touching tasks are flagged; compliance tasks are added to preserve global brand + analytics coherence.');
+
+      render();
+
+      // Auto-select Asia in privacy context after triggering
+      state.selected = { contextId: 'privacy', regionId: 'asia' };
+      renderSelection();
+      highlightActiveCard();
+    });
+
+    el.btnReset.addEventListener('click', () => {
+      state.hasPrivacyContext = false;
+      state.selected = null;
+      state.audit = [];
+      el.tagSelection.textContent = 'none selected';
+      el.detailBody.innerHTML = `
+        <div class="detailsTitle">
+          <h3>Click a region card to inspect its local plan</h3>
+          <span class="small">You can click Baseline or Privacy column cards.</span>
+        </div>
+        <p class="hint" style="margin-top:0">
+          The right panel shows the object in the fibre (a regional plan) sitting over the selected base context.
+          When you trigger the Asia update, the prototype constructs a new base object <code>C₁</code> and a base morphism <code>u : C₁ → C₀</code>, then computes pullbacks <code>u*P</code> for each region.
+        </p>
+
+        <div class="audit">
+          <h4>Audit log</h4>
+          <ul class="auditList" id="auditList"></ul>
+        </div>
+      `;
+      el.auditList = document.getElementById('auditList');
+      render();
+    });
+
+    // Modal wiring
+    document.querySelectorAll('[data-modal]').forEach(btn => {
+      btn.addEventListener('click', () => openModal(btn.dataset.modal));
+    });
+
+    document.querySelectorAll('[data-close]').forEach(btn => {
+      btn.addEventListener('click', () => closeAllModals());
+    });
+
+    document.querySelectorAll('.modalOverlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeAllModals();
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeAllModals();
+    });
+
+    function openModal(id) {
+      closeAllModals();
+      const el = document.getElementById(id);
+      if (el) el.classList.add('open');
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('.modalOverlay').forEach(m => m.classList.remove('open'));
+    }
+
+    // -----------------------------
+    // Utilities
+    // -----------------------------
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function render() {
+      renderConstraints();
+      renderContexts();
+      highlightActiveCard();
+      if (state.selected) renderSelection();
+
+      // Keep audit list synced in the right panel intro state
+      if (!state.selected && el.auditList) {
+        el.auditList.innerHTML = state.audit.map(a => `<li class="auditItem">${a}</li>`).join('');
+      }
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
