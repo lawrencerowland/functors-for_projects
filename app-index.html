@@ -94,7 +94,10 @@ function createCards(data){
         card.appendChild(img);
         const title=document.createElement('h3');
         const link=document.createElement('a');
-        link.href='apps/'+item.name+'/index.html';
+        const linkTarget=item.name.endsWith('.html')
+            ? 'apps/'+item.name
+            : 'apps/'+item.name+'/index.html';
+        link.href=linkTarget;
         link.textContent=item.name;
         title.appendChild(link);
         card.appendChild(title);
