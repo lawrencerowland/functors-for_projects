@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grounded theory and a finite colimit</title>
+<link rel="stylesheet" href="../../common.css">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","GTM-WXM2VXQH");</script>
+<!-- End Google Tag Manager -->
+<style>
+:root{color-scheme:light;font-family:system-ui,-apple-system,sans-serif;color:#182337;background:#f5f7fb;line-height:1.55}body{margin:0}main,nav{max-width:1000px;margin:auto;padding:1.2rem}h1{font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.15}h2{font-size:1.25rem}a{color:#184d91}.card{background:white;border:1px solid #ccd5df;border-radius:14px;padding:1rem;margin:1rem 0}.lede{max-width:76ch}.muted{color:#45546a}.controls{display:flex;gap:.6rem;flex-wrap:wrap;align-items:end}button,select,input{font:inherit;border:1px solid #8293a9;border-radius:7px;padding:.55rem;min-height:42px}button{cursor:pointer;background:#e8eef7;color:#142d51}button.primary{background:#224e83;color:#fff}button:disabled{opacity:.5;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #d97706;outline-offset:3px}label{display:flex;flex-direction:column;gap:.2rem}#coding-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;margin:1rem 0}#coding-fields input{width:100%;box-sizing:border-box}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{padding:.5rem;border-bottom:1px solid #dce2ea;text-align:left}.result{padding:.65rem;border-left:4px solid #7290b4;margin-top:.8rem;overflow-wrap:anywhere}.pass{border-color:#237a4e}.fail{border-color:#ac422c}#vis-wrapper{overflow:auto}svg{display:block;width:100%;min-width:320px}#status{min-height:1.7em}details summary{cursor:pointer;font-weight:600}code{font-size:.95em}@media(max-width:520px){main,nav{padding:.7rem}.controls label{flex:1;min-width:95px}.controls button{flex-grow:1}}
+</style></head><body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WXM2VXQH" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<nav><a href="../../app-index.html">Functors for Projects · app index</a> · <a href="../../index.html">Site home</a></nav>
+<main id="app"><h1>Grounded theory and a finite colimit</h1>
+<p class="lede">Try a precise, limited analogy for coding incidents. You decide which incidents must receive the <strong>same code</strong>; the model computes exactly the identifications those decisions imply. It does not infer meaning or discover a core theory.</p>
+<p class="muted">Illustrative incidents only. Changes stay in this page until reset or reload; nothing is saved or uploaded by these controls.</p>
+<section class="card" aria-labelledby="build-title"><h2 id="build-title">1. Make your identifications explicit</h2>
+<p>A link here means “use the same code”, not just “these incidents are related”. Equality is symmetric and transitive, even though the declared map names a source and a target.</p>
+<div class="controls"><button id="addIncident">Add incident</button><label>From<select id="from"></select></label><label>To<select id="to"></select></label><button id="addMorphism" class="primary">Add identification</button><button id="undo">Undo last identification</button><button id="reset">Reset</button></div>
+<p id="status" role="status" aria-live="polite"></p><p id="edge-list"></p>
+<div id="vis-wrapper"><svg id="diagram" viewBox="0 0 900 230" role="img" aria-labelledby="diagram-title diagram-description"></svg></div>
+<div class="table-wrap"><table><caption id="class-count"></caption><thead><tr><th>Quotient class</th><th>Incidents mapped to it</th></tr></thead><tbody id="classes"></tbody></table></div>
+</section>
+<section class="card" aria-labelledby="read-title"><h2 id="read-title">2. Read the coding analogy</h2><div id="readalong" aria-live="polite"></div><button id="stepPhase">Next stage</button></section>
+<section class="card" aria-labelledby="test-title"><h2 id="test-title">3. Test a proposed coding</h2><p>Give each incident a non-empty code. A compatible assignment must be constant on every quotient class. Different classes may share a code: that adds a further distinction you choose to collapse.</p>
+<div id="coding-fields"></div><div class="controls"><button id="test-coding" class="primary">Test coding</button><button id="use-classes">Use quotient class labels</button></div><div id="factor-result" class="result" role="status" aria-live="polite">Enter codes, then test them.</div></section>
+<details class="card"><summary>What is actually computed?</summary>
+<p>The indexing category is the free category on the chosen directed graph. Each incident is represented by a singleton set, and each arrow by its unique singleton-to-singleton map. The colimit in <strong>Set</strong> is the disjoint union of those singletons, quotiented by the equivalence relation generated by the arrows. Its elements are the connected components of the identification graph, including isolated incidents.</p>
+<p>The canonical map <code>q</code> sends each incident to its class. A candidate map <code>f</code> into a set of code labels factors as <code>f = h ∘ q</code> exactly when its labels agree on every generating arrow. In that case <code>h</code> is unique because every quotient class has an incident representative. The checker shows the unique factor map for the labels you entered; it is an example of the general property, not an empirical test of a theory.</p>
+<p>A memo, comparison or causal relation is not automatically an equality or a set map. Choosing identifications is an analyst's modelling decision. There is no automatic single Core node, no claim of theoretical saturation, and no guarantee for unseen incidents. An initial algebra requires a separately specified endofunctor and algebra structure; neither is defined here, so this page makes no initial-algebra claim.</p>
+<p>Mathematical construction: <a href="https://stacks.math.columbia.edu/tag/002U">The Stacks Project, limits and colimits in the category of sets</a>. The grounded-theory connection is an illustrative interpretation, not a theorem about qualitative research.</p>
+</details>
+</main>
+<script id="quotient-model">
+/* Pure finite-set construction, shared with the independent law checks. */
+globalThis.CodingQuotient = (() => {
+ function quotient(ids, edges) {
+  if (!Array.isArray(ids) || new Set(ids).size !== ids.length) throw new Error('Incident IDs must be unique.');
+  const parent = new Map(ids.map(id => [id,id]));
+  const find = id => { if (!parent.has(id)) throw new Error('Unknown incident.'); let r=id;while(parent.get(r)!==r)r=parent.get(r);return r; };
+  for(const [a,b] of edges){const ra=find(a),rb=find(b);if(ra!==rb)parent.set(rb,ra);}
+  const groups=[];const roots=new Map();
+  for(const id of ids){const root=find(id);if(!roots.has(root)){roots.set(root,groups.length);groups.push([]);}groups[roots.get(root)].push(id);}
+  return groups;
+ }
+ function factor(ids,edges,labels){
+  const groups=quotient(ids,edges);
+  if(labels.length!==ids.length || labels.some(s=>typeof s!=='string'||!s.trim())) return {valid:false,message:'Enter one non-empty code for every incident.'};
+  const value=new Map(ids.map((id,i)=>[id,labels[i].trim()]));
+  for(const [a,b] of edges)if(value.get(a)!==value.get(b))return {valid:true,compatible:false,witness:[a,b],values:[value.get(a),value.get(b)]};
+  return {valid:true,compatible:true,mapping:groups.map((g,i)=>({classIndex:i,members:g,label:value.get(g[0])}))};
+ }
+ return {quotient,factor};
+})();
+</script>
+<script>
+(()=>{'use strict';const $=s=>document.querySelector(s);const NS='http://www.w3.org/2000/svg';let ids=[],edges=[],labels=new Map(),phase=0;
+const readings=[
+ ['Open coding','Record illustrative incidents. Their textual meaning is not analysed by this model. With no declared identifications, each incident remains its own quotient class.'],
+ ['Axial coding analogy','Compare incidents and choose any “same code” identifications. This equality-only toy is much narrower than the many relations and judgements used in qualitative coding. The colours come from your links, never random grouping.'],
+ ['Selective coding analogy','Inspect the quotient classes. A connected group contributes one class; disconnected groups remain separate. Selecting a core theme would require additional interpretation and evidence beyond this construction.'],
+ ['Review and new evidence','Try a candidate coding below, then add a new incident. A new isolated incident creates another class until you deliberately link it. Mathematical factorisation does not establish theoretical saturation.']
+];
+function say(s){$('#status').textContent=s;}
+function invalidated(){const r=$('#factor-result');r.className='result';r.textContent='Inputs changed. Test coding to check this assignment.';}
+function el(name,attrs,text){const e=document.createElementNS(NS,name);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;}
+function draw(){
+ const groups=CodingQuotient.quotient(ids,edges);const membership=new Map();groups.forEach((g,i)=>g.forEach(id=>membership.set(id,i)));
+ for(const name of ['from','to']){const s=$('#'+name),old=s.value;s.replaceChildren(...ids.map(id=>new Option('I'+id,String(id))));s.value=ids.includes(Number(old))?old:String(ids[name==='to'?1:0]??ids[0]);}
+ $('#addIncident').disabled=ids.length>=12;$('#addMorphism').disabled=ids.length<2;$('#undo').disabled=!edges.length;
+ $('#edge-list').textContent=edges.length?'Declared maps: '+edges.map(([a,b])=>'I'+a+' → I'+b).join('; '):'No identifications declared.';
+ $('#class-count').textContent=ids.length+' incidents → '+groups.length+' quotient classes';
+ const body=$('#classes');body.replaceChildren();groups.forEach((g,i)=>{const tr=document.createElement('tr');for(const text of ['C'+(i+1),g.map(x=>'I'+x).join(', ')]){const td=document.createElement('td');td.textContent=text;tr.appendChild(td);}body.appendChild(tr);});
+ const svg=$('#diagram');svg.replaceChildren(el('title',{id:'diagram-title'},'Incidents and their quotient classes'),el('desc',{id:'diagram-description'},'Each incident maps to the class listed in the table below. The links are chosen identifications.'));
+ const x=id=>40+(ids.indexOf(id)+.5)*820/Math.max(1,ids.length);const cx=i=>40+(i+.5)*820/Math.max(1,groups.length);svg.appendChild(el('text',{x:12,y:20},'Incidents'));
+ edges.forEach(([a,b],i)=>svg.appendChild(el('path',{d:`M${x(a)},65 Q${(x(a)+x(b))/2},${25-(i%3)*7} ${x(b)},65`,fill:'none',stroke:'#63758d','stroke-width':2})));
+ ids.forEach(id=>{const g=membership.get(id);svg.appendChild(el('line',{x1:x(id),y1:80,x2:cx(g),y2:165,stroke:'#9baec7','stroke-dasharray':'5 4'}));svg.appendChild(el('circle',{cx:x(id),cy:65,r:17,fill:`hsl(${g*67%360} 50% 85%)`,stroke:'#354c67'}));svg.appendChild(el('text',{x:x(id),y:70,'text-anchor':'middle'},'I'+id));});
+ groups.forEach((g,i)=>{svg.appendChild(el('circle',{cx:cx(i),cy:180,r:22,fill:`hsl(${i*67%360} 50% 85%)`,stroke:'#354c67'}));svg.appendChild(el('text',{x:cx(i),y:185,'text-anchor':'middle'},'C'+(i+1)));});
+ const fields=$('#coding-fields');fields.replaceChildren();ids.forEach(id=>{const l=document.createElement('label');l.textContent='Code for I'+id;const input=document.createElement('input');input.id='code-'+id;input.maxLength=40;input.value=labels.get(id)||'';input.addEventListener('input',()=>{labels.set(id,input.value);invalidated();});l.appendChild(input);fields.appendChild(l);});
+ const [title,text]=readings[phase];const strong=document.createElement('strong');strong.textContent=(phase+1)+'/4 · '+title;const p=document.createElement('p');p.textContent=text;$('#readalong').replaceChildren(strong,p);
+ $('#vis-wrapper').dataset.smoke='ok';window.__canvasStatus='ready';
+}
+function reset(){ids=[1,2,3,4];edges=[];labels=new Map(ids.map(i=>[i,'Code '+i]));phase=0;draw();invalidated();say('Reset to four separate incidents.');}
+$('#addIncident').addEventListener('click',()=>{if(ids.length>=12)return;const id=ids.length+1;ids.push(id);labels.set(id,'Code '+id);draw();invalidated();say('Added I'+id+' as a separate incident; no saturation is inferred.');});
+$('#addMorphism').addEventListener('click',()=>{const a=Number($('#from').value),b=Number($('#to').value);if(a===b){say('Choose two different incidents. An identity adds no identification.');return;}if(edges.some(([x,y])=>x===a&&y===b||x===b&&y===a)){say('That identification is already declared.');return;}edges.push([a,b]);draw();invalidated();say('Declared I'+a+' and I'+b+' must receive the same code.');});
+$('#undo').addEventListener('click',()=>{if(!edges.length)return;edges.pop();draw();invalidated();say('Removed the last declared identification; classes recomputed.');});
+$('#stepPhase').addEventListener('click',()=>{phase=(phase+1)%4;draw();});
+$('#reset').addEventListener('click',reset);
+function test(){const r=CodingQuotient.factor(ids,edges,ids.map(i=>labels.get(i)));const box=$('#factor-result');box.className='result '+(r.compatible?'pass':'fail');if(!r.valid){box.textContent=r.message;return;}if(!r.compatible){box.textContent='Cannot factor: I'+r.witness[0]+' → I'+r.witness[1]+' requires the same code, but “'+r.values[0]+'” and “'+r.values[1]+'” differ.';return;}box.textContent='Compatible. The unique factor map is '+r.mapping.map(x=>'C'+(x.classIndex+1)+' → '+x.label).join('; ')+'. This verifies only your declared identifications.';}
+$('#test-coding').addEventListener('click',test);$('#use-classes').addEventListener('click',()=>{CodingQuotient.quotient(ids,edges).forEach((g,i)=>g.forEach(id=>labels.set(id,'Class '+(i+1))));draw();test();});reset();
+})();
+</script></body></html>
