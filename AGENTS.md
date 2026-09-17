@@ -21,3 +21,7 @@ This repository contains a basic React/Vite setup that can host many small appli
 - Keep asset paths relative (avoid leading `/`) so the site works when published to GitHub Pages. In React apps pass `basename={import.meta.env.BASE_URL}` to `BrowserRouter`.
 - Embed small datasets inline so each app can be opened directly without a server.
 
+
+## Grounded-theory illustration
+
+The static app in `apps/grounded-theory-colimit/index.html` computes a finite quotient and candidate factor map. Preserve its explicit mathematical limits and user-chosen identifications. Run `node tests/grounded-theory-colimit.cjs` when editing it. Its ordinary entry is the App Index, with a featured link on the site home.
