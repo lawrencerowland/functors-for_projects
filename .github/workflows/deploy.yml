@@ -21,7 +21,12 @@ jobs:
           node-version: 18
           cache: 'npm'
       - run: npm ci
-      - run: node tests/grounded-theory-colimit.cjs
+      - name: Check example models
+        run: |
+          node tests/grounded-theory-colimit.cjs
+          node tests/functor-atlas.cjs
+          node tests/functor-atlas-project-example.cjs
+          node tests/simplicial-model.cjs
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

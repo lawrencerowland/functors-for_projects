@@ -9,6 +9,8 @@ const root = dirname(__dirname);
 const appsDir = join(root, 'apps');
 const docsDir = join(root, 'docs');
 
+await import('./generate-catalogue.js');
+
 mkdirSync(docsDir, { recursive: true });
 
 const apps = readdirSync(appsDir).filter(app =>

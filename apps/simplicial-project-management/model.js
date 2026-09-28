@@ -1,0 +1,8 @@
+(function(root){'use strict';const model={
+positions:{Scope:[380,65],Schedule:[595,165],Resources:[595,365],Risk:[380,465],Quality:[165,365],Stakeholder:[165,165]},
+cases:[
+{vertices:['Scope','Schedule','Resources'],filled:true,color:'#2262a5',title:'A joint delivery choice',meaning:'The toy model explicitly records a joint scope, schedule and resources decision. Changing scope calls for reassessment of duration and resources; the direction and size of any effect depend on the work, constraints and commitments.'},
+{vertices:['Schedule','Resources','Risk'],filled:true,color:'#288265',title:'Buffers considered together',meaning:'The toy model includes a joint discussion of schedule allowance, resource buffers and risk. A team could use risk analysis to inform it, but this app computes no forecasts or buffer sizes.'},
+{vertices:['Scope','Quality','Stakeholder'],filled:false,color:'#b76d10',title:'A missing joint statement',meaning:'Pairwise relationships are recorded, but no three-way scope, quality and stakeholder statement has been supplied. This invites a question about shared acceptance criteria; it does not establish that rework will occur.'},
+{vertices:['Quality','Risk','Schedule'],filled:false,color:'#a44582',title:'Check the three-way commitment',meaning:'Each pair is connected, but no joint quality, risk and schedule relationship is declared. Ask whether the timing and ownership of assurance are jointly understood; an outline alone does not demonstrate late defects.'}
+]};if(typeof module!=='undefined'&&module.exports)module.exports=model;else root.SimplexModel=model;})(typeof window!=='undefined'?window:globalThis);

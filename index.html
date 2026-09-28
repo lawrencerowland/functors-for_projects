@@ -10,31 +10,53 @@
 .pw-scenario{box-sizing:border-box;display:grid;grid-template-columns:minmax(150px,240px) minmax(0,1fr);gap:clamp(18px,3vw,32px);align-items:center;width:100%;max-width:1100px;margin:24px auto;padding:clamp(18px,3vw,28px);background:#f3f0e6;color:#203e3b;border:1px solid #d5dacf;border-radius:16px;text-align:left;font-family:system-ui,sans-serif;line-height:1.55}
 .pw-scenario figure{margin:0;min-width:0}.pw-scenario img{display:block;width:100%;height:210px;object-fit:contain;border-radius:8px;background:#f9f7ef}.pw-scenario figcaption{font-size:11px;line-height:1.4;color:#52665e;margin-top:8px}.pw-scenario .pw-kicker{font-size:11px;letter-spacing:.11em;text-transform:uppercase;font-weight:700;color:#476f62;margin:0 0 8px}.pw-scenario h2{font-size:clamp(21px,2.7vw,30px);line-height:1.2;letter-spacing:-.025em;margin:0 0 12px;color:#203e3b;max-width:none}.pw-scenario p{font-size:15px;line-height:1.6;max-width:none;margin:0 0 12px;color:#304b44}.pw-scenario .pw-question{font-weight:700;margin:0;color:#165c4c}
 @media(max-width:600px){.pw-scenario{grid-template-columns:1fr}.pw-scenario>div{grid-row:1}.pw-scenario img{height:165px}.pw-scenario figcaption{max-width:440px}.pw-scenario{margin:16px auto}}
+
+body{max-width:1160px;margin:24px auto;padding:0 20px;background:#fcfbf7;color:#203e3b;line-height:1.55}a{color:#17624f}h1{font-size:2rem}main{scroll-margin-top:20px}.catalogue-tools{display:flex;gap:18px;align-items:end;flex-wrap:wrap;margin:22px 0}.catalogue-tools label{display:grid;gap:5px;font-weight:600}.catalogue-tools input,.catalogue-tools select{max-width:100%;box-sizing:border-box;font:inherit;border:1px solid #acbfb5;border-radius:7px;padding:9px;background:white}.catalogue-tools p{font-size:.9rem;color:#53695f}.app-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr));gap:20px}.app-card{border:1px solid #d7dfd5;border-radius:12px;overflow:hidden;background:#fff;display:flex;flex-direction:column}.app-card[hidden]{display:none}.app-card img{width:100%;height:155px;object-fit:contain;background:#f0f2eb}.app-card .card-copy{padding:18px}.app-card h3{margin:0 0 9px;font-size:1.15rem;line-height:1.35}.app-card p{font-size:.94rem;margin:8px 0}.app-card .tagline{font-size:.77rem;color:#52665e}.app-card.featured{border-top:4px solid #267860}:focus-visible{outline:3px solid #d38b20;outline-offset:4px}@media(max-width:600px){body{padding:0 12px}.catalogue-tools{display:grid;grid-template-columns:1fr}.catalogue-tools input,.catalogue-tools select{width:100%}}
 </style>
 </head>
 <body>
-  <nav>
-    <a href="apps/website/index.html">Home</a> |
-    <a href="apps/website/projects/">Projects</a> |
-    <a href="apps/website/sandbox/">Galois Adjoints</a> |
-    <a href="apps/website/ai-tools/">AI Tools</a> |
-    <a href="apps/website/systems/">Systems Thinking</a> |
-    <a href="apps/website/lifecycle/">Lifecycle</a> |
-    <a href="apps/website/insights/">Insights</a> |
-    <a href="app-index.html">App Index</a>
-  </nav>
+  <p><a href="https://lawrencerowland.github.io/side-projects.html">← Side projects</a></p>
   <h1>Functors for Projects</h1>
 <section class="pw-scenario" aria-label="Scenario and motivating question">
-  <figure><img src="https://lawrencerowland.github.io/functors-for_projects/pics/scenarios/library.svg" alt="Two different model views on a project workbench" width="640" height="400" decoding="async"><figcaption>Illustrative scene; the experiments below state their own assumptions.</figcaption></figure>
+  <figure><img src="pics/scenarios/library.svg" alt="Two different model views on a project workbench" width="640" height="400" decoding="async"><figcaption>Illustrative scene; the experiments below state their own assumptions.</figcaption></figure>
   <div><p class="pw-kicker">A motivating example</p><h2>Describe one project in more than one useful way.</h2><p>A delivery team has tasks and milestones; another view groups work into packages or records the states it produces. These small examples explore what survives when we translate or combine views. The collection also includes stand-alone mathematical teaching examples rather than one universal project model.</p><p class="pw-question">Which relationships must a change of view preserve?</p></div>
 </section>
 
-  <p><a href="apps/grounded-theory-colimit/index.html">Grounded theory and a finite colimit</a> — choose identifications, inspect their quotient classes and test a proposed coding.</p>
-  <p><a href="app-index.html">Browse the mathematical and project examples →</a></p>
-  <ul>
-    <li>Explore project portfolios.</li>
-    <li>Try interactive tools.</li>
-    <li>Browse our learning hub.</li>
-  </ul>
+  <main id="apps" tabindex="-1">
+    <h2>Explore the examples</h2>
+    <p>Start with the atlas explanation and its project graph, or explore a specific construction. Each example states what is modelled and what remains an analogy.</p>
+    <div class="catalogue-tools"><label>Find an example <input type="search" id="app-search" placeholder="Title, idea or project question"></label><label>Topic <select id="app-topic"><option value="">All topics</option></select></label><p id="app-count" role="status" aria-live="polite"></p></div>
+    <div class="app-grid" id="examples">
+<!-- APP-CARDS:START -->
+<article class="app-card featured" id="app-16" data-tags="category theory|colimit|quotient|qualitative research"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/grounded-theory-colimit/index.html">Grounded theory and a finite colimit</a></h3><p>Choose incident identifications and test a coding through a finite quotient; a precise but limited grounded-theory analogy.</p><p class="tagline">category theory, colimit, quotient, qualitative research</p></div></article>
+<article class="app-card featured" id="app-7" data-tags="category theory|project management|functors"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/functor-atlas/index.html">The atlas: ideas and explanations</a></h3><p>Learn what project-view mappings would need to preserve; distinguish proposed functors, relations and heuristic task drafting.</p><p class="tagline">category theory, project management, functors</p></div></article>
+<article class="app-card featured" id="app-8" data-tags="functors|category theory|visualization|project management"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/functor-atlas-project-example/index.html">The atlas: explore a project graph</a></h3><p>Explore project objects and relationships with category filters, three layouts and explanations of every connection.</p><p class="tagline">functors, category theory, visualization, project management</p></div></article>
+<article class="app-card featured" id="app-17" data-tags="simplicial models|higher-order interactions|project management"><img src="pics/17.svg" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/simplicial-project-management/index.html">Three-way project relationships</a></h3><p>Compare pairwise links with an explicitly declared three-way relationship using filled and outlined triangles.</p><p class="tagline">simplicial models, higher-order interactions, project management</p></div></article>
+<article class="app-card" id="app-1" data-tags="set|currying"><img src="pics/1.webp" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/currying-B/index.html">Currying: changing the shape of a mapping</a></h3><p>currying demonstration with concrete mappings</p><p class="tagline">set, currying</p></div></article>
+<article class="app-card" id="app-2" data-tags="education|pushout|product"><img src="pics/2.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/push-out-pull-back/index.html">Products, coproducts, pullbacks and pushouts</a></h3><p>stop getting mixed up between push outs and pullbacks, products and Co products</p><p class="tagline">education, pushout, product</p></div></article>
+<article class="app-card" id="app-3" data-tags="presheaves|functors"><img src="pics/3.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/presheaves-and-opposite-categories/index.html">Presheaves and opposite categories</a></h3><p>explains why pre sheaves are a functor from the Opposite category using a node colouring example</p><p class="tagline">presheaves, functors</p></div></article>
+<article class="app-card" id="app-4" data-tags="functors|arrow_category"><img src="pics/4.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/functors-as-objects/index.html">Functors as objects</a></h3><p>why sometimes to see functors as objects</p><p class="tagline">functors, arrow category</p></div></article>
+<article class="app-card" id="app-5" data-tags="operad|models|natural_transformations|functors"><img src="pics/5.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/functors-models-natural-transformations/index.html">Models and natural transformations</a></h3><p>showing how Natural transformations allow you to move between models </p><p class="tagline">operad, models, natural transformations, functors</p></div></article>
+<article class="app-card" id="app-6" data-tags="geometry of interaction|category theory|visualization"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/geometry-of-interaction/index.html">Geometry of interaction</a></h3><p>token-chasing diagram for GoI composition as cut and execution</p><p class="tagline">geometry of interaction, category theory, visualization</p></div></article>
+<article class="app-card" id="app-9" data-tags="category theory|fibration|project management|visualization"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/fibration-milestone-linking/index.html">Fibrations and milestone linking</a></h3><p>fibration-based milestone linking toy example</p><p class="tagline">category theory, fibration, project management, visualization</p></div></article>
+<article class="app-card" id="app-10" data-tags="category theory|project management|sheaf|scheduling|visualization"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/sheaf-schedule-playground/index.html">Sheaf-style schedule playground</a></h3><p>interactive sheaf-style scheduling playground for local-to-global WBS consistency</p><p class="tagline">category theory, project management, sheaf, scheduling, visualization</p></div></article>
+<article class="app-card" id="app-11" data-tags="group actions|project management|toggle groups|posets"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/group-actions-project-thinking/index.html">Group actions for project thinking</a></h3><p>group actions for project thinking with toggle dynamics on posets</p><p class="tagline">group actions, project management, toggle groups, posets</p></div></article>
+<article class="app-card" id="app-12" data-tags="category theory|adjoints|project management|visualization"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/galois-adjoints/index.html">Galois adjoints</a></h3><p>galois adjoints for project management rail upgrade demo</p><p class="tagline">category theory, adjoints, project management, visualization</p></div></article>
+<article class="app-card" id="app-13" data-tags="category theory|construction|toolkit|systems"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/category_theory_construction_toolkit/index.html">Category theory construction toolkit</a></h3><p>category theory toolkit for construction systems engineering</p><p class="tagline">category theory, construction, toolkit, systems</p></div></article>
+<article class="app-card" id="app-14" data-tags="category theory|uncertainty|wiring diagrams|co-design"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/composable-uncertainty-wiring/index.html">Composable uncertainty wiring</a></h3><p>composable uncertainty wiring diagram for a co-design loop (power/cooling/footprint)</p><p class="tagline">category theory, uncertainty, wiring diagrams, co-design</p></div></article>
+<article class="app-card" id="app-15" data-tags="fibration|milestones|linking"><img src="pics/blank.png" alt="" loading="lazy" width="300" height="155"><div class="card-copy"><h3><a href="apps/fibration_example_v2/index.html">Milestone linking: a second example</a></h3><p>fibration-based milestone linking interactive example</p><p class="tagline">fibration, milestones, linking</p></div></article>
+<!-- APP-CARDS:END -->
+    </div>
+    <p id="no-results" hidden>No examples match. Try a broader search or select all topics.</p>
+  </main>
+  <script>
+  (() => {
+    const cards = [...document.querySelectorAll('.app-card')], search = document.querySelector('#app-search'), topic = document.querySelector('#app-topic');
+    const tags = [...new Set(cards.flatMap(c => c.dataset.tags.split('|'))) ].filter(Boolean).sort();
+    for (const tag of tags) { const o = document.createElement('option'); o.value = tag; o.textContent = tag.replaceAll('_', ' '); topic.append(o); }
+    function filter() { let shown = 0; for (const card of cards) { const matches = card.textContent.toLowerCase().includes(search.value.trim().toLowerCase()) && (!topic.value || card.dataset.tags.split('|').includes(topic.value)); card.hidden = !matches; if (matches) shown++; } document.querySelector('#app-count').textContent = `${shown} of ${cards.length} examples`; document.querySelector('#no-results').hidden = shown > 0; }
+    search.addEventListener('input',filter); topic.addEventListener('change',filter); window.addEventListener('pageshow',filter); filter();
+  })();
+  </script>
 </body>
 </html>
