@@ -31,3 +31,7 @@ The static app in `apps/grounded-theory-colimit/index.html` computes a finite qu
 
 ## Milestone context example (28 September 2026)
 Keep `apps/fibration-milestone-linking/` canonical and preserve the V2 redirect. The example distinguishes observed changes, shared-scope decisions, supplied adaptation rules, computed dependencies/feasibility and the unproved categorical interpretation. Run the milestone context and catalogue tests alongside existing checks when changing it. Do not restore baseline-as-total-order or float-as-linear-extension claims.
+
+
+## Geometry of Interaction — Island Reading Room (28 September 2026)
+Keep the canonical route `apps/geometry-of-interaction/`. The main essay implements finite Int(Pfn, disjoint union) routing; it does not claim full game semantics, learned policies, ecological safety or completed delivery. Preserve the two externally initiated episodes and the distinction between a changed observation, changed action and deliberately changed policy. The signed feedback diagram and observable A/C projection must follow the computed model. `wiring-lab.html` preserves the corrected matching comparison; its detached loop counts are not scalars of Int(Pfn). Run `node tests/goi-interaction.cjs` and `node tests/goi-page.cjs`, the other required model/catalogue checks, a build and desktop/phone/keyboard journeys before publication.

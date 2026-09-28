@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="title desc">
+<title id="title">The Island Reading Room</title><desc id="desc">An open book forms the roof of an island reading room, between two opposing request and reply curves.</desc>
+<circle cx="120" cy="120" r="112" fill="#f8f2e4" stroke="#c6b992" stroke-width="2"/>
+<path d="M40 160Q120 122 200 160L181 177H57Z" fill="#b7cec0"/>
+<path d="M68 115 120 79 172 115V159H68Z" fill="#e6b866" stroke="#234f4a" stroke-width="5" stroke-linejoin="round"/>
+<path d="M120 90Q92 60 53 68V101Q92 97 120 120Q147 97 187 101V68Q147 60 120 90Z" fill="#fffaf0" stroke="#234f4a" stroke-width="5" stroke-linejoin="round"/>
+<path d="M120 90V120M64 79Q90 74 108 89M64 90Q91 87 108 100M132 89Q151 75 176 79M132 100Q151 87 176 90" fill="none" stroke="#66837a" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M109 159V133Q120 125 131 133V159" fill="#234f4a"/>
+<path d="M47 186Q104 209 180 181" fill="none" stroke="#bb7738" stroke-width="6" stroke-linecap="round"/>
+<path d="m168 175 15 5-8 13" fill="none" stroke="#bb7738" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M189 49Q130 26 62 52" fill="none" stroke="#234f4a" stroke-width="6" stroke-linecap="round"/>
+<path d="m73 59-15-6 9-12" fill="none" stroke="#234f4a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

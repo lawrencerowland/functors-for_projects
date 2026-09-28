@@ -29,6 +29,8 @@ jobs:
           node tests/simplicial-model.cjs
           node tests/milestone-context.cjs
           node tests/milestone-catalogue.cjs
+          node tests/goi-interaction.cjs
+          node tests/goi-page.cjs
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
