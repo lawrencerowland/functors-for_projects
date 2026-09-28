@@ -27,6 +27,8 @@ jobs:
           node tests/functor-atlas.cjs
           node tests/functor-atlas-project-example.cjs
           node tests/simplicial-model.cjs
+          node tests/milestone-context.cjs
+          node tests/milestone-catalogue.cjs
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

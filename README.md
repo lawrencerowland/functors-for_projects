@@ -92,3 +92,7 @@ This project is licensed under the [MIT License](LICENSE).
 ## Grounded theory and a finite colimit
 
 `apps/grounded-theory-colimit/` is the maintained home of the corrected finite-set illustration migrated from Project Web Apps on 17 September 2026. It computes equivalence classes of declared identifications and checks compatible label assignments, retaining all reading stages, undo/reset and explicit limits. `node tests/grounded-theory-colimit.cjs` checks 76 graphs and 1099 candidate maps against independent enumeration. The original URL redirects here; source history remains in Project Web Apps at a83541f.
+
+## Milestones under changing constraints
+
+The canonical campaign example is `apps/fibration-milestone-linking/`; the former V2 address redirects here. It preserves regional plans and adaptation policies, exposes three independent constraints and a shared-service decision, and distinguishes declared dependency/feasibility checks from an unproved fibration interpretation. See the in-app method explanation and the related Solway gate/interface example. Run `node tests/milestone-context.cjs` and `node tests/milestone-catalogue.cjs` before publishing. The catalogue has one milestone entry.

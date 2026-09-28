@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 310" role="img" aria-labelledby="title desc">
+<title id="title">Milestones under changing constraints</title><desc id="desc">Three regional plans connected to shared assumptions, with one changed condition highlighted.</desc>
+<rect width="600" height="310" fill="#eff3eb"/>
+<rect x="120" y="28" width="360" height="62" rx="12" fill="#214c46"/>
+<text x="300" y="55" text-anchor="middle" fill="#fff" font-family="system-ui,sans-serif" font-size="18">Shared service &amp; launch commitment</text>
+<text x="300" y="77" text-anchor="middle" fill="#d8e8df" font-family="system-ui,sans-serif" font-size="13">Privacy · time · budget</text>
+<path d="M300 90v36M105 126H495M105 126v30M300 126v30M495 126v30" fill="none" stroke="#537b6e" stroke-width="3"/>
+<g fill="#fff" stroke="#9cb8aa" stroke-width="2"><rect x="22" y="156" width="166" height="114" rx="11"/><rect x="217" y="156" width="166" height="114" rx="11"/><rect x="412" y="156" width="166" height="114" rx="11"/></g>
+<g fill="#214c46" font-family="system-ui,sans-serif" text-anchor="middle" font-size="17"><text x="105" y="183">Asia</text><text x="300" y="183">Europe</text><text x="495" y="183">North America</text></g>
+<g stroke="#a3bbae" stroke-width="7" stroke-linecap="round"><path d="M52 210h103M52 233h66M247 210h103M247 233h66M442 210h103M442 233h66"/></g>
+<circle cx="155" cy="238" r="13" fill="#e8ac48"/><path d="M155 230v9m0 5v1" stroke="#523a18" stroke-width="3"/>
+</svg>

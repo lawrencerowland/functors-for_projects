@@ -28,3 +28,6 @@ The static app in `apps/grounded-theory-colimit/index.html` computes a finite qu
 
 ## Home catalogue and atlas (28 September 2026)
 `app-index.csv` is the catalogue source; `scripts/generate-catalogue.js` maintains the static cards in the home page and runs during build. Keep the atlas explanation and project graph reciprocal links. The project graph checks relationship coverage, not functor laws. Run the four `tests/*.cjs` checks before publishing catalogue or atlas changes.
+
+## Milestone context example (28 September 2026)
+Keep `apps/fibration-milestone-linking/` canonical and preserve the V2 redirect. The example distinguishes observed changes, shared-scope decisions, supplied adaptation rules, computed dependencies/feasibility and the unproved categorical interpretation. Run the milestone context and catalogue tests alongside existing checks when changing it. Do not restore baseline-as-total-order or float-as-linear-extension claims.

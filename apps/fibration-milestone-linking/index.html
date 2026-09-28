@@ -1,298 +1,349 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fibration‑Based Milestone Linking: Toy Example</title>
-  <link rel="stylesheet" href="../../common.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.5;
-      margin: 20px;
-      color: #2d4263;
-      background-color: #fafafa;
-    }
-    h1, h2, h3 {
-      color: #263859;
-      margin-bottom: 0.5em;
-    }
-    #chart {
-      width: 100%;
-      height: 480px;
-      margin-top: 20px;
-      position: relative;
-    }
-    svg {
-      width: 100%;
-      height: 100%;
-    }
-    .node circle {
-      fill: #91a8d0;
-      stroke: #2d4263;
-      stroke-width: 1.5px;
-      transition: fill 0.2s ease;
-    }
-    .node text {
-      font-size: 12px;
-      text-anchor: middle;
-      pointer-events: none;
-      fill: #263859;
-    }
-    .link {
-      fill: none;
-      stroke: #c5d9e8;
-      stroke-width: 1.2px;
-    }
-    .highlight circle {
-      fill: #ffd2d2;
-      stroke: #e53935;
-    }
-    #info {
-      margin-top: 20px;
-      padding: 12px;
-      border: 1px solid #c5d9e8;
-      background-color: #f4f7fb;
-      border-radius: 4px;
-      color: #263859;
-    }
-    #info ul {
-      margin: 0;
-      padding-left: 20px;
-    }
-    #info li {
-      margin-bottom: 4px;
-    }
-    .updateBtn {
-      margin-top: 10px;
-      padding: 6px 12px;
-      background-color: #4e7ac7;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .updateBtn:hover {
-      background-color: #3a5a91;
-    }
-    footer {
-      margin-top: 40px;
-      font-size: 12px;
-      color: #555;
-    }
-    footer ol {
-      padding-left: 20px;
-    }
-    footer li {
-      margin-bottom: 4px;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A campaign impact explorer: trace local observations, shared decisions, regional obligations and conflicts under privacy, time and budget constraints.">
+<title>Milestones under changing constraints · Functors for Projects</title>
+<link rel="stylesheet" href="../../common.css">
+<style>
+:root{--ink:#18363b;--muted:#486269;--paper:#f5f7f3;--line:#cddbd4;--teal:#176357;--soft:#e4f1eb;--amber:#80501b;--amber-bg:#fff0d4;--red:#a03436;--red-bg:#ffe6e3;--violet:#635082}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.55}body>*+*{margin-top:0}a{color:#155b64;text-underline-offset:.2em}button,input,select{font:inherit}button,.button{min-height:44px}button{border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);padding:.55rem .9rem}button:hover{background:var(--soft)}button[aria-pressed=true]{border-color:var(--teal);background:var(--soft);box-shadow:inset 0 0 0 1px var(--teal)}:focus-visible{outline:3px solid #b4631e;outline-offset:4px}input[type=checkbox]{width:1.2rem;height:1.2rem;accent-color:var(--teal)}select{max-width:100%;padding:.65rem;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}h1,h2,h3,h4,p{margin-top:0}h1{font-size:clamp(2.1rem,4.6vw,3.7rem);line-height:1.1;letter-spacing:-.045em;border:0;display:block;max-width:880px;margin-bottom:1rem}h2{font-size:1.5rem;line-height:1.25;letter-spacing:-.025em}h3{font-size:1.06rem}h4{font-size:.95rem}.wrap{max-width:1260px;margin:auto;padding:0 28px}.nav{display:flex;gap:1rem;justify-content:space-between;flex-wrap:wrap;padding:22px 0;font-size:.9rem}.hero{background:#e7f0e8;border-bottom:1px solid var(--line);padding:36px 0 40px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.74rem;font-weight:700;color:var(--teal);margin-bottom:15px}.lead{font-size:1.15rem;max-width:900px}.boundary{max-width:950px;margin-bottom:0;color:var(--muted);font-size:.94rem}.main{padding-top:28px;padding-bottom:36px}.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:24px}.section-head{display:flex;align-items:start;justify-content:space-between;gap:20px;flex-wrap:wrap}.section-head p{color:var(--muted);max-width:780px}.muted,.small{color:var(--muted)}.small{font-size:.85rem}.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.control{display:block;border:1px solid var(--line);background:#fafcf9;border-radius:10px;padding:17px}.control label{display:flex;gap:10px;align-items:start;font-weight:650;cursor:pointer}.control p{margin:.7rem 0 0;font-size:.89rem}.value{display:block;font-weight:650;color:var(--teal);margin-top:6px}.scope-row{display:grid;grid-template-columns:1.7fr 1fr;gap:20px;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}.scope-row label{display:block;font-weight:650;margin-bottom:6px}.scope-row select{width:100%}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.primary{background:var(--teal);color:#fff;border-color:var(--teal)}.primary:hover{background:#104f46}.result{border-left:5px solid var(--teal);padding:16px 20px;background:var(--soft);border-radius:6px;margin-top:20px}.result.conflict{border-color:var(--red);background:var(--red-bg)}.result p:last-child{margin-bottom:0}.trace{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}.step{border-top:3px solid var(--teal);padding:15px;background:#f5f8f5}.step .number{color:var(--teal);font-size:.76rem;font-weight:700;letter-spacing:.1em}.step h3{margin:.5rem 0}.step p{font-size:.92rem;margin-bottom:0}.table-scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:.92rem}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:12px 9px}th{color:var(--muted);font-size:.82rem}caption{text-align:left;font-weight:650;margin-bottom:10px}.badge{display:inline-block;font-size:.73rem;font-weight:650;padding:3px 8px;border-radius:5px;background:#edf0ee;white-space:normal}.badge.direct,.badge.downstream,.badge.obligation{background:var(--amber-bg);color:var(--amber)}.badge.conflict{background:var(--red-bg);color:var(--red)}.badge.candidate{background:var(--soft);color:var(--teal)}.context-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px}.context-box{background:#f5f8f5;border:1px solid var(--line);border-radius:10px;padding:18px}.context-box ul{margin-bottom:0;padding-left:20px}.context-box li{margin-bottom:6px}.context-box h3{margin-bottom:10px}.additions{padding-top:12px;border-top:1px dashed var(--line);margin-top:15px}.diagram{margin:22px 0 8px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#fbfcfa}.diagram svg{display:block;width:100%;height:auto;max-height:330px}.diagram text{font-family:Inter,system-ui,sans-serif;fill:var(--ink);font-size:15px}.diagram .sub{font-size:12px;fill:var(--muted)}.regions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.region{text-align:left;display:flex;flex-direction:column;gap:7px;padding:17px}.region strong{font-size:1.05rem}.region span{font-size:.85rem}.legend{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.plan-head{display:flex;justify-content:space-between;gap:16px;align-items:start;flex-wrap:wrap;margin-top:25px}.local{margin:0 0 20px;font-size:.89rem;color:var(--muted)}.task-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.task{border:1px solid var(--line);border-radius:10px;padding:16px;scroll-margin-top:15px;min-width:0}.task h4{margin-bottom:7px}.task p{font-size:.86rem;margin:9px 0}.task details{font-size:.86rem}.task details p{margin:9px 0}.task .prereqs{border-top:1px solid var(--line);padding-top:10px}.task .prereqs a{display:inline-block;margin-right:8px;line-height:1.9}.task:target{outline:3px solid #b4631e}.acceptance{margin-top:20px;background:#f5f7fa;border:1px solid #d4dde7;border-radius:10px;padding:18px}.acceptance ul{margin-bottom:0;padding-left:20px}.explainers{display:grid;grid-template-columns:1fr 1fr;gap:16px}.explainer{border:1px solid var(--line);border-radius:10px;padding:17px;align-self:start}summary{cursor:pointer;font-weight:650;min-height:35px}details[open]>summary{margin-bottom:14px}.explainer p,.explainer li{font-size:.92rem}.explainer ul{padding-left:20px}.schedule-demo{display:grid;grid-template-columns:1fr 1fr;gap:10px}.schedule-demo div{padding:12px;background:var(--soft);border-radius:7px;font-size:.85rem}.audit-current{background:#edf4ef;border-radius:8px;padding:15px;overflow-wrap:anywhere}.audit-current p{margin-bottom:6px}.audit-list{padding-left:22px;max-height:360px;overflow:auto;font-size:.89rem}.audit-list li{padding:8px 0}.foot{font-size:.84rem;color:var(--muted);padding-bottom:28px}.history-text{white-space:pre-wrap;font-size:.85rem;padding:15px;background:#f5f5f0;border-radius:8px}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.no-js{background:var(--amber-bg);padding:20px}.inline-link{border:0;padding:0;min-height:0;background:none;color:#155b64;text-decoration:underline;text-underline-offset:.2em}.policy-desc{font-size:.86rem;margin-top:8px}.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.proof-grid div{padding:16px;background:#f5f8f5;border-radius:8px}.proof-grid p{font-size:.9rem;margin-bottom:0}@media(max-width:760px){.wrap{padding:0 17px}.hero{padding-top:22px}.panel{padding:18px}.controls,.trace,.regions,.proof-grid,.context-layout,.scope-row,.explainers,.task-list{grid-template-columns:1fr}.diagram{padding:7px;overflow-x:auto}.diagram svg{min-width:850px}.diagram text{font-size:14px}.diagram .sub{font-size:11px}.nav{font-size:.82rem}.lead{font-size:1.04rem}.section-head{gap:4px}th,td{padding:9px 7px}.schedule-demo{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <a href="../../index.html">Back to app index</a>
-  <h1>Fibration‑Based Milestone Linking</h1>
-  <p>
-    In category‑theoretic project planning, one models the structure of a programme as a functor whose fibres encode local constraints and tasks. A Grothendieck fibration is such a functor whose fibres depend contravariantly in a pseudofunctorial way on arrows in the base category; it admits cartesian liftings of morphisms, so that every change in the base has a uniquely determined lift in the total category. By organising project milestones as fibres of a fibration, refinements to a sub‑plan can be lifted or pulled back through the overarching plan, ensuring that changes propagate coherently and tasks are never orphaned. Below we work through a toy example of a global marketing campaign to illustrate how such a fibration‑based model can tame interdependent milestones.
-  </p>
+<a class="sr-only" href="#controls-heading">Skip to scenario controls</a>
+<div class="wrap"><nav class="nav" aria-label="Related projects"><a href="../../index.html#apps">← Functors for Projects</a><a href="https://lawrencerowland.github.io/Solway_tunnel_ontology/apps/solway_firth_tunnel_fibration_demo.html">Applied example: Solway tunnel →</a></nav></div>
+<header class="hero"><div class="wrap"><div class="eyebrow">A campaign, three regions, shared commitments</div><h1>Milestones under<br>changing constraints</h1><p class="lead">One regional change can expose work elsewhere because teams share services and commitments. Trace the connections, test two responses, and see exactly where a decision is needed.</p><p class="boundary">A rule-based impact explorer and a <strong>fibration candidate</strong>. It asks whether indexing plans by their assumptions adds useful discipline. It does not prove a cartesian lifting property, certify compliance, or establish launch readiness.</p></div></header>
+<main class="wrap main">
+<noscript><p class="no-js">This interactive example needs JavaScript. The explanations below remain readable; its calculation results require JavaScript.</p></noscript>
+<section class="panel" aria-labelledby="controls-heading">
+<div class="section-head"><div><div class="eyebrow">01 · Change the situation</div><h2 id="controls-heading">Three independent constraints</h2></div><p>Try privacy first. Tighten the budget to leave one candidate, then tighten the window: neither response fits both. These invented numbers describe one shared work package.</p></div>
+<div class="controls">
+<div class="control"><label><input id="privacy" type="checkbox">Observe an Asian privacy change</label><p>A local requirement needs assessment.<span class="value" id="privacy-value">No new observation → no added contract</span></p></div>
+<div class="control"><label><input id="time" type="checkbox">European prerequisite arrives late</label><p>Response work begins after European regulatory review; it cannot overlap it.<span class="value" id="time-value">Available window: 4 → 4 weeks</span></p></div>
+<div class="control"><label><input id="budget" type="checkbox">North American contribution is cut</label><p>The regions fund the same analytics response.<span class="value" id="budget-value">Shared allowance: 8 → 8 cost units</span></p></div>
+</div>
+<div class="scope-row"><div><label for="scope">Who decides how far the observation reaches?</label><select id="scope"><option value="shared">Toy programme owner authorises a shared analytics contract</option><option value="local">Local assessment only; shared contract is not authorised</option></select><p class="small">This is an explicit scenario decision, not a real approval. It takes effect only with the privacy observation. A regional law does not automatically apply to every region.</p></div><div><label for="policy">Regional adaptation policy</label><select id="policy"><option value="minimal">Minimal · core reviews</option><option value="strict">Strict · additional assurance</option><option value="pivot">Pivot · reduce personal-data use</option></select><p id="policy-desc" class="policy-desc"></p></div></div>
+<div class="toolbar"><button id="guided" class="primary">Load the coupled conflict</button><button id="reset">Reset scenario</button><button id="export">Export session receipt</button></div>
+<div id="result" class="result" role="status" aria-live="polite" aria-atomic="true"></div>
+</section>
+<section class="panel" aria-labelledby="trace-heading"><div class="eyebrow">02 · Follow one consequence</div><h2 id="trace-heading">Observation → authorised scope → derived effects</h2><div id="trace" class="trace"></div>
+<div class="table-scroll"><table><caption>Two supplied responses to the shared contract</caption><thead><tr><th scope="col">Response</th><th scope="col">Cost</th><th scope="col">Duration</th><th scope="col">Current bounds</th></tr></thead><tbody id="responses"></tbody></table></div><p id="response-note" class="small" style="margin-top:14px"></p>
+<div id="shared-response" class="acceptance" tabindex="-1"></div>
+</section>
+<section class="panel" aria-labelledby="contexts-heading"><div class="eyebrow">03 · Keep assumptions attached to plans</div><h2 id="contexts-heading">Two context views, with the original assumptions retained</h2><div class="context-layout"><div class="context-box"><h3>C₀ · Baseline context</h3><ul id="baseline-assumptions"></ul></div><div class="context-box"><h3 id="current-context">C₀ · Current context</h3><ul id="inherited-assumptions"></ul><div class="additions"><strong>Added or tightened assumptions</strong><ul id="context-additions"></ul></div></div></div>
+<figure class="diagram"><svg viewBox="0 0 900 300" role="img" aria-labelledby="diagram-title diagram-desc"><title id="diagram-title">Regional plans projected to their contexts</title><desc id="diagram-desc">Current regional plans appear above the current context on the left. Baseline regional plans appear above the baseline context on the right. Vertical projection arrows attach plans to assumptions. A comparison points from current plans to baseline plans; a forgetful base arrow points from the current context to the baseline context. The comparison is a candidate, not a verified cartesian lift.</desc><defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7" fill="#176357"/></marker></defs><rect x="14" y="10" width="335" height="96" rx="12" fill="#e4f1eb" stroke="#91b7a5"/><text x="32" y="36">Current fibre · regional plan views</text><text x="32" y="62">Asia · Europe · North America</text><text x="32" y="86" class="sub">Tasks + obligations + unresolved evidence</text><rect x="551" y="10" width="335" height="96" rx="12" fill="#f1f4ef" stroke="#a9beb1"/><text x="570" y="36">Baseline fibre · regional plan views</text><text x="570" y="62">Asia · Europe · North America</text><text x="570" y="86" class="sub">Original tasks and named prerequisites</text><path d="M355 63 H540" stroke="#176357" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)"/><text x="367" y="33" class="sub">candidate comparison</text><text x="367" y="91" class="sub">retain original IDs / edges</text><path d="M180 116 V198 M718 116 V198" stroke="#176357" stroke-width="2" marker-end="url(#arrow)"/><text x="192" y="156" class="sub">projection p</text><text x="730" y="156" class="sub">projection p</text><rect x="14" y="208" width="335" height="65" rx="12" fill="#f5f8f5" stroke="#91b7a5"/><text id="diagram-context" x="32" y="235">C₀ · no added shared assumptions</text><text x="32" y="258" class="sub">Context: privacy contract / time / budget</text><rect x="551" y="208" width="335" height="65" rx="12" fill="#f5f8f5" stroke="#a9beb1"/><text x="570" y="235">C₀ · original shared assumptions</text><text x="570" y="258" class="sub">Brand / analytics / launch commitment</text><path d="M355 239 H540" stroke="#176357" stroke-width="2" marker-end="url(#arrow)"/><text x="363" y="209" class="sub">u: forget added constraints</text></svg><figcaption class="small">On a narrow screen, scroll the diagram horizontally. The arrows point toward the less constrained context, opposite the chronological update. Vertical arrows are context projection; they are neither WBS containment nor task dependencies. A fibre groups plans with the same shared assumptions. Local-only obligations can change a plan while that shared context stays C₀.</figcaption></figure>
+<details class="explainer"><summary>What is formally defined here, and what is still a candidate?</summary><p>The implemented base has eight objects: the binary triples (shared privacy contract, tighter time bound, tighter budget bound). There is one arrow Cᵦ → Cₐ when every active constraint in a is also active in b. Identity forgets nothing; composition is successive forgetting. The tests check identity and composition for this finite poset.</p><p>The diagram proposes plan objects with tasks, prerequisites, obligations and evidence attached to a context. Its horizontal comparison retains baseline identifiers and edges. A suitable category of plan morphisms, their composition, and the cartesian universal property are <strong>not yet constructed or checked</strong>. The projection label records which context a plan belongs to; it is not a verified functor on a total category.</p><p>A fibration would require appropriate cartesian lifts for every permitted base arrow and target. A cleavage chooses such lifts; different adaptation policies are <strong>not automatically cleavages</strong>. Reindexing coheres up to isomorphism, unless a suitable split construction supports strict equality. An empty feasible fibre can obstruct lifts; reporting a conflict does not fix that proof. See <a href="https://stacks.math.columbia.edu/tag/02XJ">Stacks Project §4.33</a>.</p></details>
+</section>
+<section class="panel" aria-labelledby="regions-heading"><div class="eyebrow">04 · Inspect a regional plan</div><h2 id="regions-heading">Local differences, named connections</h2><p class="muted">Select a region with a pointer or keyboard. Impact and acceptance are separate: an unchanged task still has no completion evidence in this scenario.</p><div id="region-cards" class="regions"></div><div class="toolbar" role="group" aria-label="Plan context"><button id="view-current" aria-pressed="true">Current plan</button><button id="view-baseline" aria-pressed="false">Baseline plan</button></div><div class="legend"><span class="badge direct">Direct review</span><span class="badge downstream">Downstream review</span><span class="badge obligation">Supplied obligation</span><span class="badge">Not directly flagged</span></div><div id="plan"></div></section>
+<section class="panel" aria-labelledby="questions-heading"><div class="eyebrow">05 · Ask whether the structure earns its place</div><h2 id="questions-heading">The questions behind the example</h2><div class="explainers">
+<details class="explainer" open><summary>Explain it to a project director</summary><p>Imagine each regional plan on a transparency sheet. Shared analytics and launch commitments are the registration marks that align the sheets. A mark on Asia’s sheet appears elsewhere only when a declared shared connection carries it there.</p><p>The budget cut and late prerequisite come from different regions but constrain one shared response. With 5 units and 2 weeks, the cheaper option is too slow and the faster option is too expensive. The next step is an owner’s decision about scope, funding or time.</p></details>
+<details class="explainer" open><summary>Does it actually work?</summary><p>The app computes declared effects and checks a small response-choice problem. It makes the observation, scope decision and rules inspectable. The acceptance panel shows which evidence is missing. It does not infer real legal requirements or discover missing dependencies.</p><p>At the shared response, “candidate fits” means only cost ≤ allowance and duration ≤ available window. Regional task costs, resources, overlap, dates and real evidence are not supplied. No candidate is an accepted whole campaign plan.</p></details>
+<details class="explainer"><summary>So what does the fibration add?</summary><p>Here, an ordinary dependency and constraint model produces the same task reviews and numerical result. The app’s useful extra discipline is visible context indexing: retained assumptions, local differences and a trace from decision to effect.</p><p>No exclusive mathematical benefit has been demonstrated. A next experiment would define plan morphisms and an actual lifting construction, then test reuse and successive changes. Adding terminology does not make a hand-written policy a theorem.</p></details>
+<details class="explainer"><summary>How does this compare with a schedule?</summary><ul><li><strong>WBS:</strong> what work belongs to a package or region.</li><li><strong>Dependencies:</strong> what constrains what; this app declares finish-to-start prerequisite edges without lags.</li><li><strong>Schedule:</strong> dates interpreted with dependency types, calendars and resources.</li><li><strong>Context-indexed plans:</strong> which assumptions each plan is interpreted under.</li></ul><p>These views answer different questions. <a href="https://docs.oracle.com/cd/G48902_01/English/User_Guides/p6_pro_user/relationships.htm">P6 already supports typed start/finish relationships, including across projects</a>. The categorical proposal must be compared with that capability fairly.</p></details>
+<details class="explainer"><summary>Is a published baseline a total order?</summary><p>No. Dates do not impose precedence between every pair of tasks. Let “creative” and “venue booking” have no dependency edge:</p><div class="schedule-demo"><div><strong>Permissible assignment A</strong><br>Creative: week 1–2<br>Venue booking: week 1–2</div><div><strong>Permissible assignment B</strong><br>Creative: week 1–2<br>Venue booking: week 2–3</div></div><p>Both obey the same empty precedence relation between those activities. Sorting a schedule’s rows adds no dependency. A <a href="https://docs.oracle.com/cd/F74773_01/p6help/en/6687_1.htm?source=%3Aow%3Ams%3Apt%3A%3A">baseline is a saved comparison plan</a>. An acyclic precedence graph gives a reachability partial order; typed endpoint relationships and lags contain more information than an unqualified activity poset.</p></details>
+<details class="explainer"><summary>What is float, and what does this not guarantee?</summary><p><a href="https://docs.oracle.com/cd/E80666_01/p6help/en/6067.htm">Total float is time computed from early and late dates with scheduling options</a>. For example, early start at week 1 and late start at week 2 gives a start-based difference of one week. Float is not a distance or count of alternative total orderings. This app does not calculate schedule float.</p><p>Context indexing does not remove rebaselining, resource coupling or hidden dependencies. Checks here cover retained task identifiers, resolved prerequisite references, declared-edge propagation, policy deltas and the stated numerical predicates. They cannot show that the model includes every real connection.</p></details>
+</div>
+<div class="proof-grid" style="margin-top:20px"><div><h3>Computed</h3><p>Impact traversal, retained references, context bits, option inequalities, task deltas and current audit state.</p></div><div><h3>Supplied by the author</h3><p>Task dependencies, data-consumer tags, regional work templates, scope options, response durations/costs and acceptance predicates.</p></div><div><h3>Unchecked in the world</h3><p>Compliance, complete resource feasibility, completed work, human usefulness and a cartesian universal property.</p></div></div>
+</section>
+<section class="panel" aria-labelledby="audit-heading"><div class="eyebrow">06 · Check the explanation against the state</div><h2 id="audit-heading">Session audit</h2><p class="small">This is an ephemeral explanation in this browser tab. Reloading clears it. Export downloads a user-kept JSON receipt; it is not a saved approval or independently verified evidence.</p><div id="audit-current" class="audit-current"></div><ol id="audit-list" class="audit-list" reversed></ol></section>
+<section class="panel"><details><summary>Historical prompt and corrections</summary><p>The two original prompt excerpts below are retained as historical text. Their automatic-propagation and guarantee claims are hypotheses, not results of this app. A local observation needs a scope decision; a valid fibration needs specified categories and cartesian lifts. Hierarchy alone establishes neither. “No orphaned tasks” is replaced here by bounded identifier/reference checks.</p><div id="historical-prompt" class="history-text"></div><div id="historical-toy" class="history-text" style="margin-top:15px"></div></details></section>
+</main><footer class="wrap foot">Foray 192 · Milestones under changing constraints · Teaching scenario, revised 28 September 2026. <a href="../../index.html#apps">Browse the other project experiments</a>.</footer>
+<script id="campaign-model">
+(function(root){
+'use strict';
+    const REGION_BASE_PLANS = {
+      asia: {
+        id: 'asia',
+        name: 'Asia',
+        localConstraints: [
+          'Multiple languages; localisation must be approved.',
+          'Local vendors for adtech and event operations.'
+        ],
+        tasks: [
+          { id: 'a1', milestone: 'Research & targeting', name: 'Market research (panels + surveys)', depends: [], tags: ['data'] },
+          { id: 'a2', milestone: 'Content & brand', name: 'Localisation (copy + creative)', depends: ['a1'], tags: ['content'] },
+          { id: 'a3', milestone: 'Execution', name: 'Digital campaign setup (audiences + pixels)', depends: ['a2'], tags: ['data','adtech'] },
+          { id: 'a4', milestone: 'Execution', name: 'Launch event planning', depends: ['a2'], tags: ['event'] },
+          { id: 'a5', milestone: 'Measurement', name: 'Analytics instrumentation (dashboards)', depends: ['a3'], tags: ['data'] }
+        ]
+      },
+      europe: {
+        id: 'europe',
+        name: 'Europe',
+        localConstraints: [
+          'GDPR is already a baseline assumption.',
+          'Many markets: translations + approvals across countries.'
+        ],
+        tasks: [
+          { id: 'e1', milestone: 'Compliance', name: 'Regulatory review (privacy + claims)', depends: [], tags: ['legal','data'] },
+          { id: 'e2', milestone: 'Content & brand', name: 'Brand alignment with global narrative', depends: [], tags: ['content'] },
+          { id: 'e3', milestone: 'Content & brand', name: 'Localisation (country variants)', depends: ['e2'], tags: ['content'] },
+          { id: 'e4', milestone: 'Execution', name: 'Digital campaign setup (audiences + pixels)', depends: ['e3','e1'], tags: ['data','adtech'] },
+          { id: 'e5', milestone: 'Execution', name: 'Launch event planning', depends: ['e3','e1'], tags: ['event'] },
+          { id: 'e6', milestone: 'Measurement', name: 'Analytics instrumentation (dashboards)', depends: ['e4'], tags: ['data'] }
+        ]
+      },
+      north: {
+        id: 'north',
+        name: 'North America',
+        localConstraints: [
+          'FTC guidelines for advertising claims.',
+          'Heavy digital spend; ad platforms change frequently.'
+        ],
+        tasks: [
+          { id: 'n1', milestone: 'Compliance', name: 'Digital compliance audit (tracking + claims)', depends: [], tags: ['legal','data'] },
+          { id: 'n2', milestone: 'Content & brand', name: 'Content creation (ads + landing pages)', depends: [], tags: ['content'] },
+          { id: 'n3', milestone: 'Execution', name: 'Media buying plan (channels + budget)', depends: ['n2'], tags: ['adtech'] },
+          { id: 'n4', milestone: 'Execution', name: 'Digital campaign setup (pixels + audiences)', depends: ['n1','n3'], tags: ['data','adtech'] },
+          { id: 'n5', milestone: 'Execution', name: 'Launch event planning', depends: ['n2'], tags: ['event'] },
+          { id: 'n6', milestone: 'Measurement', name: 'Analytics instrumentation (dashboards)', depends: ['n4'], tags: ['data'] }
+        ]
+      }
+    };
 
-  <h2>Fibrations and Project Planning</h2>
-  <p>
-    Abstractly, a fibration is a functor \(p\colon E \to B\) for which each morphism in the base category \(B\) has a so‑called cartesian lifting: given an object in the fibre over \(b\) and a morphism \(f : b' \to b\) in \(B\), there is a unique arrow in \(E\) mapping to \(f\) that pulls back the object. This encodes the idea that local data above \(b\) restrict to local data above \(b'\) in a way compatible with composition. In more concrete terms, the fibre over an output of a non‑invertible function—say, the set of even numbers mapping to \(\mathrm{True}\) under a parity test—collects all inputs consistent with that output; replacing sets by categories and functions by functors yields Grothendieck’s fibre‑wise view. The concept originated to formalise pull‑back operations on geometric objects such as vector bundles and sheaves, but it now appears throughout type theory and applied category theory.
-  </p>
 
-  <h2>Toy Example: Global Marketing Campaign</h2>
-  <p>
-    Imagine a global marketing campaign with three regional sub‑plans—Asia, Europe and North America. Each regional plan consists of a bundle of tasks (market research, localization, regulatory review, etc.) and constraints (such as consumer‑data regulations). We model the overarching campaign as the base category and each regional plan as a fibre category above its corresponding object. Morphisms in the base represent resource‑state transitions or high‑level dependencies, while cartesian liftings specify how tasks in one region restrict or lift along those dependencies. An update to a local constraint (e.g., new consumer data regulations in Asia) therefore induces a cartesian morphism that “lifts” the change to the global strategy and “pulls back” appropriate adjustments in other regions. The interactive diagram below visualises this structure.
-  </p>
+    function suppliedPolicyTasks(regionId, policy) {
+      // Helper: common edits
+      const edits = {};
+      const added = [];
 
-  <div id="chart"></div>
-  <div id="info">Click on a regional node to display its tasks and constraints.</div>
-
-  <h2>Discussion and Evaluation</h2>
-  <p>
-    The fibration‑based structure makes explicit how regional tasks depend on and contribute to the global strategy. In our toy example, Asia’s localisation task depends on market research, and its launch event depends on successful localisation; these dependencies correspond to arrows in the fibre. When a regulatory change arrives, we enact a cartesian lifting that updates Asia’s constraints and automatically flags related tasks in Europe and North America. By tracking such liftings systematically, one can audit how changes propagate, avoiding the “transition friction” of ad‑hoc spreadsheets or siloed charts. Of course, this idealised model presumes that dependencies are static and that cartesian liftings exist; in practice, cross‑regional coupling may be looser, and the pseudo‑functorial nature of real projects demands judgement about which changes should propagate. Nevertheless, the categorical viewpoint encourages planners to articulate dependencies explicitly and to design systems that propagate updates coherently.
-  </p>
-
-  <h2>Try It Yourself</h2>
-  <p>
-    In the interactive diagram you can click on a region (Asia, Europe or North America) to view its tasks and constraints. For Asia there is an additional button to simulate a new consumer‑data regulation. Clicking this button highlights the tasks in Europe and North America that must be revisited because they depend on the global regulatory landscape. This simple demonstration shows how a fibration‑based model can keep regional plans in sync.
-  </p>
-
-  <footer>
-    <p><strong>Footnotes</strong></p>
-    <ol>
-      <li id="fn1">A Grothendieck fibration is a functor whose fibres depend contravariantly on base arrows and behaves pseudofunctorially.</li>
-      <li id="fn2">For each base arrow there is a unique cartesian lifting, and a collection of such liftings (a cleavage) characterises the fibration.</li>
-      <li id="fn3">The intuition behind fibres generalises non‑invertible functions: the fibre over True in a parity test is the set of even numbers, and this idea extends to functors and categories.</li>
-      <li id="fn4">Fibred categories formalise pull‑back operations on geometric objects such as vector bundles and sheaves and underlie descent theory.</li>
-    </ol>
-  </footer>
-
-  <script>
-    // Use D3 from CDN for simplicity. The CDN loads asynchronously; the graph will render when the script runs.
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js';
-    script.onload = drawGraph;
-    document.head.appendChild(script);
-
-    function drawGraph() {
-      // Define the nodes and their positions. Regional and task nodes include metadata
-      const nodes = [
-        { id: 'global', name: 'Global Campaign', x: 400, y: 40, type: 'global' },
-        { id: 'asia', name: 'Asia Plan', x: 200, y: 140, type: 'region' },
-        { id: 'europe', name: 'Europe Plan', x: 400, y: 140, type: 'region' },
-        { id: 'north', name: 'North America Plan', x: 600, y: 140, type: 'region' },
-        // Asia tasks
-        { id: 'asia_task1', name: 'Market Research', x: 150, y: 260, parent: 'asia', type: 'task' },
-        { id: 'asia_task2', name: 'Localization', x: 200, y: 260, parent: 'asia', type: 'task' },
-        { id: 'asia_task3', name: 'Launch Event', x: 250, y: 260, parent: 'asia', type: 'task' },
-        // Europe tasks
-        { id: 'eu_task1', name: 'Regulatory Review', x: 350, y: 260, parent: 'europe', type: 'task' },
-        { id: 'eu_task2', name: 'Brand Alignment', x: 400, y: 260, parent: 'europe', type: 'task' },
-        { id: 'eu_task3', name: 'Launch Event', x: 450, y: 260, parent: 'europe', type: 'task' },
-        // North America tasks
-        { id: 'na_task1', name: 'Digital Audit', x: 550, y: 260, parent: 'north', type: 'task' },
-        { id: 'na_task2', name: 'Content Creation', x: 600, y: 260, parent: 'north', type: 'task' },
-        { id: 'na_task3', name: 'Launch Event', x: 650, y: 260, parent: 'north', type: 'task' }
-      ];
-
-      // Define the link relationships (parent -> child)
-      const links = [];
-      nodes.forEach(node => {
-        if (node.parent) {
-          const parentNode = nodes.find(n => n.id === node.parent);
-          links.push({ x1: parentNode.x, y1: parentNode.y + 15, x2: node.x, y2: node.y - 15 });
-        }
-      });
-      // Add links from global to regions
-      links.push({ x1: nodes[0].x, y1: nodes[0].y + 15, x2: nodes[1].x, y2: nodes[1].y - 15 });
-      links.push({ x1: nodes[0].x, y1: nodes[0].y + 15, x2: nodes[2].x, y2: nodes[2].y - 15 });
-      links.push({ x1: nodes[0].x, y1: nodes[0].y + 15, x2: nodes[3].x, y2: nodes[3].y - 15 });
-
-      // Map region metadata, including tasks, constraints, and update effects
-      const regionDetails = {
-        asia: {
-          name: 'Asia Plan',
-          constraints: 'Consumer‑data regulations; language adaptation.',
-          tasks: [
-            { name: 'Market Research', dependencies: [] },
-            { name: 'Localization', dependencies: [] },
-            { name: 'Launch Event', dependencies: ['Localization'] }
-          ],
-          updateEffects: {
-            europe: ['eu_task1', 'eu_task2'],
-            north: ['na_task1', 'na_task2']
-          },
-          updateDescription: 'New consumer‑data regulation applied to Asia'
-        },
-        europe: {
-          name: 'Europe Plan',
-          constraints: 'GDPR compliance; cross‑market synergy.',
-          tasks: [
-            { name: 'Regulatory Review', dependencies: [] },
-            { name: 'Brand Alignment', dependencies: [] },
-            { name: 'Launch Event', dependencies: ['Regulatory Review'] }
-          ],
-          updateEffects: {},
-          updateDescription: ''
-        },
-        north: {
-          name: 'North America Plan',
-          constraints: 'FTC guidelines; digital marketing synergy.',
-          tasks: [
-            { name: 'Digital Audit', dependencies: [] },
-            { name: 'Content Creation', dependencies: [] },
-            { name: 'Launch Event', dependencies: ['Content Creation'] }
-          ],
-          updateEffects: {},
-          updateDescription: ''
-        }
+      const mark = (taskId, status, reason) => {
+        edits[taskId] = { status, reason };
       };
 
-      // Create SVG
-      const svg = d3.select('#chart').append('svg');
-
-      // Draw links
-      svg.selectAll('line')
-        .data(links)
-        .enter()
-        .append('line')
-        .attr('class', 'link')
-        .attr('x1', d => d.x1)
-        .attr('y1', d => d.y1)
-        .attr('x2', d => d.x2)
-        .attr('y2', d => d.y2);
-
-      // Draw nodes (groups to capture circle and text)
-      const nodeGroups = svg.selectAll('g.node')
-        .data(nodes)
-        .enter()
-        .append('g')
-        .attr('class', 'node')
-        .attr('transform', d => `translate(${d.x},${d.y})`);
-
-      nodeGroups.append('circle')
-        .attr('r', 15);
-
-      nodeGroups.append('text')
-        .attr('dy', 4)
-        .text(d => (d.name.length > 12 ? `${d.name.slice(0, 10)}…` : d.name));
-
-      // Click handler for region nodes
-      nodeGroups.on('click', function(event, d) {
-        // Only regions respond to clicks
-        if (d.type !== 'region') return;
-        displayRegionInfo(d.id);
+      // Common for all: anything tagged 'data' should be reviewed under privacy
+      const baseTasks = REGION_BASE_PLANS[regionId].tasks;
+      baseTasks.forEach(t => {
+        if (t.tags.includes('data')) {
+          mark(t.id, 'review', 'Touches customer data; must satisfy new consent/minimisation rules.');
+        }
       });
 
-      // Helper to display region info and show update button if applicable
-      function displayRegionInfo(regionId) {
-        const detail = regionDetails[regionId];
-        let html = `<h3>${detail.name}</h3>`;
-        html += `<p><strong>Constraints:</strong> ${detail.constraints}</p>`;
-        html += '<p><strong>Tasks:</strong></p><ul>';
-        detail.tasks.forEach(task => {
-          html += `<li>${task.name}`;
-          if (task.dependencies.length > 0) {
-            html += ` (depends on ${task.dependencies.join(', ')})`;
-          }
-          html += '</li>';
-        });
-        html += '</ul>';
-        // Add update button for Asia only (simulate regulatory change)
-        if (detail.updateDescription) {
-          html += `<button class="updateBtn" onclick="applyUpdate('${regionId}')">${detail.updateDescription}</button>`;
+      // Region-specific
+      if (regionId === 'asia') {
+        // Asia triggers the change; add immediate compliance tasks
+        added.push(
+          { id: 'a_priv_1', milestone: 'Compliance', name: 'Privacy gap assessment (new regulation)', depends: [], tags: ['legal'], status: 'new', reason: 'New Asia regulation must be interpreted + mapped to campaign practices.' },
+          { id: 'a_priv_2', milestone: 'Compliance', name: 'Update consent UX + privacy copy (brand-consistent)', depends: ['a_priv_1'], tags: ['legal','content'], status: 'new', reason: 'Consent flows must be updated and remain globally on-brand.' },
+          { id: 'a_priv_3', milestone: 'Compliance', name: 'Vendor terms & DPAs for adtech providers', depends: ['a_priv_1'], tags: ['legal'], status: 'new', reason: 'Cross-border/data-processing terms need review under stricter regime.' }
+        );
+        if (policy === 'strict') {
+          added.push(
+            { id: 'a_priv_4', milestone: 'Measurement', name: 'Data retention & deletion test (pre-launch)', depends: ['a_priv_2','a5'], tags: ['data'], status: 'new', reason: 'Strict policy: test retention/deletion end-to-end before launch.' }
+          );
         }
-        document.getElementById('info').innerHTML = html;
+        if (policy === 'pivot') {
+          // Pivot: supplied alternatives reduce tracking; no automatic completion.
+          mark('a3', 'review', 'Pivot policy: consider contextual targeting; reduce tracking pixels/audiences.');
+          mark('a5', 'review', 'Pivot policy: dashboards may move to aggregated or on-device metrics.');
+          added.push(
+            { id: 'a_priv_p1', milestone: 'Execution', name: 'Switch to contextual targeting packages', depends: ['a2'], tags: ['adtech'], status: 'new', reason: 'Pivot policy reduces reliance on personal data.' },
+            { id: 'a_priv_p2', milestone: 'Measurement', name: 'Define privacy-preserving KPIs (aggregated)', depends: ['a_priv_p1'], tags: ['data'], status: 'new', reason: 'Replace user-level tracking with aggregated measurement.' }
+          );
+        }
       }
 
-      // Make applyUpdate globally accessible so that inline onclick can call it
-      window.applyUpdate = function(regionId) {
-        const detail = regionDetails[regionId];
-        // Reset all task nodes
-        nodeGroups.classed('highlight', false);
-        // Highlight tasks in the affected regions
-        Object.entries(detail.updateEffects).forEach(([targetRegion, taskIds]) => {
-          taskIds.forEach(taskId => {
-            svg.selectAll('g.node')
-              .filter(d => d.id === taskId)
-              .classed('highlight', true);
-          });
-        });
-        // Informational message
-        let msg = `<h3>${detail.name}</h3>`;
-        msg += `<p><strong>Update:</strong> ${detail.updateDescription}.</p>`;
-        msg += '<p>The following tasks in other regions are flagged for review:</p><ul>';
-        Object.entries(detail.updateEffects).forEach(([region, taskIds]) => {
-          msg += `<li><strong>${regionDetails[region].name}</strong>: `;
-          msg += taskIds.map(id => nodes.find(n => n.id === id).name).join(', ');
-          msg += '</li>';
-        });
-        msg += '</ul>';
-        document.getElementById('info').innerHTML = msg;
-      };
+      if (regionId === 'europe') {
+        // Europe already has GDPR: fewer NEW tasks, more alignment checks
+        added.push(
+          { id: 'e_priv_1', milestone: 'Compliance', name: 'Align consent language with new global baseline', depends: ['e1','e2'], tags: ['legal','content'], status: 'new', reason: 'Maintain brand consistency across regions for consent UX/copy.' },
+          { id: 'e_priv_2', milestone: 'Measurement', name: 'Review cross-border transfer to global dashboard', depends: ['e6'], tags: ['data'], status: 'new', reason: 'Global analytics now governed by stricter transfer rules.' }
+        );
+        if (policy === 'strict') {
+          added.push(
+            { id: 'e_priv_3', milestone: 'Compliance', name: 'Vendor DPIA template update for shared adtech', depends: ['e_priv_1'], tags: ['legal'], status: 'new', reason: 'Strict policy: ensure shared vendors meet the highest common standard.' }
+          );
+        }
+        if (policy === 'pivot') {
+          mark('e4', 'review', 'Pivot policy: shift away from audience-based targeting where feasible.');
+          added.push(
+            { id: 'e_priv_p1', milestone: 'Execution', name: 'Update media plan to privacy-first channels', depends: ['e2'], tags: ['adtech'], status: 'new', reason: 'Pivot policy reduces data reliance while keeping brand messaging.' }
+          );
+        }
+      }
+
+      if (regionId === 'north') {
+        added.push(
+          { id: 'n_priv_1', milestone: 'Compliance', name: 'Update tracking opt-out + consent signals', depends: ['n1'], tags: ['legal','data'], status: 'new', reason: 'Global privacy baseline requires consistent consent signalling.' },
+          { id: 'n_priv_2', milestone: 'Measurement', name: 'Update analytics retention settings (global standard)', depends: ['n6'], tags: ['data'], status: 'new', reason: 'Retention limits must align for cross-region reporting.' }
+        );
+        if (policy === 'strict') {
+          added.push(
+            { id: 'n_priv_3', milestone: 'Compliance', name: 'Run pre-launch privacy compliance drill (tabletop)', depends: ['n_priv_1'], tags: ['legal'], status: 'new', reason: 'Strict policy: rehearsed incident response + consent audit.' }
+          );
+        }
+        if (policy === 'pivot') {
+          mark('n4', 'review', 'Pivot policy: reduce pixel dependence; use contextual + first-party where consented.');
+          added.push(
+            { id: 'n_priv_p1', milestone: 'Execution', name: 'Replace lookalike audiences with contextual buys', depends: ['n3'], tags: ['adtech'], status: 'new', reason: 'Pivot policy reduces personal data dependency.' }
+          );
+        }
+      }
+
+      // Minimal policy: keep changes small
+      if (policy === 'minimal') {
+        // Nothing extra beyond baseline review and a few new tasks.
+      }
+
+      return { taskEdits: edits, addedTasks: added };
     }
-  </script>
+
+const RULE_VERSION='campaign-impact-192.1';
+const BASE_ASSUMPTIONS=[
+  'One global brand narrative and design system remain consistent.',
+  'Regions share a cross-region analytics dashboard.',
+  'Regional launches must fit the global launch commitment.'
+];
+const PRIVACY_ASSUMPTIONS=[
+  'Shared contract: consent before marketing collection of personal data.',
+  'Shared contract: data minimisation and retention limits.',
+  'Shared contract: review cross-border transfers and vendor terms.',
+  'Shared contract: consent copy and UX remain brand-consistent.'
+];
+const POLICIES={
+  minimal:{name:'Minimal',preferred:'patch',description:'Core regional reviews and 7 supplied obligations when shared privacy applies. Prefers the consent-pipeline patch.'},
+  strict:{name:'Strict',preferred:'patch',description:'Core work plus retention testing, a vendor DPIA template and a privacy drill: 10 supplied obligations. Prefers the patch; assurance effort is not costed.'},
+  pivot:{name:'Pivot',preferred:'aggregate',description:'Core work plus contextual targeting and aggregate-measurement alternatives: 11 supplied obligations. Prefers aggregate reporting; local channel changes are not costed.'}
+};
+const RESPONSES=[{id:'patch',name:'Patch the consent pipeline',cost:6,weeks:2},{id:'aggregate',name:'Switch to aggregate reporting',cost:4,weeks:3}];
+const DEFAULTS={privacy:false,time:false,budget:false,scope:'shared',policy:'minimal'};
+function normalize(input={}){
+  const s={...DEFAULTS,...input};
+  return {privacy:!!s.privacy,time:!!s.time,budget:!!s.budget,scope:s.scope==='local'?'local':'shared',policy:POLICIES[s.policy]?s.policy:'minimal'};
+}
+function contextBits(state){const s=normalize(state);return [s.privacy&&s.scope==='shared',s.time,s.budget].map(Number);}
+function contextId(state){return 'C'+contextBits(state).join('');}
+function baseArrow(from,to){return from.every((bit,i)=>bit>=to[i]);}
+function composeBase(first,second){
+  if(!baseArrow(first.from,first.to)||!baseArrow(second.from,second.to)||first.to.some((x,i)=>x!==second.from[i]))throw new Error('Base arrows are not composable');
+  return {from:[...first.from],to:[...second.to]};
+}
+function dependents(tasks,seeds){
+  const downstream=new Set(),queue=[...seeds];
+  while(queue.length){const id=queue.shift();for(const t of tasks){if(t.depends.includes(id)&&!seeds.has(t.id)&&!downstream.has(t.id)){downstream.add(t.id);queue.push(t.id);}}}
+  return downstream;
+}
+function references(tasks){const ids=new Set(tasks.map(t=>t.id));return tasks.flatMap(t=>t.depends.filter(id=>!ids.has(id)).map(id=>({task:t.id,missing:id})));}
+function evaluateRequirements(required, records){
+  const byId=new Map(records.map(t=>[t.id,t]));
+  if(required.some(id=>!byId.has(id)))return 'unresolved reference';
+  if(required.some(id=>byId.get(id).status==='conflict'))return 'conflict';
+  // This explorer carries no accepted deliverable evidence. A clean impact state is insufficient.
+  return 'unverified';
+}
+function build(input){
+  const state=normalize(input),shared=state.privacy&&state.scope==='shared';
+  const allowance=state.budget?5:8,window=state.time?2:4;
+  const options=RESPONSES.map(r=>({...r,withinBudget:r.cost<=allowance,withinWindow:r.weeks<=window,feasible:r.cost<=allowance&&r.weeks<=window}));
+  const feasible=shared?options.filter(r=>r.feasible):[];
+  const preferred=POLICIES[state.policy].preferred;
+  const recommendation=shared?(options.find(r=>r.id===preferred&&r.feasible)||null):null;
+  const conflict=shared&&feasible.length===0;
+  const context={id:contextId(state),bits:contextBits(state),inherited:[...BASE_ASSUMPTIONS],additions:[...(shared?PRIVACY_ASSUMPTIONS:[]),...(state.time?['European prerequisite arrives in week 2, leaving 2 weeks before the week-4 shared gate.']:[]),...(state.budget?['North American contribution cut lowers the shared response allowance from 8 to 5 units.']:[])]};
+  const sharedTask={id:'shared-response',name:'Shared analytics response and contract evidence',milestone:'Shared service',depends:['e1'],regionId:'shared',added:shared,status:shared?(conflict?'conflict':'direct'):'unflagged',reason:shared?'Authorised shared contract requires one compatible response, accepted after European regulatory review.':'No changed shared contract; no response package has been requested.',evidence:'not supplied'};
+  const plans=Object.values(REGION_BASE_PLANS).map(base=>{
+    const applies=state.privacy&&(shared||base.id==='asia');
+    const supplied=applies?suppliedPolicyTasks(base.id,state.policy):{taskEdits:{},addedTasks:[]};
+    const tasks=base.tasks.map(t=>({...t,depends:[...t.depends],regionId:base.id,added:false,status:'unflagged',reason:'No declared rule directly flags this task. Completion and prerequisite acceptance are not established.',evidence:'not supplied'}));
+    const direct=new Set();
+    for(const t of tasks){if(supplied.taskEdits[t.id]){t.status='direct';direct.add(t.id);t.reason=(shared?'Authorised shared contract → declared data-consumer rule. ':'Asia-only observation → local assessment rule. ')+supplied.taskEdits[t.id].reason;}}
+    if(state.time&&base.id==='europe'){
+      const t=tasks.find(t=>t.id==='e1');t.status='direct';direct.add(t.id);t.reason=(supplied.taskEdits[t.id]?t.reason+' ':'')+'Timing rule: regulatory review is available in week 2 rather than week 0; downstream work needs timing review.';
+    }
+    if(state.budget&&base.id==='north'){
+      const t=tasks.find(t=>t.id==='n3');t.status='direct';direct.add(t.id);t.reason='Budget rule: the contribution cut requires review of the media buying plan and its downstream work.';
+    }
+    for(const suppliedTask of supplied.addedTasks){tasks.push({...suppliedTask,depends:[...suppliedTask.depends],regionId:base.id,added:true,status:'obligation',evidence:'not supplied',reason:`Supplied ${state.policy} policy template: ${suppliedTask.reason}`});}
+    const downstream=dependents(tasks,direct);
+    for(const t of tasks){if(t.status==='unflagged'&&downstream.has(t.id)){t.status='downstream';t.reason='Declared prerequisite edges lead here from a directly affected task; review this downstream acceptance condition.';}t.affectedPrerequisites=t.depends.filter(id=>direct.has(id)||downstream.has(id));}
+    const event=tasks.find(t=>t.tags.includes('event'));
+    const analytics=base.tasks.find(t=>t.milestone==='Measurement');
+    const gates=[
+      {id:base.id+'-event-gate',name:'Regional launch-event milestone',requires:[event.id,...event.depends],predicate:'Accepted event-plan deliverable AND accepted named prerequisites.',status:'unverified',reason:'No accepted deliverable or prerequisite evidence has been supplied.'},
+      {id:base.id+'-measurement-gate',name:'Campaign measurement acceptance',requires:[analytics.id,...tasks.filter(t=>t.added).map(t=>t.id),...(shared?['shared-response']:[])],predicate:'Accepted analytics deliverable AND accepted policy obligations'+(shared?' AND accepted shared-contract response.':'.'),status:'unverified',reason:'Feasible options and task review flags do not provide accepted deliverable evidence.'}
+    ];
+    for(const gate of gates){gate.status=evaluateRequirements(gate.requires,[...tasks,sharedTask]);if(gate.status==='conflict')gate.reason='No supplied shared response fits both bounds. This acceptance predicate has a declared shared prerequisite conflict.';}
+    return {...base,tasks,gates,contextId:context.id,globalConstraints:[...context.inherited,...context.additions],summary:{total:tasks.length,direct:tasks.filter(t=>t.status==='direct').length,downstream:tasks.filter(t=>t.status==='downstream').length,added:tasks.filter(t=>t.added).length,unflagged:tasks.filter(t=>t.status==='unflagged').length}};
+  });
+  const tasks=plans.flatMap(p=>p.tasks);
+  const baselineIds=Object.values(REGION_BASE_PLANS).flatMap(p=>p.tasks.map(t=>t.id));
+  const checkTasks=[...tasks,sharedTask];
+  const missing=references(checkTasks);
+  const eventCount=tasks.filter(t=>t.tags.includes('event')&&t.status==='unflagged').length;
+  return {ruleVersion:RULE_VERSION,state,context,shared,allowance,window,options,feasible,recommendation,conflict,plans,tasks,sharedTask,checks:{referencesResolved:missing.length===0,missing,baselineIdsRetained:baselineIds.every(id=>tasks.some(t=>t.id===id)),unflaggedEvents:eventCount},summary:{total:tasks.length,added:tasks.filter(t=>t.added).length,direct:tasks.filter(t=>t.status==='direct').length,downstream:tasks.filter(t=>t.status==='downstream').length,conflict,acceptance:'Unverified: no completion evidence supplied'}};
+}
+function taskDeltas(before,after){
+ const old=new Map(before.tasks.map(t=>[t.id,t])),now=new Map(after.tasks.map(t=>[t.id,t]));
+ return {added:after.tasks.filter(t=>!old.has(t.id)).map(t=>({id:t.id,name:t.name,status:t.status})),removed:before.tasks.filter(t=>!now.has(t.id)).map(t=>({id:t.id,name:t.name,status:t.status})),changed:after.tasks.filter(t=>old.has(t.id)&&(old.get(t.id).status!==t.status||old.get(t.id).reason!==t.reason)).map(t=>({id:t.id,name:t.name,before:old.get(t.id).status,after:t.status,reason:t.reason}))};
+}
+function snapshot(model){return {ruleVersion:RULE_VERSION,controls:{...model.state},context:JSON.parse(JSON.stringify(model.context)),bounds:{allowance:model.allowance,window:model.window},preferred:POLICIES[model.state.policy].preferred,feasibleOptions:model.feasible.map(x=>x.id),conflict:model.conflict,summary:{...model.summary},checks:{...model.checks}};}
+function createSession(){const model=build(DEFAULTS);return {model,events:[{sequence:1,action:'Initial scenario',before:null,after:snapshot(model),deltas:{added:[],removed:[],changed:[]}}]};}
+function transition(session,patch,action='Change scenario'){
+ const before=session.model,after=build({...before.state,...patch});
+ const event={sequence:session.events.length+1,action,before:snapshot(before),after:snapshot(after),deltas:taskDeltas(before,after)};
+ return {model:after,events:[...session.events,event]};
+}
+function resetSession(session){const fresh=transition(session,DEFAULTS,'Reset scenario to baseline');fresh.events=[{...fresh.events[fresh.events.length-1],sequence:1}];return fresh;}
+root.CampaignModel={RULE_VERSION,BASE_ASSUMPTIONS,PRIVACY_ASSUMPTIONS,POLICIES,RESPONSES,DEFAULTS,REGION_BASE_PLANS,normalize,contextBits,baseArrow,composeBase,dependents,references,evaluateRequirements,build,taskDeltas,snapshot,createSession,transition,resetSession};
+})(globalThis);
+</script>
+<script>
+(function(){
+'use strict';
+const M=CampaignModel,$=id=>document.getElementById(id);
+const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let session=M.createSession(),selected='asia',view='current';
+const labels={direct:'Direct review',downstream:'Downstream review',obligation:'Supplied obligation',unflagged:'Not directly flagged',conflict:'Conflict'};
+function describe(m){if(!m.shared)return m.state.privacy?'Local assessment only. Asia has added review work; no shared analytics response is authorised.':'No new privacy contract. Timing and funding controls still update their declared regional review edges.';if(m.conflict)return 'Conflict: neither response fits both bounds. A programme decision is required.';if(!m.recommendation)return 'An alternative fits, but the policy’s preferred response does not. A response decision is required.';return m.feasible.length===2?'Both shared responses fit the toy bounds. Neither is accepted or completed.':'One shared response fits the toy bounds. Acceptance still needs evidence.';}
+function linkTo(id,m){const t=m.tasks.find(x=>x.id===id)||m.sharedTask;return `<a href="#${esc(id)}" data-task-link="${esc(id)}">${esc(t.name)}</a>`;}
+function draw(){const m=session.model,s=m.state;
+ for(const key of ['privacy','time','budget'])$(key).checked=s[key];$('scope').value=s.scope;$('policy').value=s.policy;
+ $('privacy-value').textContent=s.privacy?(m.shared?'Observed → shared contract authorised':'Observed → local assessment only'):'No new observation → no added contract';
+ $('time-value').textContent=`Available window: 4 → ${m.window} weeks`;$('budget-value').textContent=`Shared allowance: 8 → ${m.allowance} cost units`;
+ $('policy-desc').textContent=M.POLICIES[s.policy].description+(s.scope==='local'?' Local-only scope uses the Asia portion of that template.':'');
+ $('result').className='result'+(m.conflict?' conflict':'');$('result').innerHTML=`<strong>${esc(describe(m))}</strong><p>${m.summary.direct} direct reviews · ${m.summary.downstream} downstream reviews · ${m.summary.added} supplied regional obligations. Milestone acceptance: <strong>unverified</strong>${m.conflict?'; measurement gates also have a shared prerequisite conflict':''}.</p>`;
+ $('trace').innerHTML=[['1 · OBSERVATION',s.privacy?'Asia reports a new requirement':'No new privacy observation',s.privacy?'This toy fact calls for local assessment. It does not change European or North American law.':'The original regional plans remain the starting point. Independent timing and contribution changes can still request review.'],['2 · SCOPE DECISION',m.shared?'Owner changes the shared service contract':s.privacy?'Shared scope withheld':'Conditional decision is inactive',m.shared?'The selected toy programme decision applies consent, minimisation, retention and transfer review to the common analytics service.':s.privacy?'Only Asia gets privacy-assessment obligations. The law is not propagated globally.':'The displayed scope choice has no effect until a privacy observation exists.'],['3 · DECLARED CONSEQUENCE',m.shared?'Consumers and downstream gates need attention':'Only declared local edges carry effects',m.shared?`Nine baseline data-tagged tasks are declared consumers or reviewers of the shared contract. Prerequisite edges carry review onward. The shared response must fit within ${m.window} weeks and ${m.allowance} cost units.`:'The app follows the supplied dependency graph. North America’s launch-event branch stays unchanged, even though its completion is unverified.']].map(([n,h,p])=>`<div class="step"><span class="number">${esc(n)}</span><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
+ $('responses').innerHTML=m.options.map(r=>`<tr><th scope="row">${esc(r.name)}${M.POLICIES[s.policy].preferred===r.id?'<br><span class="small">Policy preference</span>':''}</th><td>${r.cost} units</td><td>${r.weeks} weeks</td><td><span class="badge ${m.shared?(r.feasible?'candidate':'conflict'):''}">${m.shared?(r.feasible?'Fits both bounds':[!r.withinBudget?'Over budget':'',!r.withinWindow?'Too slow':''].filter(Boolean).join(' + ')):'Not required; bounds shown only'}</span></td></tr>`).join('');
+ $('response-note').textContent=`Response starts after European regulatory review (${s.time?'week 2':'week 0'}); shared gate is at week 4. No overlap with that prerequisite is permitted. Only this response package is costed and timed; regional obligations and other resource constraints remain uncosted.`;
+ $('shared-response').innerHTML=`<h3>Shared response acceptance · ${m.conflict?'conflict':m.shared?'unverified':'not requested'}</h3><p>Required: an owner-selected response that fits both bounds, accepted European regulatory review, and accepted evidence that the response meets the shared contract. A preferred response is a recommendation, not a selection or approval.</p><p>Named prerequisite: ${linkTo('e1',m)} → shared response → regional measurement gates.</p><p class="small">${esc(m.sharedTask.reason)} No acceptance evidence is supplied.</p>`;
+ $('baseline-assumptions').innerHTML=M.BASE_ASSUMPTIONS.map(x=>`<li>${esc(x)}</li>`).join('');$('inherited-assumptions').innerHTML=M.BASE_ASSUMPTIONS.map(x=>`<li>${esc(x)} <span class="small">(retained)</span></li>`).join('');
+ $('context-additions').innerHTML=(m.context.additions.length?m.context.additions:['None. Shared baseline assumptions remain in force.']).map(x=>`<li>${esc(x)}</li>`).join('');
+ $('current-context').textContent=`${m.context.id} · Current shared context`;$('diagram-context').textContent=`${m.context.id} · privacy ${+m.shared} / time ${+s.time} / budget ${+s.budget}`;
+ $('region-cards').innerHTML=m.plans.map(p=>`<button class="region" data-region="${p.id}" aria-pressed="${p.id===selected}"><strong>${esc(p.name)}</strong><span>${p.summary.total} tasks · ${p.summary.direct+p.summary.downstream} review flags · ${p.summary.added} obligations</span><span>Event milestone: unverified · measurement: ${m.conflict?'conflict':'unverified'}</span></button>`).join('');
+ drawPlan();drawAudit();
+}
+function drawPlan(){const m=view==='baseline'?M.build(M.DEFAULTS):session.model,p=m.plans.find(p=>p.id===selected);
+ $('view-current').setAttribute('aria-pressed',String(view==='current'));$('view-baseline').setAttribute('aria-pressed',String(view==='baseline'));
+ const groups=[...new Set(p.tasks.map(t=>t.milestone))];
+ $('plan').innerHTML=`<div class="plan-head"><h3>${esc(p.name)} · ${view==='baseline'?'baseline':esc(m.context.id)} plan</h3><span class="small">${view==='baseline'?'Original tasks':esc(M.POLICIES[m.state.policy].name)+' adaptation policy'}</span></div><p class="local"><strong>Local assumptions:</strong> ${p.localConstraints.map(esc).join(' ')}</p>`+groups.map(group=>`<h4>${esc(group)} <span class="small">· WBS grouping, not a dependency arrow</span></h4><ul class="task-list">${p.tasks.filter(t=>t.milestone===group).map(t=>`<li id="${t.id}" class="task" tabindex="-1"><h4>${esc(t.name)}</h4><span class="badge ${t.status}">${labels[t.status]}</span><p class="small">Acceptance evidence: not supplied</p><div class="prereqs small"><strong>Finish-to-start prerequisites:</strong> ${t.depends.length?t.depends.map(id=>linkTo(id,m)).join(' · '):'None declared'}</div><details><summary>Trace effect and acceptance</summary><p>${esc(t.reason)}</p>${t.affectedPrerequisites.length?`<p>Affected named prerequisites: ${t.affectedPrerequisites.map(id=>linkTo(id,m)).join(' · ')}</p>`:''}<p><strong>Acceptance condition:</strong> this deliverable has accepted evidence, every named prerequisite has accepted evidence, and any applicable review obligation is resolved. No evidence is loaded; ${t.status==='unflagged'?'an unflagged task is not ready.':'a review flag is not a completion verdict.'}</p><p class="small">Rule ${esc(M.RULE_VERSION)} · stable task ID ${esc(t.id)} · ${t.added?'authored regional template':'retained baseline task'}.</p></details></li>`).join('')}</ul>`).join('<div style="height:20px"></div>')+`<div class="acceptance"><h3>Explicit milestone acceptance</h3>${p.gates.map(g=>`<p><strong>${esc(g.name)}:</strong> <span class="badge ${g.status==='conflict'?'conflict':''}">${esc(g.status)}</span><br>${esc(g.predicate)}</p><p class="small">Requires ${g.requires.map(id=>linkTo(id,m)).join(' · ')}<br>${esc(g.reason)}</p>`).join('')}<p class="small">“Launch event planning” is a deliverable; the event milestone is its acceptance predicate, not a completed launch. The shared week-4 target is a separate date commitment.</p></div>`;
+}
+function drawAudit(){const m=session.model,last=session.events[session.events.length-1],s=m.state;
+ $('audit-current').innerHTML=`<p><strong>Current state · ${esc(M.RULE_VERSION)}</strong></p><p>Privacy observation: ${s.privacy?'yes':'no'} · timing: ${s.time?'tight':'baseline'} · budget: ${s.budget?'tight':'baseline'} · scope decision: ${esc(s.scope)} · policy: ${esc(s.policy)}.</p><p>Context ${esc(m.context.id)} · ${m.allowance} units / ${m.window} weeks · candidates: ${m.feasible.map(r=>esc(r.name)).join(', ')||(m.shared?'none':'not requested')}.</p><p>${m.summary.total} regional tasks, ${m.summary.added} supplied obligations, ${m.summary.direct} direct reviews, ${m.summary.downstream} downstream reviews. IDs retained: ${m.checks.baselineIdsRetained?'yes':'no'}; prerequisite references resolved: ${m.checks.referencesResolved?'yes':'no'}.</p><p class="small">Latest explanation is generated from the same state as the plans. Acceptance remains unverified. Last transition: ${esc(last.action)}.</p>`;
+ $('audit-list').innerHTML=[...session.events].reverse().map(e=>`<li><strong>${esc(e.action)}</strong> · policy ${esc(e.after.controls.policy)} · privacy ${+e.after.controls.privacy}, time ${+e.after.controls.time}, budget ${+e.after.controls.budget}, scope ${esc(e.after.controls.scope)}<br>${e.deltas.added.length} added / ${e.deltas.removed.length} removed / ${e.deltas.changed.length} changed task explanations or impact states. Shared conflict: ${e.after.conflict?'yes':'no'}.${e.deltas.added.length+e.deltas.removed.length+e.deltas.changed.length?`<details><summary>Named before / after deltas</summary>${[['Added',e.deltas.added],['Removed',e.deltas.removed],['Changed',e.deltas.changed]].map(([name,tasks])=>tasks.length?`<p><strong>${name}:</strong> ${tasks.map(t=>esc(t.name)+(t.before?` (${esc(t.before)} → ${esc(t.after)})`:'' )).join('; ')}</p>`:'').join('')}</details>`:''}</li>`).join('');
+}
+function change(patch,label){session=M.transition(session,patch,label);draw();}
+for(const key of ['privacy','time','budget'])$(key).addEventListener('change',e=>change({[key]:e.target.checked},`${key} control changed`));
+for(const key of ['scope','policy'])$(key).addEventListener('change',e=>change({[key]:e.target.value},`${key} changed`));
+$('guided').addEventListener('click',()=>change({privacy:true,time:true,budget:true,scope:'shared'},'Loaded coupled conflict'));
+$('reset').addEventListener('click',()=>{session=M.resetSession(session);selected='asia';view='current';draw();});
+$('export').addEventListener('click',()=>{const receipt={kind:'Ephemeral campaign scenario receipt exported by user',evidenceBoundary:'Not an approval, compliance finding, proof or completion record',exportedAt:new Date().toISOString(),current:M.snapshot(session.model),events:session.events};const url=URL.createObjectURL(new Blob([JSON.stringify(receipt,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='milestone-context-session.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+$('view-current').addEventListener('click',()=>{view='current';drawPlan();});$('view-baseline').addEventListener('click',()=>{view='baseline';drawPlan();});
+$('region-cards').addEventListener('click',e=>{const b=e.target.closest('[data-region]');if(!b)return;selected=b.dataset.region;draw();document.querySelector(`[data-region="${selected}"]`).focus();});
+document.addEventListener('click',e=>{const a=e.target.closest('[data-task-link]');if(!a)return;const id=a.dataset.taskLink;e.preventDefault();if(id!=='shared-response'){const model=view==='baseline'?M.build(M.DEFAULTS):session.model;const t=model.tasks.find(t=>t.id===id);if(!t)return;selected=t.regionId;draw();}const target=$(id);if(target){target.scrollIntoView({behavior:'auto',block:'center'});target.focus();}});
+draw();
+    const VERBATIM_PROMPT =
+`ibration-based Milestone Linking
+Structure milestones as fibered objects in a category of evolving constraints, so each milestone trivially “lifts” or “restricts” along a morphism of resource states. By designing the entire project plan in a fibration framework, changes at one node can be systematically reflected upward or downward without losing the global structure.
+i.e. Viewing milestones and constraints within a category, a fibration structure ensures that local refinements (e.g., sub-milestone updates) consistently “lift” or “pull back” through the overarching project plan. When resources or dependencies shift, a fibration-based model automatically propagates these changes across higher or lower levels of abstraction without orphaning tasks in the organizational chart. This yields a smoother global coherence, minimizing “transition friction” in large programs, especially those involving multiple sub-projects or specialized departmental silos. The key is to formalize the project plan as a hierarchical functor, so that iterative modifications at one tier systematically cascade in a controlled, logically consistent manner.`;
+
+    const VERBATIM_TOY =
+`Toy example: Consider a global marketing campaign with region-specific sub-milestones (launch events in Europe, Asia, and North America) that collectively form a “bundle” in the categorical sense. By representing each local plan as a fibration over a “global strategy” object, updates in one region (e.g., Asia’s new consumer data regulations) automatically propagate upward and across to other regions, ensuring that the shared milestones (like global brand consistency) remain consistent. When the Asia plan’s constraints shift, the fibration structure dictates how dependent tasks in Europe or North America reflect those changes without losing local nuance. This not only maintains coherence but also provides an auditable map of how each local event connects to—and is shaped by—the overarching campaign.`;
+
+
+$('historical-prompt').textContent=VERBATIM_PROMPT;
+$('historical-toy').textContent=VERBATIM_TOY;
+})();
+</script>
 </body>
 </html>
