@@ -1,6 +1,6 @@
 # Project Apps Repository
 
-This repository contains a basic React/Vite setup that can host many small applications. Only a single template app lives in `apps/portfolio-state-machine/` but the tooling supports adding more apps under `apps/<app-name>`.
+This repository hosts the Functors for Projects collection: static HTML and React/Vite experiments. The home catalogue currently has 16 entries. `apps/portfolio-state-machine/` remains a development template, not the collection inventory.
 
 ## Working With Apps
 
@@ -12,7 +12,7 @@ This repository contains a basic React/Vite setup that can host many small appli
 
 - Each app lives in `apps/<app-name>` with its own `src` directory and `index.html`. Shared utilities are under `src/common`.
 - Screenshots for the index page are stored in `pics/`. The numeric `#` column in `app-index.csv` matches a screenshot named `pics/<number>.png`. Missing images fall back to `pics/blank.png`.
-- Include `<a href="../../index.html">Back to app index</a>` somewhere in each app's `index.html` so users can return easily.
+- Provide a `../../index.html` link labelled “Functors overview” and, where useful, `../../index.html#apps` labelled “All experiments”. Keep existing deep links and query state intact.
 
 ## Design Guidelines
 - Use the shared `common.css` stylesheet in all static apps to ensure a unified look. It imports the Inter font and defines base margins, heading styles and button classes.
@@ -35,3 +35,7 @@ Keep `apps/fibration-milestone-linking/` canonical and preserve the V2 redirect.
 
 ## Geometry of Interaction — Island Reading Room (28 September 2026)
 Keep the canonical route `apps/geometry-of-interaction/`. The main essay implements finite Int(Pfn, disjoint union) routing; it does not claim full game semantics, learned policies, ecological safety or completed delivery. Preserve the two externally initiated episodes and the distinction between a changed observation, changed action and deliberately changed policy. The signed feedback diagram and observable A/C projection must follow the computed model. `wiring-lab.html` preserves the corrected matching comparison; its detached loop counts are not scalars of Int(Pfn). Run `node tests/goi-interaction.cjs` and `node tests/goi-page.cjs`, the other required model/catalogue checks, a build and desktop/phone/keyboard journeys before publication.
+
+## Scenario entrances (29 September 2026)
+
+The overview leads with the existing Island Reading Room and milestone scenarios; the complete generated catalogue remains at `#apps`. Keep the first-visit instructions tied to the actual controls and outcomes. Do not imply that the island policies learn, that a report is supplied automatically, or that the campaign is a proved fibration. Catalogue entry counts apply inside `.app-card`; pictured invitations may provide additional routes to the same app. Preserve all 16 CSV records, existing source images and atlas links. Run all `tests/*.cjs`, the React tests and production build; verify desktop, phone, keyboard and return journeys. Research direction stays with each foray’s existing sources and open questions.
